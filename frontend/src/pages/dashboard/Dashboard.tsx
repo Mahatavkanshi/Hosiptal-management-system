@@ -1,0 +1,469 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed } from 'lucide-react';
+import api from '../../services/api';
+import toast from 'react-hot-toast';
+import AddPatientModal from '../../components/modals/AddPatientModal';
+import AllocateBedModal from '../../components/modals/AllocateBedModal';
+import MedicineOrderModal from '../../components/modals/MedicineOrderModal';
+
+interface DashboardStats {
+  total_appointments: number;
+  today_appointments: {
+    total: number;
+    completed: number;
+    in_progress: number;
+    upcoming: number;
+  };
+  active_patients: number;
+  pending_appointments: number;
+  beds: {
+    total: number;
+    available: number;
+    occupied: number;
+  };
+}
+
+interface Patient {
+  id: string;
+  first_name: string;
+  last_name: string;
+  age: number;
+  address: string;
+  city: string;
+  state: string;
+  blood_group: string;
+  allergies: string;
+  chronic_conditions: string;
+  has_bed: boolean;
+  bed_number?: string;
+  room_number?: string;
+  ward_type?: string;
+}
+
+interface Appointment {
+  id: string;
+  patient_first_name: string;
+  patient_last_name: string;
+  patient_age: number;
+  patient_phone: string;
+  address: string;
+  city: string;
+  state: string;
+  appointment_time: string;
+  status: string;
+  type: string;
+  symptoms?: string;
+}
+
+interface Activity {
+  type: string;
+  patient_name: string;
+  description: string;
+  created_at: string;
+  time?: string;
+  status?: string;
+}
+
+const Dashboard = () => {
+  const { user } = useAuth();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [medicineAlerts, setMedicineAlerts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [showAddPatient, setShowAddPatient] = useState(false);
+  const [showAllocateBed, setShowAllocateBed] = useState(false);
+  const [showMedicineOrder, setShowMedicineOrder] = useState(false);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch all data in parallel
+      const [statsRes, appointmentsRes, activityRes, medicinesRes] = await Promise.all([
+        api.get('/doctor-dashboard/dashboard-stats'),
+        api.get('/doctor-dashboard/today-appointments'),
+        api.get('/doctor-dashboard/activity?limit=5'),
+        api.get('/doctor-dashboard/medicine-alerts')
+      ]);
+      
+      setStats(statsRes.data.data);
+      setTodayAppointments(appointmentsRes.data.data);
+      setActivities(activityRes.data.data);
+      setMedicineAlerts(medicinesRes.data.data);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      toast.error('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPatients = async () => {
+    try {
+      const response = await api.get('/doctor-dashboard/my-patients?limit=10');
+      setPatients(response.data.data.patients);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+      toast.error('Failed to load patients');
+    }
+  };
+
+  const formatTime = (time: string) => {
+    return time?.substring(0, 5) || '';
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Welcome back, {user?.first_name}! 👋
+        </h1>
+        <p className="mt-2 text-gray-600">
+          Here's what's happening with your patients today.
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Total Appointments */}
+        <div 
+          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => {
+            fetchPatients();
+            setActiveTab('appointments');
+          }}
+        >
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-primary-100">
+              <Calendar className="h-6 w-6 text-primary-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total Appointments</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.total_appointments || 0}</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center text-sm">
+            <span className="text-green-600 font-medium">+12%</span>
+            <span className="text-gray-500 ml-2">from last month</span>
+          </div>
+        </div>
+
+        {/* Active Patients */}
+        <div 
+          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => {
+            fetchPatients();
+            setActiveTab('patients');
+          }}
+        >
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-green-100">
+              <Users className="h-6 w-6 text-green-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Active Patients</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.active_patients || 0}</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center text-sm">
+            <span className="text-green-600 font-medium">+5%</span>
+            <span className="text-gray-500 ml-2">this month</span>
+          </div>
+        </div>
+
+        {/* Available Beds */}
+        <div 
+          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => setActiveTab('beds')}
+        >
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-blue-100">
+              <BedDouble className="h-6 w-6 text-blue-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Available Beds</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.beds?.available || 0}</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center text-sm">
+            <span className="text-gray-600">{stats?.beds?.occupied || 0} occupied</span>
+          </div>
+        </div>
+
+        {/* Medicine Alerts */}
+        <div 
+          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => setShowMedicineOrder(true)}
+        >
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-yellow-100">
+              <Pill className="h-6 w-6 text-yellow-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Low Stock Alerts</p>
+              <p className="text-2xl font-bold text-gray-900">{medicineAlerts?.length || 0}</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center text-sm">
+            <span className="text-red-600 font-medium">Needs attention</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      {activeTab === 'overview' && (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Activity */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center">
+                  <Activity className="h-5 w-5 text-gray-400 mr-2" />
+                  <h3 className="text-lg font-medium text-gray-900">Recent Activity</h3>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="space-y-4">
+                  {activities.map((activity, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className={`w-2 h-2 rounded-full mt-2 ${
+                        activity.type === 'appointment' ? 'bg-blue-500' : 'bg-green-500'
+                      }`} />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-900">{activity.description}</p>
+                        <p className="text-xs text-gray-500">{activity.patient_name}</p>
+                        <p className="text-xs text-gray-400">
+                          {activity.created_at}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Today's Appointments */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Clock className="h-5 w-5 text-gray-400 mr-2" />
+                    <h3 className="text-lg font-medium text-gray-900">Today's Appointments</h3>
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    {todayAppointments.length} total
+                  </span>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="space-y-4">
+                  {todayAppointments.map((apt) => (
+                    <div key={apt.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <p className="text-sm font-medium text-gray-900">
+                            {apt.patient_first_name} {apt.patient_last_name}
+                          </p>
+                          <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                            apt.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            apt.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {apt.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {apt.patient_age} years • {apt.city}, {apt.state}
+                        </p>
+                        {apt.symptoms && (
+                          <p className="text-xs text-gray-600 mt-1">Symptoms: {apt.symptoms}</p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900">
+                          {formatTime(apt.appointment_time)}
+                        </p>
+                        <p className="text-xs text-gray-500 capitalize">{apt.type}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {todayAppointments.length === 0 && (
+                    <p className="text-center text-gray-500 py-4">No appointments today</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button 
+                onClick={() => setShowAddPatient(true)}
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
+                <div className="p-3 rounded-full bg-green-100 mb-3">
+                  <UserPlus className="h-6 w-6 text-green-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-900">Add Patient</span>
+              </button>
+
+              <button 
+                onClick={() => setShowAllocateBed(true)}
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
+                <div className="p-3 rounded-full bg-blue-100 mb-3">
+                  <Bed className="h-6 w-6 text-blue-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-900">Allocate Bed</span>
+              </button>
+
+              <button className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <div className="p-3 rounded-full bg-purple-100 mb-3">
+                  <CreditCard className="h-6 w-6 text-purple-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-900">Process Payment</span>
+              </button>
+
+              <button className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <div className="p-3 rounded-full bg-primary-100 mb-3">
+                  <Plus className="h-6 w-6 text-primary-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-900">Book Appointment</span>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Patients Tab */}
+      {activeTab === 'patients' && (
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-gray-900">My Patients</h3>
+              <button 
+                onClick={() => setActiveTab('overview')}
+                className="text-primary-600 hover:text-primary-700"
+              >
+                ← Back
+              </button>
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bed</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {patients.map((patient) => (
+                    <tr key={patient.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                            <span className="text-primary-700 font-medium">
+                              {patient.first_name[0]}{patient.last_name[0]}
+                            </span>
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">
+                              {patient.first_name} {patient.last_name}
+                            </div>
+                            <div className="text-sm text-gray-500">{patient.blood_group}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {patient.age} years
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {patient.address}, {patient.city}, {patient.state}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {patient.has_bed ? (
+                          <span className="text-green-600">
+                            {patient.bed_number} ({patient.ward_type})
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">Not allocated</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          patient.has_bed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {patient.has_bed ? 'Admitted' : 'Outpatient'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modals */}
+      {showAddPatient && (
+        <AddPatientModal
+          onClose={() => setShowAddPatient(false)}
+          onSuccess={() => {
+            setShowAddPatient(false);
+            fetchDashboardData();
+            toast.success('Patient added successfully!');
+          }}
+        />
+      )}
+
+      {showAllocateBed && (
+        <AllocateBedModal
+          onClose={() => setShowAllocateBed(false)}
+          onSuccess={() => {
+            setShowAllocateBed(false);
+            fetchDashboardData();
+            toast.success('Bed allocated successfully!');
+          }}
+        />
+      )}
+
+      {showMedicineOrder && (
+        <MedicineOrderModal
+          onClose={() => setShowMedicineOrder(false)}
+          lowStockMedicines={medicineAlerts}
+          onSuccess={() => {
+            fetchDashboardData();
+            toast.success('Order placed successfully!');
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;
