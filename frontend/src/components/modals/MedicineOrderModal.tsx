@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, AlertTriangle, CheckCircle, Clock, Package, RefreshCw } from 'lucide-react';
+import { X, Plus, AlertTriangle, CheckCircle, Clock, Package, RefreshCw, Trash2 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 
@@ -55,11 +55,16 @@ const MedicineOrderModal = ({ onClose, lowStockMedicines, onSuccess }: MedicineO
     }
   }, [activeTab]);
 
-  const fetchOrdersAndMedicines = async () => {
+  const fetchOrdersAndMedicines = async (bustCache = false) => {
     try {
       setLoading(true);
       
-      const ordersRes = await api.get('/medicine-orders/orders');
+      // Add cache-busting timestamp and high limit if needed
+      let ordersUrl = '/medicine-orders/orders?limit=100';
+      if (bustCache) {
+        ordersUrl += `&t=${Date.now()}`;
+      }
+      const ordersRes = await api.get(ordersUrl);
       const allMedicinesRes = await api.get('/medicines?limit=100');
       
       if (ordersRes.data.success) {
@@ -92,8 +97,11 @@ const MedicineOrderModal = ({ onClose, lowStockMedicines, onSuccess }: MedicineO
       toast.success('Order created successfully!');
       setOrderForm({ medicine_id: '', quantity: 1, priority: 'normal', notes: '' });
       
-      // Refresh orders list
-      await fetchOrdersAndMedicines();
+      // Small delay to ensure database transaction is committed
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Refresh orders list with cache busting
+      await fetchOrdersAndMedicines(true);
       
       // Switch to orders tab to show the new order
       setActiveTab('orders');
@@ -125,6 +133,32 @@ const MedicineOrderModal = ({ onClose, lowStockMedicines, onSuccess }: MedicineO
     toast.success(`${medicine.name} selected for ordering!`);
   };
 
+  const handleDeleteOrder = async (orderId: string, orderName: string) => {
+    if (!window.confirm(`Are you sure you want to delete the order for "${orderName}"?`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await api.delete(`/medicine-orders/orders/${orderId}`);
+      
+      // Update local state to remove the deleted order
+      setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+      
+      toast.success('Order deleted successfully');
+      
+      // Notify parent to refresh data
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error: any) {
+      console.error('Error deleting order:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete order');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent': return 'bg-red-100 text-red-800';
@@ -144,6 +178,19 @@ const MedicineOrderModal = ({ onClose, lowStockMedicines, onSuccess }: MedicineO
       case 'cancelled': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Asia/Kolkata'
+    });
   };
 
   return (
@@ -253,7 +300,7 @@ const MedicineOrderModal = ({ onClose, lowStockMedicines, onSuccess }: MedicineO
                   Your Medicine Orders
                 </h3>
                 <button
-                  onClick={fetchOrdersAndMedicines}
+                  onClick={() => fetchOrdersAndMedicines(true)}
                   disabled={loading}
                   className="flex items-center px-3 py-2 text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
                 >
@@ -274,18 +321,28 @@ const MedicineOrderModal = ({ onClose, lowStockMedicines, onSuccess }: MedicineO
                         <h3 className="font-medium text-gray-900">{order.medicine_name}</h3>
                         <p className="text-sm text-gray-500">Qty: {order.quantity} units</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex items-center gap-2">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
                           {order.status}
                         </span>
-                        <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(order.priority)}`}>
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(order.priority)}`}>
                           {order.priority}
                         </span>
+                        {order.status === 'pending' && (
+                          <button
+                            onClick={() => handleDeleteOrder(order.id, order.medicine_name)}
+                            disabled={loading}
+                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                            title="Delete order"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="mt-2 text-sm text-gray-500">
                       <Clock className="h-4 w-4 inline mr-1" />
-                      Ordered: {`${order.created_at}`}
+                      Ordered: {formatDateTime(order.created_at)}
                     </div>
                     {order.notes && (
                       <p className="mt-2 text-sm text-gray-600 bg-gray-100 p-2 rounded">{order.notes}</p>

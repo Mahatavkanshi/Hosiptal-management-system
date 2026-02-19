@@ -200,6 +200,33 @@ router.post('/orders/:id/cancel',
   })
 );
 
+// Delete own order (doctor can delete pending orders)
+router.delete('/orders/:id',
+  authenticate,
+  authorize('doctor'),
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const userId = (req as any).user?.id;
+    
+    // Verify order belongs to doctor and is still pending
+    const orderResult = await query(
+      'SELECT * FROM medicine_orders WHERE id = $1 AND doctor_id = $2 AND status = \'pending\'',
+      [id, userId]
+    );
+    
+    if (orderResult.rows.length === 0) {
+      throw new AppError('Order not found or cannot be deleted', 404);
+    }
+    
+    await query('DELETE FROM medicine_orders WHERE id = $1', [id]);
+    
+    res.json({
+      success: true,
+      message: 'Order deleted successfully'
+    });
+  })
+);
+
 // Get order statistics
 router.get('/orders/stats',
   authenticate,
