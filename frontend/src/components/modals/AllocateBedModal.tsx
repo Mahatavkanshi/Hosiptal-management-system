@@ -37,16 +37,38 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
 
   const fetchData = async () => {
     try {
-      // Fetch patients without beds
+      // Fetch patients without beds (only from the same doctor)
       const patientsRes = await api.get('/doctor-dashboard/my-patients?limit=50');
-      const patientsWithoutBeds = patientsRes.data.data.patients.filter(
+      let patientsWithoutBeds = patientsRes.data.data.patients.filter(
         (p: any) => !p.has_bed
       );
+      
+      // If no patients found, add demo patients for the current doctor
+      if (patientsWithoutBeds.length === 0) {
+        patientsWithoutBeds = [
+          { id: 'demo-patient-1', first_name: 'John', last_name: 'Doe', age: 45 },
+          { id: 'demo-patient-2', first_name: 'Jane', last_name: 'Smith', age: 32 },
+          { id: 'demo-patient-3', first_name: 'Michael', last_name: 'Johnson', age: 28 },
+          { id: 'demo-patient-4', first_name: 'Sarah', last_name: 'Williams', age: 56 },
+        ];
+      }
       setPatients(patientsWithoutBeds);
 
       // Fetch available beds
       const bedsRes = await api.get('/beds?status=available');
-      setAvailableBeds(bedsRes.data.data.beds || []);
+      let beds = bedsRes.data.data.beds || [];
+      
+      // If no beds found, add demo beds
+      if (beds.length === 0) {
+        beds = [
+          { id: 'demo-bed-1', bed_number: 'A1', room_number: '101', ward_type: 'General', floor_number: 1 },
+          { id: 'demo-bed-2', bed_number: 'B1', room_number: '102', ward_type: 'Semi-Private', floor_number: 1 },
+          { id: 'demo-bed-3', bed_number: 'A1', room_number: '201', ward_type: 'Private', floor_number: 2 },
+          { id: 'demo-bed-4', bed_number: 'ICU-1', room_number: 'ICU-01', ward_type: 'ICU', floor_number: 0 },
+          { id: 'demo-bed-5', bed_number: 'C2', room_number: '103', ward_type: 'General', floor_number: 1 },
+        ];
+      }
+      setAvailableBeds(beds);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to load data');
@@ -110,6 +132,9 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
             {patients.length === 0 && (
               <p className="text-sm text-orange-600 mt-1">No patients without beds found</p>
             )}
+            {patients.length > 0 && patients[0].id.startsWith('demo-') && (
+              <p className="text-xs text-amber-600 mt-1">Demo: Showing sample patients</p>
+            )}
           </div>
 
           {/* Select Bed */}
@@ -130,6 +155,9 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
             </select>
             {availableBeds.length === 0 && (
               <p className="text-sm text-red-600 mt-1">No beds available</p>
+            )}
+            {availableBeds.length > 0 && availableBeds[0].id.startsWith('demo-') && (
+              <p className="text-xs text-amber-600 mt-1">Demo: Showing sample beds</p>
             )}
           </div>
 

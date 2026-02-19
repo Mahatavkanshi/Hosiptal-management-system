@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import AddPatientModal from '../../components/modals/AddPatientModal';
 import AllocateBedModal from '../../components/modals/AllocateBedModal';
 import MedicineOrderModal from '../../components/modals/MedicineOrderModal';
+import BedManagement from '../../components/beds/BedManagement';
 
 interface DashboardStats {
   total_appointments: number;
@@ -427,6 +428,14 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Beds Tab */}
+      {activeTab === 'beds' && (
+        <BedManagement 
+          onBack={() => setActiveTab('overview')}
+          onAllocateBed={() => setShowAllocateBed(true)}
+        />
       )}
 
       {/* Modals */}
