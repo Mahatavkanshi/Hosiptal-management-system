@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed } from 'lucide-react';
+import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed, IndianRupee } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import AddPatientModal from '../../components/modals/AddPatientModal';
 import AllocateBedModal from '../../components/modals/AllocateBedModal';
 import MedicineOrderModal from '../../components/modals/MedicineOrderModal';
+import BookAppointmentModal from '../../components/modals/BookAppointmentModal';
+import ProcessPaymentModal from '../../components/modals/ProcessPaymentModal';
 import BedManagement from '../../components/beds/BedManagement';
+import OutstandingPayments from '../../components/payments/OutstandingPayments';
 
 interface DashboardStats {
   total_appointments: number;
@@ -64,6 +67,7 @@ interface Activity {
   created_at: string;
   time?: string;
   status?: string;
+  amount?: number;
 }
 
 const Dashboard = () => {
@@ -78,6 +82,8 @@ const Dashboard = () => {
   const [showAddPatient, setShowAddPatient] = useState(false);
   const [showAllocateBed, setShowAllocateBed] = useState(false);
   const [showMedicineOrder, setShowMedicineOrder] = useState(false);
+  const [showBookAppointment, setShowBookAppointment] = useState(false);
+  const [showProcessPayment, setShowProcessPayment] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -95,9 +101,15 @@ const Dashboard = () => {
         api.get('/doctor-dashboard/medicine-alerts')
       ]);
       
+      // Get payment activities from localStorage
+      const paymentActivities = JSON.parse(localStorage.getItem('payment_activities') || '[]');
+      
+      // Merge regular activities with payment activities
+      const allActivities = [...paymentActivities, ...activityRes.data.data].slice(0, 10);
+      
       setStats(statsRes.data.data);
       setTodayAppointments(appointmentsRes.data.data);
-      setActivities(activityRes.data.data);
+      setActivities(allActivities);
       setMedicineAlerts(medicinesRes.data.data);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -244,12 +256,23 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   {activities.map((activity, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
-                        activity.type === 'appointment' ? 'bg-blue-500' : 'bg-green-500'
-                      }`} />
+                      {activity.type === 'payment' ? (
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                          <IndianRupee className="h-4 w-4 text-green-600" />
+                        </div>
+                      ) : (
+                        <div className={`w-2 h-2 rounded-full mt-2 ${
+                          activity.type === 'appointment' ? 'bg-blue-500' : 'bg-green-500'
+                        }`} />
+                      )}
                       <div className="flex-1">
                         <p className="text-sm text-gray-900">{activity.description}</p>
                         <p className="text-xs text-gray-500">{activity.patient_name}</p>
+                        {activity.amount && (
+                          <p className="text-xs font-medium text-green-600">
+                            ₹{activity.amount.toLocaleString()}
+                          </p>
+                        )}
                         <p className="text-xs text-gray-400">
                           {activity.created_at}
                         </p>
@@ -289,6 +312,11 @@ const Dashboard = () => {
                           }`}>
                             {apt.status}
                           </span>
+                          {apt.id?.startsWith('apt-') && (
+                            <span className="ml-2 px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full">
+                              Demo
+                            </span>
+                          )}
                         </div>
                         <p className="text-xs text-gray-500">
                           {apt.patient_age} years • {apt.city}, {apt.state}
@@ -311,6 +339,9 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+
+            {/* Outstanding Payments */}
+            <OutstandingPayments />
           </div>
 
           {/* Quick Actions */}
@@ -337,14 +368,20 @@ const Dashboard = () => {
                 <span className="text-sm font-medium text-gray-900">Allocate Bed</span>
               </button>
 
-              <button className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <button 
+                onClick={() => setShowProcessPayment(true)}
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
                 <div className="p-3 rounded-full bg-purple-100 mb-3">
                   <CreditCard className="h-6 w-6 text-purple-600" />
                 </div>
                 <span className="text-sm font-medium text-gray-900">Process Payment</span>
               </button>
 
-              <button className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <button 
+                onClick={() => setShowBookAppointment(true)}
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
                 <div className="p-3 rounded-full bg-primary-100 mb-3">
                   <Plus className="h-6 w-6 text-primary-600" />
                 </div>
@@ -468,6 +505,36 @@ const Dashboard = () => {
           onSuccess={() => {
             fetchDashboardData();
             toast.success('Order placed successfully!');
+          }}
+        />
+      )}
+
+      {showBookAppointment && (
+        <BookAppointmentModal
+          onClose={() => setShowBookAppointment(false)}
+          onSuccess={(appointment) => {
+            console.log('✅ Appointment booked:', appointment);
+            setShowBookAppointment(false);
+            
+            if (!appointment) {
+              toast.error('Failed to book appointment');
+              return;
+            }
+            
+            // Refresh dashboard data to get the latest appointments from database
+            fetchDashboardData();
+            
+            toast.success('Appointment booked and payment collected successfully!');
+          }}
+        />
+      )}
+
+      {showProcessPayment && (
+        <ProcessPaymentModal
+          onClose={() => setShowProcessPayment(false)}
+          onSuccess={() => {
+            setShowProcessPayment(false);
+            toast.success('Payment processed successfully!');
           }}
         />
       )}

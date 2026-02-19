@@ -309,4 +309,112 @@ router.post('/:id/cancel',
   })
 );
 
+// Doctor books appointment for patient (video consultation)
+router.post('/doctor-book',
+  authenticate,
+  authorize('doctor'),
+  [
+    body('patient_id').isUUID().withMessage('Valid patient ID is required'),
+    body('appointment_date').isDate().withMessage('Valid date is required'),
+    body('appointment_time').matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).withMessage('Valid time is required'),
+    body('symptoms').optional().trim(),
+    body('notes').optional().trim()
+  ],
+  asyncHandler(async (req, res) => {
+    const userId = (req as any).user?.id;
+    const { patient_id, appointment_date, appointment_time, symptoms, notes } = req.body;
+    
+    // Get doctor ID from user_id
+    const doctorResult = await query('SELECT id FROM doctors WHERE user_id = $1', [userId]);
+    if (doctorResult.rows.length === 0) {
+      throw new AppError('Doctor profile not found', 404);
+    }
+    const doctorId = doctorResult.rows[0].id;
+    
+    // Verify patient exists
+    const patientResult = await query(
+      `SELECT p.id, u.first_name, u.last_name, p.date_of_birth, u.phone, p.address, p.city, p.state
+       FROM patients p
+       JOIN users u ON p.user_id = u.id
+       WHERE p.id = $1`,
+      [patient_id]
+    );
+    if (patientResult.rows.length === 0) {
+      throw new AppError('Patient not found', 404);
+    }
+    const patient = patientResult.rows[0];
+    
+    // Get doctor details
+    const doctorDetailsResult = await query(
+      'SELECT slot_duration, consultation_fee FROM doctors WHERE id = $1',
+      [doctorId]
+    );
+    const doctor = doctorDetailsResult.rows[0];
+    
+    // Check if slot is already booked
+    const existingAppointment = await query(
+      `SELECT * FROM appointments 
+       WHERE doctor_id = $1 AND appointment_date = $2 AND appointment_time = $3 
+       AND status IN ('pending', 'confirmed', 'in_progress')`,
+      [doctorId, appointment_date, appointment_time]
+    );
+    
+    if (existingAppointment.rows.length > 0) {
+      throw new AppError('This time slot is already booked', 409);
+    }
+    
+    // Calculate end time
+    const [hours, minutes] = appointment_time.split(':').map(Number);
+    const startDate = new Date(2000, 0, 1, hours, minutes);
+    const endDate = new Date(startDate.getTime() + (doctor.slot_duration || 30) * 60000);
+    const end_time = endDate.toTimeString().substring(0, 5);
+    
+    // Generate queue number
+    const queueResult = await query(
+      'SELECT COALESCE(MAX(queue_number), 0) + 1 as next_queue FROM appointments WHERE doctor_id = $1 AND appointment_date = $2 AND status IN (\'pending\', \'confirmed\', \'in_progress\')',
+      [doctorId, appointment_date]
+    );
+    const queue_number = queueResult.rows[0].next_queue;
+    
+    // Create appointment
+    const appointmentResult = await query(
+      `INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, end_time, 
+       type, symptoms, notes, queue_number, payment_amount, payment_status, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       RETURNING *`,
+      [patient_id, doctorId, appointment_date, appointment_time, end_time, 'video', symptoms, notes, queue_number, doctor.consultation_fee, 'paid', 'confirmed']
+    );
+    
+    const appointment = appointmentResult.rows[0];
+    
+    // Get patient user_id for notification
+    const patientUserResult = await query(
+      'SELECT user_id FROM patients WHERE id = $1',
+      [patient_id]
+    );
+    const patientUserId = patientUserResult.rows[0]?.user_id;
+    
+    // Notify patient via socket
+    if (patientUserId) {
+      io.to(`user-${patientUserId}`).emit('new-appointment', appointment);
+    }
+    
+    // Return appointment with patient details
+    res.status(201).json({
+      success: true,
+      message: 'Appointment booked successfully',
+      data: {
+        ...appointment,
+        patient_first_name: patient.first_name,
+        patient_last_name: patient.last_name,
+        patient_age: Math.floor((new Date().getTime() - new Date(patient.date_of_birth).getTime()) / 31557600000),
+        patient_phone: patient.phone,
+        address: patient.address,
+        city: patient.city,
+        state: patient.state
+      }
+    });
+  })
+);
+
 export default router;

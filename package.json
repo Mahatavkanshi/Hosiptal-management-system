@@ -11,7 +11,13 @@
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "test": "cd backend && npm test"
   },
-  "keywords": ["hospital", "management", "healthcare", "appointment", "medical"],
+  "keywords": [
+    "hospital",
+    "management",
+    "healthcare",
+    "appointment",
+    "medical"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
