@@ -46,6 +46,18 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
         role: 'patient'
       });
       
+      // Save activity to localStorage for recent activity section
+      const newActivity = {
+        id: 'activity-' + Date.now(),
+        type: 'patient_added',
+        patient_name: `${formData.first_name} ${formData.last_name}`,
+        description: `New patient added`,
+        created_at: new Date().toISOString(),
+      };
+      
+      const existingActivities = JSON.parse(localStorage.getItem('payment_activities') || '[]');
+      localStorage.setItem('payment_activities', JSON.stringify([newActivity, ...existingActivities]));
+      
       onSuccess();
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to add patient');

@@ -92,6 +92,22 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
         notes
       });
       
+      // Get patient name for activity
+      const selectedPatientObj = patients.find(p => p.id === selectedPatient);
+      const selectedBedObj = availableBeds.find(b => b.id === selectedBed);
+      
+      // Save activity to localStorage for recent activity section
+      const newActivity = {
+        id: 'activity-' + Date.now(),
+        type: 'bed_allocated',
+        patient_name: selectedPatientObj ? `${selectedPatientObj.first_name} ${selectedPatientObj.last_name}` : 'Patient',
+        description: `Bed allocated: ${selectedBedObj ? `Bed ${selectedBedObj.bed_number}, Room ${selectedBedObj.room_number}` : selectedBed}`,
+        created_at: new Date().toISOString(),
+      };
+      
+      const existingActivities = JSON.parse(localStorage.getItem('payment_activities') || '[]');
+      localStorage.setItem('payment_activities', JSON.stringify([newActivity, ...existingActivities]));
+      
       onSuccess();
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to allocate bed');

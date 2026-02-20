@@ -96,16 +96,41 @@ router.get('/availability',
   })
 );
 
-// Allocate bed to patient (admin, receptionist, nurse)
+// Allocate bed to patient (admin, receptionist, nurse, doctor)
 router.post('/allocate',
   authenticate,
-  authorize('admin', 'receptionist', 'nurse'),
+  authorize('admin', 'receptionist', 'nurse', 'doctor'),
   [
-    body('bed_id').isUUID().withMessage('Valid bed ID is required'),
-    body('patient_id').isUUID().withMessage('Valid patient ID is required')
+    body('bed_id').notEmpty().withMessage('Valid bed ID is required'),
+    body('patient_id').notEmpty().withMessage('Valid patient ID is required')
   ],
   asyncHandler(async (req, res) => {
     const { bed_id, patient_id, notes } = req.body;
+    
+    // Check if this is demo data
+    const isDemoBed = bed_id.startsWith('demo-');
+    const isDemoPatient = patient_id.startsWith('demo-');
+    
+    if (isDemoBed || isDemoPatient) {
+      // Handle demo data allocation
+      const demoBed = {
+        id: bed_id,
+        ward_type: 'General',
+        bed_number: bed_id.replace('demo-bed-', 'Demo-'),
+        room_number: '101',
+        floor_number: 1
+      };
+      
+      // Emit real-time update for demo
+      io.emit('bed-updated', { bed_id, status: 'occupied', patient_id });
+      
+      res.json({
+        success: true,
+        message: 'Bed allocated successfully (Demo Mode)',
+        data: demoBed
+      });
+      return;
+    }
     
     // Check if bed is available
     const bedResult = await query(
@@ -175,6 +200,23 @@ router.post('/:id/discharge',
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { discharge_notes } = req.body;
+    
+    // Check if this is demo data
+    if (id.startsWith('demo-')) {
+      io.emit('bed-updated', { bed_id: id, status: 'cleaning' });
+      
+      res.json({
+        success: true,
+        message: 'Patient discharged successfully (Demo Mode)',
+        data: {
+          bed_id: id,
+          days_stayed: 1,
+          total_charge: 1000,
+          discharge_date: new Date().toISOString().split('T')[0]
+        }
+      });
+      return;
+    }
     
     const bedResult = await query(
       'SELECT * FROM beds WHERE id = $1 AND status = \'occupied\'',

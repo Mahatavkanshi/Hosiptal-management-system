@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed, IndianRupee } from 'lucide-react';
+import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed, IndianRupee, User } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import AddPatientModal from '../../components/modals/AddPatientModal';
@@ -259,6 +259,14 @@ const Dashboard = () => {
                       {activity.type === 'payment' ? (
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                           <IndianRupee className="h-4 w-4 text-green-600" />
+                        </div>
+                      ) : activity.type === 'patient_added' ? (
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                          <User className="h-4 w-4 text-blue-600" />
+                        </div>
+                      ) : activity.type === 'bed_allocated' ? (
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                          <Bed className="h-4 w-4 text-purple-600" />
                         </div>
                       ) : (
                         <div className={`w-2 h-2 rounded-full mt-2 ${
