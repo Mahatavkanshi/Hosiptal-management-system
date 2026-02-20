@@ -77,6 +77,7 @@ const Dashboard = () => {
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [medicineAlerts, setMedicineAlerts] = useState<any[]>([]);
+  const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddPatient, setShowAddPatient] = useState(false);
@@ -107,10 +108,24 @@ const Dashboard = () => {
       // Merge regular activities with payment activities
       const allActivities = [...paymentActivities, ...activityRes.data.data].slice(0, 10);
       
-      setStats(statsRes.data.data);
+      // Get payment history from localStorage
+      const doctorPayments = JSON.parse(localStorage.getItem('doctor_payments') || '[]');
+      
+      // Get doctor appointments from localStorage (for appointments not yet in DB)
+      const localAppointments = JSON.parse(localStorage.getItem('doctor_appointments') || '[]');
+      
+      // Merge stats with localStorage appointments
+      const apiStats = statsRes.data.data;
+      const mergedStats = {
+        ...apiStats,
+        total_appointments: apiStats.total_appointments + localAppointments.length
+      };
+      
+      setStats(mergedStats);
       setTodayAppointments(appointmentsRes.data.data);
       setActivities(allActivities);
       setMedicineAlerts(medicinesRes.data.data);
+      setPaymentHistory(doctorPayments);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       toast.error('Failed to load dashboard data');
@@ -154,7 +169,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {/* Total Appointments */}
         <div 
           className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
@@ -238,6 +253,25 @@ const Dashboard = () => {
             <span className="text-red-600 font-medium">Needs attention</span>
           </div>
         </div>
+
+        {/* Payment History */}
+        <div 
+          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => setActiveTab('payments')}
+        >
+          <div className="flex items-center">
+            <div className="p-3 rounded-full bg-purple-100">
+              <IndianRupee className="h-6 w-6 text-purple-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Payment History</p>
+              <p className="text-2xl font-bold text-gray-900">{paymentHistory?.length || 0}</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center text-sm">
+            <span className="text-purple-600 font-medium">View payments</span>
+          </div>
+        </div>
       </div>
 
       {/* Main Content Area */}
@@ -268,10 +302,12 @@ const Dashboard = () => {
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
                           <Bed className="h-4 w-4 text-purple-600" />
                         </div>
+                      ) : activity.type === 'appointment' ? (
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <Calendar className="h-4 w-4 text-indigo-600" />
+                        </div>
                       ) : (
-                        <div className={`w-2 h-2 rounded-full mt-2 ${
-                          activity.type === 'appointment' ? 'bg-blue-500' : 'bg-green-500'
-                        }`} />
+                        <div className="w-2 h-2 rounded-full mt-2 bg-green-500" />
                       )}
                       <div className="flex-1">
                         <p className="text-sm text-gray-900">{activity.description}</p>
@@ -483,6 +519,58 @@ const Dashboard = () => {
         />
       )}
 
+      {/* Payment History Tab */}
+      {activeTab === 'payments' && (
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-gray-900">Payment History</h3>
+              <button 
+                onClick={() => setActiveTab('overview')}
+                className="text-primary-600 hover:text-primary-700"
+              >
+                ← Back
+              </button>
+            </div>
+          </div>
+          <div className="p-6">
+            {paymentHistory.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">No payment history found</p>
+            ) : (
+              <div className="space-y-4">
+                {paymentHistory.map((payment, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="font-medium text-gray-900">Receipt #{payment.receipt_number}</p>
+                        <p className="text-sm text-gray-500">{new Date(payment.date).toLocaleDateString()}</p>
+                      </div>
+                      <span className="text-xl font-bold text-green-600">₹{payment.amount}</span>
+                    </div>
+                    <div className="mt-3">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Items:</p>
+                      <div className="space-y-1">
+                        {payment.fee_items?.map((item: any, idx: number) => (
+                          <div key={idx} className="flex justify-between text-sm">
+                            <span className="text-gray-600">{item.description}</span>
+                            <span className="text-gray-900">₹{item.amount}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Paid
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Modals */}
       {showAddPatient && (
         <AddPatientModal
@@ -542,6 +630,7 @@ const Dashboard = () => {
           onClose={() => setShowProcessPayment(false)}
           onSuccess={() => {
             setShowProcessPayment(false);
+            fetchDashboardData();
             toast.success('Payment processed successfully!');
           }}
         />

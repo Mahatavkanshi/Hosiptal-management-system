@@ -76,17 +76,6 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
 
     setLoading(true);
 
-    const paymentData = {
-      doctor_id: user?.id,
-      doctor_name: `Dr. ${user?.first_name} ${user?.last_name}`,
-      receipt_number: receiptNumber,
-      amount: totalAmount,
-      fee_items: feeItems,
-      date: new Date().toISOString(),
-      status: 'completed',
-      type: 'doctor_payment'
-    };
-
     try {
       await initiateRazorpayPayment({
         amount: totalAmount,
@@ -99,9 +88,33 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
         onSuccess: (response: any) => {
           console.log('Payment successful:', response);
           
-          // Save to localStorage
-          const existingPayments = JSON.parse(localStorage.getItem('doctor_payments') || '[]');
-          localStorage.setItem('doctor_payments', JSON.stringify([paymentData, ...existingPayments]));
+          // Save to payments for Payment History section
+          const paymentRecord = {
+            receipt_number: receiptNumber,
+            patient_name: `Dr. ${user?.first_name} ${user?.last_name}`,
+            amount: totalAmount,
+            payment_method: 'online',
+            date: new Date().toISOString(),
+            status: 'completed',
+            type: 'doctor_hospital_payment',
+            description: 'Hospital fees payment'
+          };
+          
+          const existingPayments = JSON.parse(localStorage.getItem('payments') || '[]');
+          localStorage.setItem('payments', JSON.stringify([paymentRecord, ...existingPayments]));
+          
+          // Also save to payment_activities for Recent Activity section
+          const paymentActivity = {
+            id: 'payment-' + Date.now(),
+            type: 'payment',
+            patient_name: `Dr. ${user?.first_name} ${user?.last_name}`,
+            description: `Hospital fees payment - ${receiptNumber}`,
+            amount: totalAmount,
+            created_at: new Date().toISOString(),
+          };
+          
+          const existingActivities = JSON.parse(localStorage.getItem('payment_activities') || '[]');
+          localStorage.setItem('payment_activities', JSON.stringify([paymentActivity, ...existingActivities]));
           
           setPaymentComplete(true);
           setLoading(false);

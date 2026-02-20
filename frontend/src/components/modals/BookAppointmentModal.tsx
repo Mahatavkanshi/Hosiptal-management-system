@@ -256,14 +256,16 @@ const BookAppointmentModal = ({ onClose, onSuccess }: BookAppointmentModalProps)
           status: savedAppointment.status || 'confirmed'
         };
 
+        // Save appointment to localStorage for stats tracking
+        const existingAppointments = JSON.parse(localStorage.getItem('doctor_appointments') || '[]');
+        localStorage.setItem('doctor_appointments', JSON.stringify([appointmentData, ...existingAppointments]));
+
         // Save activity
         const paymentActivity = {
           id: 'payment-' + Date.now(),
-          type: 'payment',
+          type: 'appointment',
           patient_name: `${selectedPatientObj?.first_name} ${selectedPatientObj?.last_name}`,
-          description: paymentOption === 'with-payment' 
-            ? `Payment pending - Consultation fee ₹${totalAmount}`
-            : `Video consultation without payment`,
+          description: `Booked video consultation with patient`,
           amount: paymentOption === 'with-payment' ? totalAmount : 0,
           created_at: new Date().toISOString(),
         };
@@ -338,6 +340,35 @@ const BookAppointmentModal = ({ onClose, onSuccess }: BookAppointmentModalProps)
               status: 'active'
             };
 
+            // Save peer consultation payment to payment history
+            const receiptNumber = `RCP-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            const paymentRecord = {
+              receipt_number: receiptNumber,
+              patient_name: `Dr. ${selectedDoctorObj?.first_name} ${selectedDoctorObj?.last_name}`,
+              amount: totalAmount,
+              payment_method: 'online',
+              date: new Date().toISOString(),
+              status: 'completed',
+              type: 'peer_consultation',
+              description: `Peer consultation: ${meetingTopic}`
+            };
+            
+            const existingPayments = JSON.parse(localStorage.getItem('payments') || '[]');
+            localStorage.setItem('payments', JSON.stringify([paymentRecord, ...existingPayments]));
+
+            // Also save to payment_activities for Recent Activity
+            const paymentActivity = {
+              id: 'payment-' + Date.now(),
+              type: 'payment',
+              patient_name: `Dr. ${selectedDoctorObj?.first_name} ${selectedDoctorObj?.last_name}`,
+              description: `Peer consultation payment - ${meetingTopic}`,
+              amount: totalAmount,
+              created_at: new Date().toISOString(),
+            };
+            
+            const existingActivities = JSON.parse(localStorage.getItem('payment_activities') || '[]');
+            localStorage.setItem('payment_activities', JSON.stringify([paymentActivity, ...existingActivities]));
+
             setPaymentComplete(true);
             setLoading(false);
             setVideoCallUrl(videoUrl);
@@ -345,6 +376,10 @@ const BookAppointmentModal = ({ onClose, onSuccess }: BookAppointmentModalProps)
             
             toast.success('Payment successful! Please set up your camera and microphone.');
             
+            // Save appointment to localStorage for stats tracking
+            const existingAppointments = JSON.parse(localStorage.getItem('doctor_appointments') || '[]');
+            localStorage.setItem('doctor_appointments', JSON.stringify([appointmentData, ...existingAppointments]));
+
             // Store appointment data for when setup is complete
             appointmentDataRef.current = appointmentData;
           }
@@ -383,6 +418,37 @@ After payment, please share the screenshot on this WhatsApp number to start the 
   };
 
   const handleProceedAfterPaymentScreenshot = () => {
+    // Save payment to payment history
+    const selectedPatientObj = patients.find(p => p.id === selectedPatient);
+    const receiptNumber = `RCP-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    
+    const paymentRecord = {
+      receipt_number: receiptNumber,
+      patient_name: `${selectedPatientObj?.first_name} ${selectedPatientObj?.last_name}`,
+      amount: totalAmount,
+      payment_method: 'online',
+      date: new Date().toISOString(),
+      status: 'completed',
+      type: 'patient_consultation',
+      description: 'Video consultation fee'
+    };
+    
+    const existingPayments = JSON.parse(localStorage.getItem('payments') || '[]');
+    localStorage.setItem('payments', JSON.stringify([paymentRecord, ...existingPayments]));
+    
+    // Also save to payment_activities for Recent Activity
+    const paymentActivity = {
+      id: 'payment-' + Date.now(),
+      type: 'payment',
+      patient_name: `${selectedPatientObj?.first_name} ${selectedPatientObj?.last_name}`,
+      description: `Consultation payment collected - ${receiptNumber}`,
+      amount: totalAmount,
+      created_at: new Date().toISOString(),
+    };
+    
+    const existingActivities = JSON.parse(localStorage.getItem('payment_activities') || '[]');
+    localStorage.setItem('payment_activities', JSON.stringify([paymentActivity, ...existingActivities]));
+    
     startVideoCall();
   };
 
