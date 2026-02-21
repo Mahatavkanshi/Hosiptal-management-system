@@ -172,108 +172,128 @@ const Dashboard = () => {
         </p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Enhanced Highlighting */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {/* Total Appointments */}
         <div 
-          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
+          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+            isDark 
+              ? 'bg-slate-800 border-blue-500/30 hover:border-blue-400 shadow-lg shadow-blue-500/10' 
+              : 'bg-white border-blue-100 hover:border-blue-300 shadow-lg hover:shadow-blue-200/50'
+          }`}
           onClick={() => {
             fetchPatients();
             setActiveTab('appointments');
           }}
         >
           <div className="flex items-center">
-            <div className="p-4 rounded-full bg-primary-100">
-              <Calendar className="h-7 w-7 text-primary-600" />
+            <div className={`p-4 rounded-full ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+              <Calendar className={`h-7 w-7 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
             </div>
             <div className="ml-4">
-              <p className="text-base font-semibold text-gray-600">Total Appointments</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.total_appointments || 0}</p>
+              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Total Appointments</p>
+              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.total_appointments || 0}</p>
             </div>
           </div>
           <div className="mt-4 flex items-center text-base">
-            <span className="text-green-600 font-semibold">+12%</span>
-            <span className="text-gray-500 ml-2">from last month</span>
+            <span className="text-green-500 font-bold">+12%</span>
+            <span className={`ml-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>from last month</span>
           </div>
         </div>
 
         {/* Active Patients */}
         <div 
-          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
+          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+            isDark 
+              ? 'bg-slate-800 border-emerald-500/30 hover:border-emerald-400 shadow-lg shadow-emerald-500/10' 
+              : 'bg-white border-emerald-100 hover:border-emerald-300 shadow-lg hover:shadow-emerald-200/50'
+          }`}
           onClick={() => {
             fetchPatients();
             setActiveTab('patients');
           }}
         >
           <div className="flex items-center">
-            <div className="p-4 rounded-full bg-green-100">
-              <Users className="h-7 w-7 text-green-600" />
+            <div className={`p-4 rounded-full ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
+              <Users className={`h-7 w-7 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
             </div>
             <div className="ml-4">
-              <p className="text-base font-semibold text-gray-600">Active Patients</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.active_patients || 0}</p>
+              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Active Patients</p>
+              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.active_patients || 0}</p>
             </div>
           </div>
           <div className="mt-4 flex items-center text-base">
-            <span className="text-green-600 font-semibold">+5%</span>
-            <span className="text-gray-500 ml-2">this month</span>
+            <span className="text-emerald-500 font-bold">+5%</span>
+            <span className={`ml-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>this month</span>
           </div>
         </div>
 
         {/* Available Beds */}
         <div 
-          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
+          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+            isDark 
+              ? 'bg-slate-800 border-cyan-500/30 hover:border-cyan-400 shadow-lg shadow-cyan-500/10' 
+              : 'bg-white border-cyan-100 hover:border-cyan-300 shadow-lg hover:shadow-cyan-200/50'
+          }`}
           onClick={() => setActiveTab('beds')}
         >
           <div className="flex items-center">
-            <div className="p-4 rounded-full bg-blue-100">
-              <BedDouble className="h-7 w-7 text-blue-600" />
+            <div className={`p-4 rounded-full ${isDark ? 'bg-cyan-500/20' : 'bg-cyan-100'}`}>
+              <BedDouble className={`h-7 w-7 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
             </div>
             <div className="ml-4">
-              <p className="text-base font-semibold text-gray-600">Available Beds</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.beds?.available || 0}</p>
+              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Available Beds</p>
+              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.beds?.available || 0}</p>
             </div>
           </div>
           <div className="mt-4 flex items-center text-base">
-            <span className="text-gray-600 font-medium">{stats?.beds?.occupied || 0} occupied</span>
+            <span className={`font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{stats?.beds?.occupied || 0} occupied</span>
           </div>
         </div>
 
         {/* Medicine Alerts */}
         <div 
-          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
+          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+            isDark 
+              ? 'bg-slate-800 border-amber-500/30 hover:border-amber-400 shadow-lg shadow-amber-500/10' 
+              : 'bg-white border-amber-100 hover:border-amber-300 shadow-lg hover:shadow-amber-200/50'
+          }`}
           onClick={() => setShowMedicineOrder(true)}
         >
           <div className="flex items-center">
-            <div className="p-4 rounded-full bg-yellow-100">
-              <Pill className="h-7 w-7 text-yellow-600" />
+            <div className={`p-4 rounded-full ${isDark ? 'bg-amber-500/20' : 'bg-amber-100'}`}>
+              <Pill className={`h-7 w-7 ${isDark ? 'text-amber-400' : 'text-amber-600'}`} />
             </div>
             <div className="ml-4">
-              <p className="text-base font-semibold text-gray-600">Low Stock Alerts</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{medicineAlerts?.length || 0}</p>
+              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Low Stock Alerts</p>
+              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{medicineAlerts?.length || 0}</p>
             </div>
           </div>
           <div className="mt-4 flex items-center text-base">
-            <span className="text-red-600 font-semibold">Needs attention</span>
+            <span className="text-rose-500 font-bold">Needs attention</span>
           </div>
         </div>
 
         {/* Payment History */}
         <div 
-          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
+          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+            isDark 
+              ? 'bg-slate-800 border-purple-500/30 hover:border-purple-400 shadow-lg shadow-purple-500/10' 
+              : 'bg-white border-purple-100 hover:border-purple-300 shadow-lg hover:shadow-purple-200/50'
+          }`}
           onClick={() => setActiveTab('payments')}
         >
           <div className="flex items-center">
-            <div className="p-4 rounded-full bg-purple-100">
-              <IndianRupee className="h-7 w-7 text-purple-600" />
+            <div className={`p-4 rounded-full ${isDark ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+              <IndianRupee className={`h-7 w-7 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
             </div>
             <div className="ml-4">
-              <p className="text-base font-semibold text-gray-600">Payment History</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{paymentHistory?.length || 0}</p>
+              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Payment History</p>
+              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{paymentHistory?.length || 0}</p>
             </div>
           </div>
           <div className="mt-4 flex items-center text-base">
-            <span className="text-purple-600 font-semibold">View payments</span>
+            <span className="text-purple-500 font-bold">View payments</span>
           </div>
         </div>
       </div>
@@ -282,46 +302,62 @@ const Dashboard = () => {
       {activeTab === 'overview' && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Activity */}
-            <div className="bg-white rounded-xl shadow-md">
-              <div className="px-6 py-5 border-b border-gray-200">
+            {/* Recent Activity - Enhanced */}
+            <div className={`rounded-xl border-2 shadow-lg overflow-hidden ${
+              isDark 
+                ? 'bg-slate-800 border-slate-700 shadow-slate-900/50' 
+                : 'bg-white border-gray-200 shadow-gray-200/50'
+            }`}>
+              <div className={`px-6 py-5 border-b ${isDark ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200 bg-gray-50/50'}`}>
                 <div className="flex items-center">
-                  <Activity className="h-6 w-6 text-gray-400 mr-3" />
-                  <h3 className="text-xl font-semibold text-gray-900">Recent Activity</h3>
+                  <div className={`p-2 rounded-lg ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                    <Activity className={`h-6 w-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                  </div>
+                  <h3 className={`text-xl font-bold ml-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>Recent Activity</h3>
                 </div>
               </div>
               <div className="p-6">
                 <div className="space-y-5">
                   {activities.map((activity, index) => (
-                    <div key={index} className="flex items-start space-x-4">
+                    <div key={index} className={`flex items-start space-x-4 p-4 rounded-xl transition-all duration-200 ${
+                      isDark ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'
+                    }`}>
                       {activity.type === 'payment' ? (
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                          <IndianRupee className="h-5 w-5 text-green-600" />
+                        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+                          isDark ? 'bg-emerald-500/20 shadow-emerald-500/20' : 'bg-emerald-100 shadow-emerald-200/50'
+                        }`}>
+                          <IndianRupee className={`h-5 w-5 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
                         </div>
                       ) : activity.type === 'patient_added' ? (
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <User className="h-5 w-5 text-blue-600" />
+                        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+                          isDark ? 'bg-blue-500/20 shadow-blue-500/20' : 'bg-blue-100 shadow-blue-200/50'
+                        }`}>
+                          <User className={`h-5 w-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
                         </div>
                       ) : activity.type === 'bed_allocated' ? (
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                          <Bed className="h-5 w-5 text-purple-600" />
+                        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+                          isDark ? 'bg-purple-500/20 shadow-purple-500/20' : 'bg-purple-100 shadow-purple-200/50'
+                        }`}>
+                          <Bed className={`h-5 w-5 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
                         </div>
                       ) : activity.type === 'appointment' ? (
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <Calendar className="h-5 w-5 text-indigo-600" />
+                        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+                          isDark ? 'bg-indigo-500/20 shadow-indigo-500/20' : 'bg-indigo-100 shadow-indigo-200/50'
+                        }`}>
+                          <Calendar className={`h-5 w-5 ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`} />
                         </div>
                       ) : (
-                        <div className="w-3 h-3 rounded-full mt-2 bg-green-500" />
+                        <div className={`w-3 h-3 rounded-full mt-2 shadow-lg ${isDark ? 'bg-emerald-400 shadow-emerald-500/50' : 'bg-emerald-500 shadow-emerald-500/30'}`} />
                       )}
                       <div className="flex-1">
-                        <p className="text-base font-medium text-gray-900">{activity.description}</p>
-                        <p className="text-sm text-gray-500 mt-1">{activity.patient_name}</p>
+                        <p className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{activity.description}</p>
+                        <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{activity.patient_name}</p>
                         {activity.amount && (
-                          <p className="text-sm font-semibold text-green-600 mt-1">
+                          <p className={`text-sm font-bold mt-1 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
                             ₹{activity.amount.toLocaleString()}
                           </p>
                         )}
-                        <p className="text-sm text-gray-400 mt-1">
+                        <p className={`text-sm mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                           {activity.created_at}
                         </p>
                       </div>
@@ -331,15 +367,23 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Today's Appointments */}
-            <div className="bg-white rounded-xl shadow-md">
-              <div className="px-6 py-5 border-b border-gray-200">
+            {/* Today's Appointments - Enhanced */}
+            <div className={`rounded-xl border-2 shadow-lg overflow-hidden ${
+              isDark 
+                ? 'bg-slate-800 border-slate-700 shadow-slate-900/50' 
+                : 'bg-white border-gray-200 shadow-gray-200/50'
+            }`}>
+              <div className={`px-6 py-5 border-b ${isDark ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200 bg-gray-50/50'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <Clock className="h-6 w-6 text-gray-400 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-900">Today's Appointments</h3>
+                    <div className={`p-2 rounded-lg ${isDark ? 'bg-orange-500/20' : 'bg-orange-100'}`}>
+                      <Clock className={`h-6 w-6 ${isDark ? 'text-orange-400' : 'text-orange-600'}`} />
+                    </div>
+                    <h3 className={`text-xl font-bold ml-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>Today's Appointments</h3>
                   </div>
-                  <span className="text-base text-gray-500">
+                  <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+                    isDark ? 'bg-slate-700 text-slate-300' : 'bg-gray-100 text-gray-600'
+                  }`}>
                     {todayAppointments.length} total
                   </span>
                 </div>
@@ -347,42 +391,50 @@ const Dashboard = () => {
               <div className="p-6">
                 <div className="space-y-4">
                   {todayAppointments.map((apt) => (
-                    <div key={apt.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <div key={apt.id} className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
+                      isDark 
+                        ? 'bg-slate-700/50 border-slate-600 hover:border-slate-500' 
+                        : 'bg-gray-50 border-gray-100 hover:border-gray-200'
+                    }`}>
                       <div className="flex-1">
                         <div className="flex items-center">
-                          <p className="text-base font-semibold text-gray-900">
+                          <p className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                             {apt.patient_first_name} {apt.patient_last_name}
                           </p>
-                          <span className={`ml-3 px-3 py-1 text-sm rounded-full ${
-                            apt.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            apt.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                            'bg-yellow-100 text-yellow-800'
+                          <span className={`ml-3 px-3 py-1 text-sm rounded-full font-semibold border ${
+                            apt.status === 'completed' 
+                              ? (isDark ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' : 'bg-emerald-100 border-emerald-200 text-emerald-800') 
+                              : apt.status === 'in_progress' 
+                                ? (isDark ? 'bg-blue-500/20 border-blue-500/30 text-blue-400' : 'bg-blue-100 border-blue-200 text-blue-800')
+                                : (isDark ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'bg-amber-100 border-amber-200 text-amber-800')
                           }`}>
                             {apt.status}
                           </span>
                           {apt.id?.startsWith('apt-') && (
-                            <span className="ml-2 px-2 py-0.5 text-sm bg-purple-100 text-purple-800 rounded-full">
+                            <span className={`ml-2 px-2 py-0.5 text-sm rounded-full font-semibold border ${
+                              isDark ? 'bg-purple-500/20 border-purple-500/30 text-purple-400' : 'bg-purple-100 border-purple-200 text-purple-800'
+                            }`}>
                               Demo
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                           {apt.patient_age} years • {apt.city}, {apt.state}
                         </p>
                         {apt.symptoms && (
-                          <p className="text-sm text-gray-600 mt-1">Symptoms: {apt.symptoms}</p>
+                          <p className={`text-sm mt-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Symptoms: {apt.symptoms}</p>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="text-base font-semibold text-gray-900">
+                        <p className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                           {formatTime(apt.appointment_time)}
                         </p>
-                        <p className="text-sm text-gray-500 capitalize">{apt.type}</p>
+                        <p className={`text-sm capitalize ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{apt.type}</p>
                       </div>
                     </div>
                   ))}
                   {todayAppointments.length === 0 && (
-                    <p className="text-center text-gray-500 py-4 text-base">No appointments today</p>
+                    <p className={`text-center py-4 text-base ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No appointments today</p>
                   )}
                 </div>
               </div>

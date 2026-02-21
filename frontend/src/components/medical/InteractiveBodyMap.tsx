@@ -519,19 +519,19 @@ const InteractiveBodyMap = () => {
                   </button>
                 ))}
                 
-                {/* Status Labels on Image */}
+                {/* Status Labels on Image - Enhanced */}
                 <div className="absolute top-6 right-6 flex flex-col gap-2 z-20">
-                  <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-emerald-500/30">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                    <span className="text-xs text-emerald-300 font-medium">{bodyPartStats.filter(p => p.status === 'healthy' && p.recordCount > 0).length} Healthy</span>
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-full border-2 shadow-lg ${isDark ? 'bg-emerald-500/20 border-emerald-400/50 shadow-emerald-500/20' : 'bg-emerald-100 border-emerald-300 shadow-emerald-200/50'}`}>
+                    <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
+                    <span className={`text-sm font-bold ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>{bodyPartStats.filter(p => p.status === 'healthy' && p.recordCount > 0).length} Healthy</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-amber-500/30">
-                    <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                    <span className="text-xs text-amber-300 font-medium">{bodyPartStats.filter(p => p.status === 'warning').length} Monitor</span>
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-full border-2 shadow-lg ${isDark ? 'bg-amber-500/20 border-amber-400/50 shadow-amber-500/20' : 'bg-amber-100 border-amber-300 shadow-amber-200/50'}`}>
+                    <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]"></div>
+                    <span className={`text-sm font-bold ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>{bodyPartStats.filter(p => p.status === 'warning').length} Monitor</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-rose-500/30">
-                    <div className="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></div>
-                    <span className="text-xs text-rose-300 font-medium">{bodyPartStats.filter(p => p.status === 'critical').length} Critical</span>
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-full border-2 shadow-lg ${isDark ? 'bg-rose-500/20 border-rose-400/50 shadow-rose-500/20' : 'bg-rose-100 border-rose-300 shadow-rose-200/50'}`}>
+                    <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.8)]"></div>
+                    <span className={`text-sm font-bold ${isDark ? 'text-rose-300' : 'text-rose-700'}`}>{bodyPartStats.filter(p => p.status === 'critical').length} Critical</span>
                   </div>
                 </div>
               </div>
@@ -542,23 +542,25 @@ const InteractiveBodyMap = () => {
               </div>
             </div>
 
-            {/* Body Part Details - Theme Aware */}
+            {/* Body Part Details - Enhanced Highlighting */}
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
               {bodyPartStats.filter(p => p.recordCount > 0).map(part => (
                 <button
                   key={part.id}
                   onClick={() => setSelectedBodyPart(selectedBodyPart === part.id ? null : part.id)}
-                  className={`p-3 rounded-xl border-2 text-left transition-all ${
+                  className={`p-4 rounded-xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
                     selectedBodyPart === part.id 
-                      ? `bg-blue-50 ${getStatusBorderColor(part.status)}` 
-                      : `${isDark ? 'bg-slate-700/50 border-slate-600 hover:border-blue-400' : 'bg-white/70 border-gray-100 hover:border-blue-200 shadow-sm'}`
+                      ? `ring-2 ring-offset-2 ${isDark ? 'ring-offset-slate-800 ring-blue-400' : 'ring-offset-white ring-blue-500'} ${getStatusBorderColor(part.status)} ${isDark ? 'bg-slate-700' : 'bg-blue-50'}` 
+                      : `${isDark ? 
+                          `bg-slate-800 border-slate-600 hover:border-${part.status === 'critical' ? 'rose' : part.status === 'warning' ? 'amber' : 'emerald'}-400 hover:shadow-lg hover:shadow-${part.status === 'critical' ? 'rose' : part.status === 'warning' ? 'amber' : 'emerald'}-500/20` 
+                          : `bg-white border-gray-200 hover:border-${part.status === 'critical' ? 'rose' : part.status === 'warning' ? 'amber' : 'emerald'}-300 shadow-md hover:shadow-lg hover:shadow-${part.status === 'critical' ? 'rose' : part.status === 'warning' ? 'amber' : 'emerald'}-100/50`}`
                   }`}
                 >
                   <div className="flex items-center space-x-2">
-                    <div className={`w-3 h-3 rounded-full ${getStatusColor(part.status)}`}></div>
-                    <span className={`font-medium text-sm ${isDark ? 'text-white' : 'text-gray-800'}`}>{part.name}</span>
+                    <div className={`w-3 h-3 rounded-full ${getStatusColor(part.status)} ${part.status === 'critical' ? 'animate-pulse' : ''}`}></div>
+                    <span className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-gray-800'}`}>{part.name}</span>
                   </div>
-                  <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>{part.recordCount} records</p>
+                  <p className={`text-sm mt-2 font-medium ${isDark ? 'text-slate-300' : 'text-gray-600'}`}>{part.recordCount} records</p>
                 </button>
               ))}
             </div>
