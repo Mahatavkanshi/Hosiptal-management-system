@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed, IndianRupee, User, Brain } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
@@ -73,6 +74,7 @@ interface Activity {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { isDark } = useTheme();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
@@ -162,10 +164,10 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className={`text-4xl font-bold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
           Welcome back, {user?.first_name}! 👋
         </h1>
-        <p className="mt-2 text-gray-600">
+        <p className={`mt-3 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
           Here's what's happening with your patients today.
         </p>
       </div>
@@ -174,104 +176,104 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {/* Total Appointments */}
         <div 
-          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
           onClick={() => {
             fetchPatients();
             setActiveTab('appointments');
           }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-primary-100">
-              <Calendar className="h-6 w-6 text-primary-600" />
+            <div className="p-4 rounded-full bg-primary-100">
+              <Calendar className="h-7 w-7 text-primary-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Appointments</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.total_appointments || 0}</p>
+              <p className="text-base font-semibold text-gray-600">Total Appointments</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.total_appointments || 0}</p>
             </div>
           </div>
-          <div className="mt-4 flex items-center text-sm">
-            <span className="text-green-600 font-medium">+12%</span>
+          <div className="mt-4 flex items-center text-base">
+            <span className="text-green-600 font-semibold">+12%</span>
             <span className="text-gray-500 ml-2">from last month</span>
           </div>
         </div>
 
         {/* Active Patients */}
         <div 
-          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
           onClick={() => {
             fetchPatients();
             setActiveTab('patients');
           }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100">
-              <Users className="h-6 w-6 text-green-600" />
+            <div className="p-4 rounded-full bg-green-100">
+              <Users className="h-7 w-7 text-green-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Patients</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.active_patients || 0}</p>
+              <p className="text-base font-semibold text-gray-600">Active Patients</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.active_patients || 0}</p>
             </div>
           </div>
-          <div className="mt-4 flex items-center text-sm">
-            <span className="text-green-600 font-medium">+5%</span>
+          <div className="mt-4 flex items-center text-base">
+            <span className="text-green-600 font-semibold">+5%</span>
             <span className="text-gray-500 ml-2">this month</span>
           </div>
         </div>
 
         {/* Available Beds */}
         <div 
-          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
           onClick={() => setActiveTab('beds')}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-blue-100">
-              <BedDouble className="h-6 w-6 text-blue-600" />
+            <div className="p-4 rounded-full bg-blue-100">
+              <BedDouble className="h-7 w-7 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Available Beds</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.beds?.available || 0}</p>
+              <p className="text-base font-semibold text-gray-600">Available Beds</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.beds?.available || 0}</p>
             </div>
           </div>
-          <div className="mt-4 flex items-center text-sm">
-            <span className="text-gray-600">{stats?.beds?.occupied || 0} occupied</span>
+          <div className="mt-4 flex items-center text-base">
+            <span className="text-gray-600 font-medium">{stats?.beds?.occupied || 0} occupied</span>
           </div>
         </div>
 
         {/* Medicine Alerts */}
         <div 
-          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
           onClick={() => setShowMedicineOrder(true)}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-yellow-100">
-              <Pill className="h-6 w-6 text-yellow-600" />
+            <div className="p-4 rounded-full bg-yellow-100">
+              <Pill className="h-7 w-7 text-yellow-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Low Stock Alerts</p>
-              <p className="text-2xl font-bold text-gray-900">{medicineAlerts?.length || 0}</p>
+              <p className="text-base font-semibold text-gray-600">Low Stock Alerts</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{medicineAlerts?.length || 0}</p>
             </div>
           </div>
-          <div className="mt-4 flex items-center text-sm">
-            <span className="text-red-600 font-medium">Needs attention</span>
+          <div className="mt-4 flex items-center text-base">
+            <span className="text-red-600 font-semibold">Needs attention</span>
           </div>
         </div>
 
         {/* Payment History */}
         <div 
-          className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+          className="bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-all"
           onClick={() => setActiveTab('payments')}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-purple-100">
-              <IndianRupee className="h-6 w-6 text-purple-600" />
+            <div className="p-4 rounded-full bg-purple-100">
+              <IndianRupee className="h-7 w-7 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Payment History</p>
-              <p className="text-2xl font-bold text-gray-900">{paymentHistory?.length || 0}</p>
+              <p className="text-base font-semibold text-gray-600">Payment History</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{paymentHistory?.length || 0}</p>
             </div>
           </div>
-          <div className="mt-4 flex items-center text-sm">
-            <span className="text-purple-600 font-medium">View payments</span>
+          <div className="mt-4 flex items-center text-base">
+            <span className="text-purple-600 font-semibold">View payments</span>
           </div>
         </div>
       </div>
@@ -281,45 +283,45 @@ const Dashboard = () => {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="px-6 py-4 border-b border-gray-200">
+            <div className="bg-white rounded-xl shadow-md">
+              <div className="px-6 py-5 border-b border-gray-200">
                 <div className="flex items-center">
-                  <Activity className="h-5 w-5 text-gray-400 mr-2" />
-                  <h3 className="text-lg font-medium text-gray-900">Recent Activity</h3>
+                  <Activity className="h-6 w-6 text-gray-400 mr-3" />
+                  <h3 className="text-xl font-semibold text-gray-900">Recent Activity</h3>
                 </div>
               </div>
               <div className="p-6">
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {activities.map((activity, index) => (
-                    <div key={index} className="flex items-start space-x-3">
+                    <div key={index} className="flex items-start space-x-4">
                       {activity.type === 'payment' ? (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                          <IndianRupee className="h-4 w-4 text-green-600" />
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                          <IndianRupee className="h-5 w-5 text-green-600" />
                         </div>
                       ) : activity.type === 'patient_added' ? (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                          <User className="h-4 w-4 text-blue-600" />
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          <User className="h-5 w-5 text-blue-600" />
                         </div>
                       ) : activity.type === 'bed_allocated' ? (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                          <Bed className="h-4 w-4 text-purple-600" />
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                          <Bed className="h-5 w-5 text-purple-600" />
                         </div>
                       ) : activity.type === 'appointment' ? (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <Calendar className="h-4 w-4 text-indigo-600" />
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <Calendar className="h-5 w-5 text-indigo-600" />
                         </div>
                       ) : (
-                        <div className="w-2 h-2 rounded-full mt-2 bg-green-500" />
+                        <div className="w-3 h-3 rounded-full mt-2 bg-green-500" />
                       )}
                       <div className="flex-1">
-                        <p className="text-sm text-gray-900">{activity.description}</p>
-                        <p className="text-xs text-gray-500">{activity.patient_name}</p>
+                        <p className="text-base font-medium text-gray-900">{activity.description}</p>
+                        <p className="text-sm text-gray-500 mt-1">{activity.patient_name}</p>
                         {activity.amount && (
-                          <p className="text-xs font-medium text-green-600">
+                          <p className="text-sm font-semibold text-green-600 mt-1">
                             ₹{activity.amount.toLocaleString()}
                           </p>
                         )}
-                        <p className="text-xs text-gray-400">
+                        <p className="text-sm text-gray-400 mt-1">
                           {activity.created_at}
                         </p>
                       </div>
@@ -330,14 +332,14 @@ const Dashboard = () => {
             </div>
 
             {/* Today's Appointments */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="px-6 py-4 border-b border-gray-200">
+            <div className="bg-white rounded-xl shadow-md">
+              <div className="px-6 py-5 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <Clock className="h-5 w-5 text-gray-400 mr-2" />
-                    <h3 className="text-lg font-medium text-gray-900">Today's Appointments</h3>
+                    <Clock className="h-6 w-6 text-gray-400 mr-3" />
+                    <h3 className="text-xl font-semibold text-gray-900">Today's Appointments</h3>
                   </div>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-base text-gray-500">
                     {todayAppointments.length} total
                   </span>
                 </div>
@@ -345,13 +347,13 @@ const Dashboard = () => {
               <div className="p-6">
                 <div className="space-y-4">
                   {todayAppointments.map((apt) => (
-                    <div key={apt.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={apt.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                       <div className="flex-1">
                         <div className="flex items-center">
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-base font-semibold text-gray-900">
                             {apt.patient_first_name} {apt.patient_last_name}
                           </p>
-                          <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                          <span className={`ml-3 px-3 py-1 text-sm rounded-full ${
                             apt.status === 'completed' ? 'bg-green-100 text-green-800' :
                             apt.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
                             'bg-yellow-100 text-yellow-800'
@@ -359,28 +361,28 @@ const Dashboard = () => {
                             {apt.status}
                           </span>
                           {apt.id?.startsWith('apt-') && (
-                            <span className="ml-2 px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full">
+                            <span className="ml-2 px-2 py-0.5 text-sm bg-purple-100 text-purple-800 rounded-full">
                               Demo
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm text-gray-500 mt-1">
                           {apt.patient_age} years • {apt.city}, {apt.state}
                         </p>
                         {apt.symptoms && (
-                          <p className="text-xs text-gray-600 mt-1">Symptoms: {apt.symptoms}</p>
+                          <p className="text-sm text-gray-600 mt-1">Symptoms: {apt.symptoms}</p>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-base font-semibold text-gray-900">
                           {formatTime(apt.appointment_time)}
                         </p>
-                        <p className="text-xs text-gray-500 capitalize">{apt.type}</p>
+                        <p className="text-sm text-gray-500 capitalize">{apt.type}</p>
                       </div>
                     </div>
                   ))}
                   {todayAppointments.length === 0 && (
-                    <p className="text-center text-gray-500 py-4">No appointments today</p>
+                    <p className="text-center text-gray-500 py-4 text-base">No appointments today</p>
                   )}
                 </div>
               </div>
@@ -392,41 +394,41 @@ const Dashboard = () => {
 
           {/* Quick Actions */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <button 
                 onClick={() => setShowAddPatient(true)}
-                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-all"
               >
                 <div className="p-3 rounded-full bg-green-100 mb-3">
-                  <UserPlus className="h-6 w-6 text-green-600" />
+                  <UserPlus className="h-7 w-7 text-green-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-900">Add Patient</span>
+                <span className="text-base font-semibold text-gray-900">Add Patient</span>
               </button>
 
               <button 
                 onClick={() => setShowAllocateBed(true)}
-                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-all"
               >
                 <div className="p-3 rounded-full bg-blue-100 mb-3">
-                  <Bed className="h-6 w-6 text-blue-600" />
+                  <Bed className="h-7 w-7 text-blue-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-900">Allocate Bed</span>
+                <span className="text-base font-semibold text-gray-900">Allocate Bed</span>
               </button>
 
               <button 
                 onClick={() => setShowProcessPayment(true)}
-                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-all"
               >
                 <div className="p-3 rounded-full bg-purple-100 mb-3">
-                  <CreditCard className="h-6 w-6 text-purple-600" />
+                  <CreditCard className="h-7 w-7 text-purple-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-900">Process Payment</span>
+                <span className="text-base font-semibold text-gray-900">Process Payment</span>
               </button>
 
               <button 
                 onClick={() => setShowBookAppointment(true)}
-                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-all"
               >
                 <div className="p-3 rounded-full bg-primary-100 mb-3">
                   <Plus className="h-6 w-6 text-primary-600" />

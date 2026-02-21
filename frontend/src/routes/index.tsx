@@ -41,6 +41,9 @@ import RevenueAnalytics from '../pages/admin/RevenueAnalytics';
 // Profile
 import Profile from '../pages/profile/Profile';
 
+// Settings
+import ThemeSettings from '../pages/settings/ThemeSettings';
+
 // Video Call
 import VideoCall from '../pages/video/VideoCall';
 
@@ -109,6 +112,8 @@ const AppRoutes = () => {
         <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={['admin', 'super_admin']}><RevenueAnalytics /></ProtectedRoute>} />
         
         <Route path="/profile" element={<Profile />} />
+        
+        <Route path="/settings/theme" element={<ThemeSettings />} />
         
         <Route path="/video-call/:roomId" element={<VideoCall />} />
       </Route>
