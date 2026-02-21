@@ -622,13 +622,26 @@ const Dashboard = () => {
 
       {/* Payment History Tab */}
       {activeTab === 'payments' && (
-        <div className="bg-white rounded-lg shadow-md">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className={`rounded-2xl overflow-hidden ${
+          isDark 
+            ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 shadow-2xl' 
+            : 'bg-white border border-gray-200 shadow-md'
+        }`}>
+          <div className={`px-6 py-5 border-b ${isDark ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200'}`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">Payment History</h3>
+              <div className="flex items-center">
+                <div className={`p-2.5 rounded-xl mr-3 ${isDark ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+                  <CreditCard className={`h-6 w-6 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
+                </div>
+                <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Payment History</h3>
+              </div>
               <button 
                 onClick={() => setActiveTab('overview')}
-                className="text-primary-600 hover:text-primary-700"
+                className={`px-4 py-2 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+                  isDark 
+                    ? 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
+                }`}
               >
                 ← Back
               </button>
@@ -636,31 +649,44 @@ const Dashboard = () => {
           </div>
           <div className="p-6">
             {paymentHistory.length === 0 ? (
-              <p className="text-center text-gray-500 py-8">No payment history found</p>
+              <div className={`text-center py-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                <div className={`p-4 rounded-full inline-flex mb-4 ${isDark ? 'bg-slate-700' : 'bg-gray-100'}`}>
+                  <CreditCard className={`h-8 w-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                </div>
+                <p className="font-medium">No payment history found</p>
+              </div>
             ) : (
               <div className="space-y-4">
                 {paymentHistory.map((payment, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
-                    <div className="flex justify-between items-start mb-2">
+                  <div key={index} className={`rounded-xl border p-4 transition-all hover:shadow-md ${
+                    isDark 
+                      ? 'bg-slate-800 border-slate-700 hover:border-slate-600' 
+                      : 'border-gray-200 hover:bg-gray-50'
+                  }`}>
+                    <div className="flex justify-between items-start mb-3">
                       <div>
-                        <p className="font-medium text-gray-900">Receipt #{payment.receipt_number}</p>
-                        <p className="text-sm text-gray-500">{new Date(payment.date).toLocaleDateString()}</p>
+                        <p className={`font-bold text-base ${isDark ? 'text-white' : 'text-gray-900'}`}>Receipt #{payment.receipt_number}</p>
+                        <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{new Date(payment.date).toLocaleDateString()}</p>
                       </div>
-                      <span className="text-xl font-bold text-green-600">₹{payment.amount}</span>
+                      <span className={`text-xl font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>₹{payment.amount}</span>
                     </div>
-                    <div className="mt-3">
-                      <p className="text-sm font-medium text-gray-700 mb-1">Items:</p>
-                      <div className="space-y-1">
+                    <div className="mt-4">
+                      <p className={`text-sm font-bold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Items:</p>
+                      <div className={`space-y-2 rounded-lg p-3 ${isDark ? 'bg-slate-900/50' : 'bg-gray-50'}`}>
                         {payment.fee_items?.map((item: any, idx: number) => (
                           <div key={idx} className="flex justify-between text-sm">
-                            <span className="text-gray-600">{item.description}</span>
-                            <span className="text-gray-900">₹{item.amount}</span>
+                            <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>{item.description}</span>
+                            <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>₹{item.amount}</span>
                           </div>
                         ))}
                       </div>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-gray-100">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <div className={`mt-4 pt-3 border-t ${isDark ? 'border-slate-700' : 'border-gray-100'}`}>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                        isDark 
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                          : 'bg-emerald-100 text-emerald-800'
+                      }`}>
                         Paid
                       </span>
                     </div>
