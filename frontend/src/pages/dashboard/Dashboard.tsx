@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed, IndianRupee, User } from 'lucide-react';
+import { Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, Activity, Clock, Bed, IndianRupee, User, Brain } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import AddPatientModal from '../../components/modals/AddPatientModal';
@@ -10,6 +10,7 @@ import BookAppointmentModal from '../../components/modals/BookAppointmentModal';
 import ProcessPaymentModal from '../../components/modals/ProcessPaymentModal';
 import BedManagement from '../../components/beds/BedManagement';
 import OutstandingPayments from '../../components/payments/OutstandingPayments';
+import AISymptomChecker from '../../components/ai/AISymptomChecker';
 
 interface DashboardStats {
   total_appointments: number;
@@ -85,6 +86,7 @@ const Dashboard = () => {
   const [showMedicineOrder, setShowMedicineOrder] = useState(false);
   const [showBookAppointment, setShowBookAppointment] = useState(false);
   const [showProcessPayment, setShowProcessPayment] = useState(false);
+  const [showAISymptomChecker, setShowAISymptomChecker] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -431,6 +433,16 @@ const Dashboard = () => {
                 </div>
                 <span className="text-sm font-medium text-gray-900">Book Appointment</span>
               </button>
+
+              <button 
+                onClick={() => setShowAISymptomChecker(true)}
+                className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+              >
+                <div className="p-3 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 mb-3">
+                  <Brain className="h-6 w-6 text-purple-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-900">AI Assistant</span>
+              </button>
             </div>
           </div>
         </>
@@ -633,6 +645,12 @@ const Dashboard = () => {
             fetchDashboardData();
             toast.success('Payment processed successfully!');
           }}
+        />
+      )}
+
+      {showAISymptomChecker && (
+        <AISymptomChecker
+          onClose={() => setShowAISymptomChecker(false)}
         />
       )}
     </div>

@@ -23,6 +23,8 @@ import adminRoutes from './routes/admin.routes';
 import videoRoutes from './routes/video.routes';
 import doctorDashboardRoutes from './routes/doctor-dashboard.routes';
 import medicineOrderRoutes from './routes/medicine-order.routes';
+import aiRoutes from './routes/ai.routes';
+import reportsRoutes from './routes/reports.routes';
 
 dotenv.config();
 
@@ -77,6 +79,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/doctor-dashboard', doctorDashboardRoutes);
 app.use('/api/medicine-orders', medicineOrderRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/reports', reportsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req: Request, res: Response) => {

@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Video, User, Users, Calendar, Clock, Stethoscope, IndianRupee, Plus, Trash2, Loader2, Phone, Share2, CreditCard } from 'lucide-react';
+import { X, Video, User, Users, Calendar, Clock, Stethoscope, IndianRupee, Plus, Trash2, Loader2, Phone, Share2, CreditCard, Brain } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { initiateRazorpayPayment } from '../../utils/razorpay';
 import VideoCallSetup from '../video/VideoCallSetup';
 import VideoCall from '../video/VideoCall';
+import aiService from '../../services/aiService';
 
 interface BookAppointmentModalProps {
   onClose: () => void;
@@ -76,6 +77,11 @@ const BookAppointmentModal = ({ onClose, onSuccess }: BookAppointmentModalProps)
   const [, setPaymentComplete] = useState(false);
   const [paymentOption, setPaymentOption] = useState<'with-payment' | 'without-payment'>('with-payment');
   
+  // AI Analysis state
+  const [showAIAnalysis, setShowAIAnalysis] = useState(false);
+  const [aiAnalyzing, setAiAnalyzing] = useState(false);
+  const [aiResult, setAiResult] = useState<string | null>(null);
+  
   // Ref to store appointment data temporarily
   const appointmentDataRef = useRef<any>(null);
 
@@ -116,6 +122,37 @@ const BookAppointmentModal = ({ onClose, onSuccess }: BookAppointmentModalProps)
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleAIAnalysis = async () => {
+    if (!consultationReason.trim()) {
+      toast.error('Please enter consultation reason/symptoms first');
+      return;
+    }
+
+    setAiAnalyzing(true);
+    try {
+      const response = await aiService.analyzeSymptoms({
+        symptoms: consultationReason,
+        patient_id: selectedPatient || undefined
+      });
+
+      if (response.success && response.data) {
+        setAiResult(response.data.ai_response);
+        toast.success('AI analysis complete!');
+      } else {
+        toast.error(response.message || 'AI analysis failed');
+      }
+    } catch (error: any) {
+      console.error('AI Analysis Error:', error);
+      if (error.response?.status === 503) {
+        toast.error('AI service unavailable, please proceed manually');
+      } else {
+        toast.error('Failed to analyze symptoms');
+      }
+    } finally {
+      setAiAnalyzing(false);
     }
   };
 
@@ -600,6 +637,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
         peerName={peerName || 'Consultation'}
         appointmentType={activeTab}
         roomId={videoCallUrl.split('/').pop() || 'room-' + Date.now()}
+        patientId={activeTab === 'doctor-to-patient' ? selectedPatient : undefined}
       />
     );
   }
@@ -818,16 +856,72 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                   {/* Consultation Reason */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Consultation Reason *
+                      Consultation Reason / Symptoms *
                     </label>
                     <textarea
                       value={consultationReason}
                       onChange={(e) => setConsultationReason(e.target.value)}
                       rows={3}
                       className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                      placeholder="Describe the reason for consultation..."
+                      placeholder="Describe the patient's symptoms and reason for consultation..."
                       required
                     />
+                    
+                    {/* AI Analysis Button */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleAIAnalysis}
+                        disabled={aiAnalyzing || !consultationReason.trim()}
+                        className="flex items-center px-3 py-1.5 text-sm bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-md hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {aiAnalyzing ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <Brain className="h-4 w-4 mr-1" />
+                            Get AI Suggestions
+                          </>
+                        )}
+                      </button>
+                      {aiResult && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAIAnalysis(!showAIAnalysis)}
+                          className="text-sm text-blue-600 hover:text-blue-800"
+                        >
+                          {showAIAnalysis ? 'Hide' : 'Show'} Results
+                        </button>
+                      )}
+                    </div>
+                    
+                    {/* AI Results Display */}
+                    {showAIAnalysis && aiResult && (
+                      <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium text-gray-900 flex items-center">
+                            <Brain className="h-4 w-4 mr-1 text-purple-600" />
+                            AI Preliminary Diagnosis
+                          </h4>
+                          <button
+                            type="button"
+                            onClick={() => setShowAIAnalysis(false)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans max-h-48 overflow-y-auto">
+                          {aiResult}
+                        </pre>
+                        <p className="text-xs text-gray-500 mt-2 italic">
+                          AI-generated suggestions. Final diagnosis by doctor required.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Date and Time */}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Video, Mic, MicOff, Camera, CameraOff, Phone, PhoneOff, Monitor, Loader2 } from 'lucide-react';
+import { X, Video, Mic, MicOff, Camera, CameraOff, Phone, PhoneOff, Monitor, Loader2, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ReportGenerator from '../modals/ReportGenerator';
 
 interface VideoCallProps {
   isOpen: boolean;
@@ -8,9 +9,10 @@ interface VideoCallProps {
   peerName: string;
   appointmentType: 'doctor-to-doctor' | 'doctor-to-patient';
   roomId: string;
+  patientId?: string;
 }
 
-const VideoCall = ({ isOpen, onClose, peerName, roomId }: VideoCallProps) => {
+const VideoCall = ({ isOpen, onClose, peerName, roomId, patientId }: VideoCallProps) => {
   const [step, setStep] = useState<'setup' | 'calling' | 'connected'>('setup');
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [isCameraOn, setIsCameraOn] = useState(true);
@@ -18,6 +20,7 @@ const VideoCall = ({ isOpen, onClose, peerName, roomId }: VideoCallProps) => {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [showReportGenerator, setShowReportGenerator] = useState(false);
   
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -320,12 +323,37 @@ const VideoCall = ({ isOpen, onClose, peerName, roomId }: VideoCallProps) => {
           >
             <PhoneOff className="h-6 w-6" />
           </button>
+          
+          {/* Generate Report Button - Only show for patient consultations */}
+          {patientId && step === 'connected' && (
+            <button
+              onClick={() => setShowReportGenerator(true)}
+              className="p-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-colors ml-4"
+              title="Generate Medical Report"
+            >
+              <FileText className="h-6 w-6" />
+            </button>
+          )}
         </div>
         
         <p className="text-center text-gray-400 text-sm mt-3">
           Room ID: {roomId}
         </p>
       </div>
+      
+      {/* Report Generator Modal */}
+      {showReportGenerator && patientId && (
+        <ReportGenerator
+          isOpen={showReportGenerator}
+          onClose={() => setShowReportGenerator(false)}
+          onSuccess={() => {
+            toast.success('Report generated successfully!');
+          }}
+          patientId={patientId}
+          patientName={peerName}
+          defaultType="prescription"
+        />
+      )}
     </div>
   );
 };
