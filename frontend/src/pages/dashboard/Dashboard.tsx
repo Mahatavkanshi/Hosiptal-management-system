@@ -172,105 +172,105 @@ const Dashboard = () => {
         </p>
       </div>
 
-      {/* Stats Cards - Enhanced Highlighting */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      {/* Stats Cards - Dark Theme Style */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Total Appointments */}
         <div 
-          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
             isDark 
-              ? 'bg-slate-800 border-blue-500/30 hover:border-blue-400 shadow-lg shadow-blue-500/10' 
-              : 'bg-white border-blue-100 hover:border-blue-300 shadow-lg hover:shadow-blue-200/50'
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 hover:border-blue-500/50 shadow-lg' 
+              : 'bg-white border border-gray-200 hover:border-blue-300 shadow-md'
           }`}
           onClick={() => {
             fetchPatients();
             setActiveTab('appointments');
           }}
         >
-          <div className="flex items-center">
-            <div className={`p-4 rounded-full ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
-              <Calendar className={`h-7 w-7 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
-            </div>
-            <div className="ml-4">
-              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Total Appointments</p>
-              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.total_appointments || 0}</p>
+          <div className="flex items-start justify-between">
+            <div className={`p-3 rounded-xl ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+              <Calendar className={`h-6 w-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-base">
-            <span className="text-green-500 font-bold">+12%</span>
-            <span className={`ml-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>from last month</span>
+          <div className="mt-3">
+            <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Appointments</p>
+            <p className={`text-2xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.total_appointments || 0}</p>
+          </div>
+          <div className="mt-2 flex items-center text-sm">
+            <span className="text-emerald-500 font-semibold">+12%</span>
+            <span className={`ml-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>from last month</span>
           </div>
         </div>
 
         {/* Active Patients */}
         <div 
-          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
             isDark 
-              ? 'bg-slate-800 border-emerald-500/30 hover:border-emerald-400 shadow-lg shadow-emerald-500/10' 
-              : 'bg-white border-emerald-100 hover:border-emerald-300 shadow-lg hover:shadow-emerald-200/50'
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 hover:border-emerald-500/50 shadow-lg' 
+              : 'bg-white border border-gray-200 hover:border-emerald-300 shadow-md'
           }`}
           onClick={() => {
             fetchPatients();
             setActiveTab('patients');
           }}
         >
-          <div className="flex items-center">
-            <div className={`p-4 rounded-full ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
-              <Users className={`h-7 w-7 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
-            </div>
-            <div className="ml-4">
-              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Active Patients</p>
-              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.active_patients || 0}</p>
+          <div className="flex items-start justify-between">
+            <div className={`p-3 rounded-xl ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
+              <Users className={`h-6 w-6 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-base">
-            <span className="text-emerald-500 font-bold">+5%</span>
-            <span className={`ml-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>this month</span>
+          <div className="mt-3">
+            <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Active Patients</p>
+            <p className={`text-2xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.active_patients || 0}</p>
+          </div>
+          <div className="mt-2 flex items-center text-sm">
+            <span className="text-emerald-500 font-semibold">+5%</span>
+            <span className={`ml-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>this month</span>
           </div>
         </div>
 
         {/* Available Beds */}
         <div 
-          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
             isDark 
-              ? 'bg-slate-800 border-cyan-500/30 hover:border-cyan-400 shadow-lg shadow-cyan-500/10' 
-              : 'bg-white border-cyan-100 hover:border-cyan-300 shadow-lg hover:shadow-cyan-200/50'
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 hover:border-cyan-500/50 shadow-lg' 
+              : 'bg-white border border-gray-200 hover:border-cyan-300 shadow-md'
           }`}
           onClick={() => setActiveTab('beds')}
         >
-          <div className="flex items-center">
-            <div className={`p-4 rounded-full ${isDark ? 'bg-cyan-500/20' : 'bg-cyan-100'}`}>
-              <BedDouble className={`h-7 w-7 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
-            </div>
-            <div className="ml-4">
-              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Available Beds</p>
-              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.beds?.available || 0}</p>
+          <div className="flex items-start justify-between">
+            <div className={`p-3 rounded-xl ${isDark ? 'bg-cyan-500/20' : 'bg-cyan-100'}`}>
+              <BedDouble className={`h-6 w-6 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-base">
+          <div className="mt-3">
+            <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Available Beds</p>
+            <p className={`text-2xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{stats?.beds?.available || 0}</p>
+          </div>
+          <div className="mt-2 flex items-center text-sm">
             <span className={`font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{stats?.beds?.occupied || 0} occupied</span>
           </div>
         </div>
 
         {/* Medicine Alerts */}
         <div 
-          className={`rounded-xl border-2 p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
             isDark 
-              ? 'bg-slate-800 border-amber-500/30 hover:border-amber-400 shadow-lg shadow-amber-500/10' 
-              : 'bg-white border-amber-100 hover:border-amber-300 shadow-lg hover:shadow-amber-200/50'
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 hover:border-amber-500/50 shadow-lg' 
+              : 'bg-white border border-gray-200 hover:border-amber-300 shadow-md'
           }`}
           onClick={() => setShowMedicineOrder(true)}
         >
-          <div className="flex items-center">
-            <div className={`p-4 rounded-full ${isDark ? 'bg-amber-500/20' : 'bg-amber-100'}`}>
-              <Pill className={`h-7 w-7 ${isDark ? 'text-amber-400' : 'text-amber-600'}`} />
-            </div>
-            <div className="ml-4">
-              <p className={`text-base font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Low Stock Alerts</p>
-              <p className={`text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{medicineAlerts?.length || 0}</p>
+          <div className="flex items-start justify-between">
+            <div className={`p-3 rounded-xl ${isDark ? 'bg-amber-500/20' : 'bg-amber-100'}`}>
+              <Pill className={`h-6 w-6 ${isDark ? 'text-amber-400' : 'text-amber-600'}`} />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-base">
-            <span className="text-rose-500 font-bold">Needs attention</span>
+          <div className="mt-3">
+            <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Low Stock Alerts</p>
+            <p className={`text-2xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{medicineAlerts?.length || 0}</p>
+          </div>
+          <div className="mt-2 flex items-center text-sm">
+            <span className="text-rose-500 font-semibold">Needs attention</span>
           </div>
         </div>
 
@@ -524,22 +524,22 @@ const Dashboard = () => {
 
       {/* Patients Tab */}
       {activeTab === 'patients' && (
-        <div className={`rounded-xl border-2 shadow-lg overflow-hidden ${
+        <div className={`rounded-2xl overflow-hidden ${
           isDark 
-            ? 'bg-slate-800 border-slate-700 shadow-slate-900/50' 
-            : 'bg-white border-gray-200 shadow-gray-200/50'
+            ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 shadow-2xl' 
+            : 'bg-white border border-gray-200 shadow-xl'
         }`}>
-          <div className={`px-6 py-4 border-b ${isDark ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200 bg-gray-50/50'}`}>
+          <div className={`px-6 py-5 border-b ${isDark ? 'border-slate-700/50 bg-slate-800/50' : 'border-gray-200 bg-gray-50'}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <div className={`p-2 rounded-lg mr-3 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                <div className={`p-2.5 rounded-xl mr-3 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
                   <Users className={`h-6 w-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
                 </div>
                 <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>My Patients</h3>
               </div>
               <button 
                 onClick={() => setActiveTab('overview')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                className={`px-4 py-2 rounded-xl font-semibold transition-all flex items-center gap-2 ${
                   isDark 
                     ? 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600' 
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
@@ -551,22 +551,22 @@ const Dashboard = () => {
           </div>
           <div className="p-6">
             <div className="overflow-x-auto">
-              <table className={`min-w-full divide-y ${isDark ? 'divide-slate-700' : 'divide-gray-200'}`}>
-                <thead className={`${isDark ? 'bg-slate-700/50' : 'bg-gray-50'}`}>
-                  <tr>
-                    <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Patient</th>
-                    <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Age</th>
-                    <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Address</th>
-                    <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Bed</th>
-                    <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Status</th>
+              <table className={`min-w-full ${isDark ? 'bg-slate-900/50' : 'bg-white'}`}>
+                <thead>
+                  <tr className={`${isDark ? 'bg-slate-800/80' : 'bg-gray-50'}`}>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Patient</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Age</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Address</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Bed</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Status</th>
                   </tr>
                 </thead>
-                <tbody className={`divide-y ${isDark ? 'divide-slate-700 bg-slate-800' : 'divide-gray-200 bg-white'}`}>
+                <tbody className={`divide-y ${isDark ? 'divide-slate-700/50' : 'divide-gray-100'}`}>
                   {patients.map((patient) => (
-                    <tr key={patient.id} className={`transition-colors ${isDark ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'}`}>
+                    <tr key={patient.id} className={`transition-colors ${isDark ? 'hover:bg-slate-800/30' : 'hover:bg-gray-50'}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                          <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
                             <span className={`font-bold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>
                               {patient.first_name[0]}{patient.last_name[0]}
                             </span>
@@ -575,28 +575,30 @@ const Dashboard = () => {
                             <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                               {patient.first_name} {patient.last_name}
                             </div>
-                            <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{patient.blood_group}</div>
+                            <div className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{patient.blood_group}</div>
                           </div>
                         </div>
                       </td>
-                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                         {patient.age} years
                       </td>
-                      <td className={`px-6 py-4 text-sm ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>
+                      <td className={`px-6 py-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         {patient.address}, {patient.city}, {patient.state}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         {patient.has_bed ? (
-                          <span className="text-emerald-500">
+                          <span className="text-emerald-500 font-semibold">
                             {patient.bed_number} ({patient.ward_type})
                           </span>
                         ) : (
-                          <span className={isDark ? 'text-gray-500' : 'text-gray-400'}>Not allocated</span>
+                          <span className={`text-sm ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>Not allocated</span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          patient.has_bed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          patient.has_bed 
+                            ? (isDark ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-emerald-100 text-emerald-800') 
+                            : (isDark ? 'bg-gray-700 text-gray-400 border border-gray-600' : 'bg-gray-100 text-gray-800')
                         }`}>
                           {patient.has_bed ? 'Admitted' : 'Outpatient'}
                         </span>
