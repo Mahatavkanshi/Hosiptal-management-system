@@ -14,7 +14,7 @@ import {
   Plus
 } from 'lucide-react';
 import api from '../../services/api';
-import { useTheme, getThemeColors } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import ThemeSelector from '../theme/ThemeSelector';
 
 // Body parts configuration with their positions and related medical keywords
@@ -117,9 +117,7 @@ const generateDemoRecords = (patientId: string): MedicalRecord[] => [
 ];
 
 const InteractiveBodyMap = () => {
-  const { theme } = useTheme();
-  const colors = getThemeColors(theme);
-  const isDark = theme === 'dark';
+  const { isDark } = useTheme();
   
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -319,10 +317,12 @@ const InteractiveBodyMap = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className={`text-3xl font-bold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent`}>
+          <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Interactive Medical History
           </h1>
-          <p className={`mt-1 ${styles.subtext}`}>Visualize patient health by body system</p>
+          <p className={`mt-1 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            Visualize patient health by body system
+          </p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -602,9 +602,9 @@ const InteractiveBodyMap = () => {
 
           {/* Medical Records List - Theme Aware */}
           <div className={`rounded-2xl shadow-sm ${isDark ? 'bg-slate-800/80 border-slate-700' : 'bg-white/90 backdrop-blur-sm border border-white/50 shadow-lg'}`}>
-            <div className="p-4 border-b border-gray-200">
+            <div className={`p-4 border-b ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <h3 className={`text-lg font-semibold flex items-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
                   <FileText className="h-5 w-5 mr-2 text-blue-600" />
                   {selectedBodyPart ? 
                     `${bodyPartStats.find(p => p.id === selectedBodyPart)?.name} Records` : 
@@ -624,37 +624,37 @@ const InteractiveBodyMap = () => {
 
             <div className="max-h-[400px] overflow-y-auto">
               {filteredRecords.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
-                  <Stethoscope className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                  <p>No medical records found</p>
-                  <p className="text-sm mt-1">
+                <div className={`p-8 text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <Stethoscope className={`h-12 w-12 mx-auto mb-3 ${isDark ? 'text-gray-600' : 'text-gray-300'}`} />
+                  <p className="text-lg">No medical records found</p>
+                  <p className="text-base mt-1">
                     {selectedBodyPart ? 'for this body system' : 'for this patient'}
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100">
+                <div className={`divide-y ${isDark ? 'divide-slate-700' : 'divide-gray-100'}`}>
                   {filteredRecords.map((record) => (
-                    <div key={record.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div key={record.id} className={`p-4 transition-colors ${isDark ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'}`}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
-                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                            <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
                               {new Date(record.visit_date).toLocaleDateString('en-US', { 
                                 month: 'short', 
                                 day: 'numeric' 
                               })}
                             </span>
                             {record.doctor_specialization && (
-                              <span className="text-xs text-gray-500">
+                              <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                 {record.doctor_specialization}
                               </span>
                             )}
                           </div>
-                          <h4 className="font-medium text-gray-900 mb-1">{record.diagnosis}</h4>
-                          <p className="text-sm text-gray-600 line-clamp-2">{record.chief_complaint}</p>
+                          <h4 className={`font-medium text-lg mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{record.diagnosis}</h4>
+                          <p className={`text-base line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{record.chief_complaint}</p>
                           
                           {record.doctor_first_name && (
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className={`text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                               Dr. {record.doctor_first_name} {record.doctor_last_name}
                             </p>
                           )}

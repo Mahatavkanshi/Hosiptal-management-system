@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Search, UserPlus, Filter, Users, Bed, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, UserPlus, Filter, Users, Bed, FileText, ChevronLeft } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
+import ThemeWrapper from '../../components/theme/ThemeWrapper';
 import api from '../../services/api';
-import toast from 'react-hot-toast';
 import ReportList from '../../components/reports/ReportList';
 import ReportGenerator from '../../components/modals/ReportGenerator';
 import AddPatientModal from '../../components/modals/AddPatientModal';
@@ -168,6 +169,7 @@ const demoPatients: Patient[] = [
 ];
 
 const MyPatients = () => {
+  const { isDark } = useTheme();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -237,12 +239,13 @@ const MyPatients = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <ThemeWrapper>
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Patients</h1>
-          <p className="mt-1 text-gray-600">Manage and view all your patients</p>
+          <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>My Patients</h1>
+          <p className={`mt-1 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Manage and view all your patients</p>
         </div>
         <button 
           onClick={() => setShowAddPatient(true)}
@@ -254,17 +257,17 @@ const MyPatients = () => {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
+      <div className={`border-b ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
         <nav className="flex space-x-8">
           <button
             onClick={() => {
               setActiveTab('patients');
               setSelectedPatient(null);
             }}
-            className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
+            className={`py-4 px-1 border-b-2 font-medium text-base flex items-center ${
               activeTab === 'patients'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                : `border-transparent ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`
             }`}
           >
             <Users className="h-5 w-5 mr-2" />
@@ -278,16 +281,16 @@ const MyPatients = () => {
           
           <button
             onClick={() => setActiveTab('reports')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
+            className={`py-4 px-1 border-b-2 font-medium text-base flex items-center ${
               activeTab === 'reports'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                : `border-transparent ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`
             }`}
           >
             <FileText className="h-5 w-5 mr-2" />
             Medical Reports
             {selectedPatient && (
-              <span className="ml-2 text-gray-400">
+              <span className={`ml-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                 {selectedPatient.first_name} {selectedPatient.last_name}
               </span>
             )}
@@ -543,6 +546,7 @@ const MyPatients = () => {
         />
       )}
     </div>
+    </ThemeWrapper>
   );
 };
 
