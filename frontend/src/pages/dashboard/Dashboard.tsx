@@ -444,78 +444,78 @@ const Dashboard = () => {
             <OutstandingPayments />
           </div>
 
-          {/* Quick Actions - Enhanced */}
+          {/* Quick Actions - Enhanced with Better Highlighting */}
           <div>
-            <h3 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>Quick Actions</h3>
+            <h3 className={`text-2xl font-black mb-6 ${isDark ? 'text-white drop-shadow-lg' : 'text-gray-900'}`}>Quick Actions</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <button 
                 onClick={() => setShowAddPatient(true)}
-                className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 ${
                   isDark 
-                    ? 'bg-slate-800 border-emerald-500/30 hover:border-emerald-400 shadow-lg shadow-emerald-500/10' 
-                    : 'bg-white border-emerald-100 hover:border-emerald-300 shadow-lg hover:shadow-emerald-200/50'
+                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-emerald-500/50 hover:border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]' 
+                    : 'bg-gradient-to-br from-white to-emerald-50 border-emerald-300 hover:border-emerald-500 shadow-lg hover:shadow-emerald-200/80 shadow-emerald-100/50'
                 }`}
               >
-                <div className={`p-3 rounded-full mb-3 ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
-                  <UserPlus className={`h-7 w-7 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
+                <div className={`p-4 rounded-full mb-3 shadow-lg ${isDark ? 'bg-emerald-500/30 shadow-emerald-500/40' : 'bg-emerald-100 shadow-emerald-200/50'}`}>
+                  <UserPlus className={`h-8 w-8 ${isDark ? 'text-emerald-300' : 'text-emerald-600'}`} />
                 </div>
-                <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Add Patient</span>
+                <span className={`text-base font-black ${isDark ? 'text-white drop-shadow-md' : 'text-gray-900'}`}>Add Patient</span>
               </button>
 
               <button 
                 onClick={() => setShowAllocateBed(true)}
-                className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 ${
                   isDark 
-                    ? 'bg-slate-800 border-blue-500/30 hover:border-blue-400 shadow-lg shadow-blue-500/10' 
-                    : 'bg-white border-blue-100 hover:border-blue-300 shadow-lg hover:shadow-blue-200/50'
+                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-blue-500/50 hover:border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)]' 
+                    : 'bg-gradient-to-br from-white to-blue-50 border-blue-300 hover:border-blue-500 shadow-lg hover:shadow-blue-200/80 shadow-blue-100/50'
                 }`}
               >
-                <div className={`p-3 rounded-full mb-3 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
-                  <Bed className={`h-7 w-7 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                <div className={`p-4 rounded-full mb-3 shadow-lg ${isDark ? 'bg-blue-500/30 shadow-blue-500/40' : 'bg-blue-100 shadow-blue-200/50'}`}>
+                  <Bed className={`h-8 w-8 ${isDark ? 'text-blue-300' : 'text-blue-600'}`} />
                 </div>
-                <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Allocate Bed</span>
+                <span className={`text-base font-black ${isDark ? 'text-white drop-shadow-md' : 'text-gray-900'}`}>Allocate Bed</span>
               </button>
 
               <button 
                 onClick={() => setShowProcessPayment(true)}
-                className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 ${
                   isDark 
-                    ? 'bg-slate-800 border-purple-500/30 hover:border-purple-400 shadow-lg shadow-purple-500/10' 
-                    : 'bg-white border-purple-100 hover:border-purple-300 shadow-lg hover:shadow-purple-200/50'
+                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-purple-500/50 hover:border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]' 
+                    : 'bg-gradient-to-br from-white to-purple-50 border-purple-300 hover:border-purple-500 shadow-lg hover:shadow-purple-200/80 shadow-purple-100/50'
                 }`}
               >
-                <div className={`p-3 rounded-full mb-3 ${isDark ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
-                  <CreditCard className={`h-7 w-7 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
+                <div className={`p-4 rounded-full mb-3 shadow-lg ${isDark ? 'bg-purple-500/30 shadow-purple-500/40' : 'bg-purple-100 shadow-purple-200/50'}`}>
+                  <CreditCard className={`h-8 w-8 ${isDark ? 'text-purple-300' : 'text-purple-600'}`} />
                 </div>
-                <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Process Payment</span>
+                <span className={`text-base font-black ${isDark ? 'text-white drop-shadow-md' : 'text-gray-900'}`}>Process Payment</span>
               </button>
 
               <button 
                 onClick={() => setShowBookAppointment(true)}
-                className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 ${
                   isDark 
-                    ? 'bg-slate-800 border-cyan-500/30 hover:border-cyan-400 shadow-lg shadow-cyan-500/10' 
-                    : 'bg-white border-cyan-100 hover:border-cyan-300 shadow-lg hover:shadow-cyan-200/50'
+                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-cyan-500/50 hover:border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]' 
+                    : 'bg-gradient-to-br from-white to-cyan-50 border-cyan-300 hover:border-cyan-500 shadow-lg hover:shadow-cyan-200/80 shadow-cyan-100/50'
                 }`}
               >
-                <div className={`p-3 rounded-full mb-3 ${isDark ? 'bg-cyan-500/20' : 'bg-cyan-100'}`}>
-                  <Plus className={`h-7 w-7 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
+                <div className={`p-4 rounded-full mb-3 shadow-lg ${isDark ? 'bg-cyan-500/30 shadow-cyan-500/40' : 'bg-cyan-100 shadow-cyan-200/50'}`}>
+                  <Plus className={`h-8 w-8 ${isDark ? 'text-cyan-300' : 'text-cyan-600'}`} />
                 </div>
-                <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Book Appointment</span>
+                <span className={`text-base font-black ${isDark ? 'text-white drop-shadow-md' : 'text-gray-900'}`}>Book Appointment</span>
               </button>
 
               <button 
                 onClick={() => setShowAISymptomChecker(true)}
-                className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 ${
                   isDark 
-                    ? 'bg-slate-800 border-pink-500/30 hover:border-pink-400 shadow-lg shadow-pink-500/10' 
-                    : 'bg-white border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50'
+                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-pink-500/50 hover:border-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]' 
+                    : 'bg-gradient-to-br from-white to-pink-50 border-pink-300 hover:border-pink-500 shadow-lg hover:shadow-pink-200/80 shadow-pink-100/50'
                 }`}
               >
-                <div className={`p-3 rounded-full mb-3 ${isDark ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20' : 'bg-gradient-to-r from-blue-100 to-purple-100'}`}>
-                  <Brain className={`h-7 w-7 ${isDark ? 'text-pink-400' : 'text-purple-600'}`} />
+                <div className={`p-4 rounded-full mb-3 shadow-lg ${isDark ? 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 shadow-purple-500/40' : 'bg-gradient-to-r from-blue-100 to-purple-100 shadow-purple-200/50'}`}>
+                  <Brain className={`h-8 w-8 ${isDark ? 'text-pink-300' : 'text-purple-600'}`} />
                 </div>
-                <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>AI Assistant</span>
+                <span className={`text-base font-black ${isDark ? 'text-white drop-shadow-md' : 'text-gray-900'}`}>AI Assistant</span>
               </button>
             </div>
           </div>

@@ -67,26 +67,34 @@ const OutstandingPayments = () => {
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className={`rounded-xl border-2 shadow-lg overflow-hidden ${
+    <div className={`rounded-2xl border-2 shadow-2xl overflow-hidden backdrop-blur-sm ${
       isDark 
-        ? 'bg-slate-800 border-slate-700 shadow-slate-900/50' 
-        : 'bg-white border-gray-200 shadow-gray-200/50'
+        ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-600 shadow-slate-900/80' 
+        : 'bg-gradient-to-br from-white to-gray-50 border-gray-300 shadow-gray-300/60'
     }`}>
-      <div className={`p-6 ${isDark ? 'bg-slate-800' : 'bg-white'}`}>
+      <div className={`p-6 ${isDark ? 'bg-gradient-to-br from-slate-800/80 to-slate-900/80' : 'bg-gradient-to-br from-white to-gray-50'}`}>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Payment History</h3>
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Track all payments and outstanding bills</p>
           </div>
           
-          <div className="flex gap-6">
-            <div className="text-right">
-              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Outstanding</p>
-              <p className="text-xl font-bold text-rose-500">₹{totalOutstanding.toLocaleString()}</p>
+          <div className="flex gap-4">
+            <div className={`text-right px-4 py-2 rounded-xl border-2 ${
+              isDark 
+                ? 'bg-rose-500/10 border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.3)]' 
+                : 'bg-rose-50 border-rose-200 shadow-rose-200/50'
+            }`}>
+              <p className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>Outstanding</p>
+              <p className="text-2xl font-black text-rose-500 drop-shadow-lg">₹{totalOutstanding.toLocaleString()}</p>
             </div>
-            <div className="text-right">
-              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Collected</p>
-              <p className="text-xl font-bold text-emerald-500">₹{totalCollected.toLocaleString()}</p>
+            <div className={`text-right px-4 py-2 rounded-xl border-2 ${
+              isDark 
+                ? 'bg-emerald-500/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.3)]' 
+                : 'bg-emerald-50 border-emerald-200 shadow-emerald-200/50'
+            }`}>
+              <p className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>Collected</p>
+              <p className="text-2xl font-black text-emerald-500 drop-shadow-lg">₹{totalCollected.toLocaleString()}</p>
             </div>
           </div>
         </div>
