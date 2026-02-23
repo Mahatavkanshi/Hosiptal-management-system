@@ -48,7 +48,7 @@ const Login: React.FC = () => {
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="email" className="label">
+          <label htmlFor="email" className="block text-sm font-semibold text-gray-800 mb-2">
             Email address
           </label>
           <input
@@ -59,13 +59,13 @@ const Login: React.FC = () => {
             required
             value={formData.email}
             onChange={handleChange}
-            className="input"
+            className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
             placeholder="you@example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="label">
+          <label htmlFor="password" className="block text-sm font-semibold text-gray-800 mb-2">
             Password
           </label>
           <div className="relative">
@@ -77,7 +77,7 @@ const Login: React.FC = () => {
               required
               value={formData.password}
               onChange={handleChange}
-              className="input pr-10"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white pr-10"
               placeholder="••••••••"
             />
             <button
@@ -96,15 +96,15 @@ const Login: React.FC = () => {
               id="remember-me"
               name="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 font-medium">
               Remember me
             </label>
           </div>
 
           <div className="text-sm">
-            <Link to="/forgot-password" className="font-medium text-primary-600 hover:text-primary-500">
+            <Link to="/forgot-password" className="font-bold text-blue-700 hover:text-blue-800 underline">
               Forgot your password?
             </Link>
           </div>
@@ -114,7 +114,7 @@ const Login: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full btn-primary py-3"
+            className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
@@ -131,17 +131,17 @@ const Login: React.FC = () => {
       <div className="mt-6">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
+            <div className="w-full border-t border-gray-400" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
+            <span className="px-2 bg-white text-gray-700 font-medium">Don't have an account?</span>
           </div>
         </div>
 
         <div className="mt-6">
           <Link
             to="/register"
-            className="w-full btn-outline py-3"
+            className="w-full flex justify-center items-center py-3 px-4 border-2 border-blue-600 rounded-lg text-blue-700 font-bold hover:bg-blue-50 transition-colors bg-white"
           >
             Create new account
           </Link>

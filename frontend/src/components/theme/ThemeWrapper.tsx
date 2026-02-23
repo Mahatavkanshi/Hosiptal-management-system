@@ -7,13 +7,14 @@ interface ThemeWrapperProps {
 }
 
 export const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children, className = '' }) => {
-  const { theme, wallpaper } = useTheme();
+  const { theme, wallpaper, getEffectiveBackground } = useTheme();
   const colors = getThemeColors(theme);
   const wallpaperStyle = getWallpaperStyle(wallpaper);
 
   return (
     <div 
-      className={`min-h-screen transition-all duration-500 ${colors.bodyBg} ${className}`}
+      className={`min-h-screen transition-all duration-500 ${className}`}
+      style={{ background: getEffectiveBackground() }}
     >
       {/* Wallpaper Pattern Overlay */}
       <div 
@@ -21,8 +22,8 @@ export const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children, className 
         style={wallpaperStyle}
       />
 
-      {/* Gradient Mesh Overlay for special themes */}
-      {(theme === 'midnight-gradient' || theme === 'neon-dreams' || theme === 'berry-smoothie') && (
+      {/* Gradient Mesh Overlay for special themes (Dark Mode Only) */}
+      {colors.isDark && (theme === 'midnight-gradient' || theme === 'neon-dreams' || theme === 'berry-smoothie') && (
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-b from-purple-500/10 to-transparent rounded-full blur-3xl animate-pulse" />
           <div className="absolute -bottom-1/2 -left-1/2 w-full h-full bg-gradient-to-t from-blue-500/10 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />

@@ -127,9 +127,8 @@ const MainLayout: React.FC = () => {
     <div 
       className="min-h-screen relative"
       style={{ 
-        background: getEffectiveBackground() || 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        minHeight: '100vh',
-        transition: 'background 0.5s ease'
+        background: isDark ? currentTheme.gradient : `linear-gradient(135deg, rgba(255,255,255,0.95) 0%, ${accentColor}15 100%)`,
+        minHeight: '100vh'
       }}
     >
       {/* Wallpaper Layer */}
@@ -140,8 +139,8 @@ const MainLayout: React.FC = () => {
         />
       )}
 
-      {/* Animated Gradient Mesh for Special Themes */}
-      {(currentTheme.id === 'purple-dream' || currentTheme.id === 'neon' || currentTheme.id === 'rainbow') && (
+      {/* Animated Gradient Mesh for Special Themes (Dark Mode Only) */}
+      {isDark && (currentTheme.id === 'purple-dream' || currentTheme.id === 'neon' || currentTheme.id === 'rainbow') && (
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
           <div 
             className="absolute -top-1/2 -right-1/2 w-full h-full rounded-full blur-3xl animate-pulse-slow"
@@ -167,21 +166,19 @@ const MainLayout: React.FC = () => {
         />
         
         <div 
-          className="relative flex w-full max-w-xs flex-1 flex-col transition-transform"
+          className="relative flex w-full max-w-xs flex-1 flex-col bg-white transition-transform"
           style={{
-            ...glassStyles,
-            borderRight: '1px solid var(--glass-border)',
+            borderRight: '1px solid #e5e7eb',
             transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'
           }}
         >
           <div 
-            className="flex h-16 flex-shrink-0 items-center justify-between px-4"
-            style={{ background: currentTheme.gradient }}
+            className="flex h-16 flex-shrink-0 items-center justify-between px-4 bg-white border-b border-gray-200"
           >
-            <span className="text-xl font-bold text-white">HMS</span>
+            <span className="text-xl font-bold text-gray-800">HMS</span>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="text-white hover:text-white/80 transition-colors"
+              className="text-gray-500 hover:text-gray-700 transition-colors"
             >
               <X className="h-6 w-6" />
             </button>
@@ -194,14 +191,14 @@ const MainLayout: React.FC = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center px-4 py-3.5 text-base font-semibold rounded-xl transition-all duration-200 ${
+                  className={`flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200 ${
                     isActive 
-                      ? 'sidebar-item active' 
-                      : 'sidebar-item'
+                      ? 'bg-blue-50 text-blue-600' 
+                      : 'text-gray-600 hover:bg-gray-50'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-white' : 'opacity-60'}`} />
+                  <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
                   {item.name}
                 </Link>
               );
@@ -213,17 +210,15 @@ const MainLayout: React.FC = () => {
       {/* Static sidebar for desktop */}
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col z-20">
         <div 
-          className="flex min-h-0 flex-1 flex-col"
+          className="flex min-h-0 flex-1 flex-col bg-white"
           style={{
-            ...glassStyles,
-            borderRight: '1px solid var(--glass-border)'
+            borderRight: '1px solid #e5e7eb'
           }}
         >
           <div 
-            className="flex h-16 flex-shrink-0 items-center px-6"
-            style={{ background: currentTheme.gradient }}
+            className="flex h-16 flex-shrink-0 items-center px-6 bg-white border-b border-gray-200"
           >
-            <span className="text-xl font-bold text-white">Hospital MS</span>
+            <span className="text-xl font-bold text-gray-800">Hospital MS</span>
           </div>
           
           <div className="flex flex-1 flex-col overflow-y-auto">
@@ -234,13 +229,13 @@ const MainLayout: React.FC = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center px-4 py-3.5 text-base font-semibold rounded-xl transition-all duration-200 ${
+                    className={`flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200 ${
                       isActive 
-                        ? 'sidebar-item active' 
-                        : 'sidebar-item'
+                        ? 'bg-blue-50 text-blue-600' 
+                        : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
-                    <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-white' : 'opacity-60'}`} />
+                    <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`} />
                     {item.name}
                   </Link>
                 );
@@ -253,15 +248,11 @@ const MainLayout: React.FC = () => {
       {/* Main content */}
       <div className="flex flex-1 flex-col md:pl-64 relative z-10">
         <div 
-          className="sticky top-0 z-10 flex h-16 flex-shrink-0"
-          style={{
-            ...glassStyles,
-            borderBottom: '1px solid var(--glass-border)'
-          }}
+          className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white border-b border-gray-200"
         >
           <button
             onClick={() => setSidebarOpen(true)}
-            className="border-r border-white/10 px-4 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-inset md:hidden transition-colors"
+            className="border-r border-gray-200 px-4 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset md:hidden transition-colors"
           >
             <span className="sr-only">Open sidebar</span>
             <Menu className="h-6 w-6" />
@@ -273,7 +264,7 @@ const MainLayout: React.FC = () => {
             </div>
             
             <div className="ml-4 flex items-center md:ml-6 gap-3">
-              <button className="rounded-full p-2 text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">
+              <button className="rounded-full p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all">
                 <span className="sr-only">View notifications</span>
                 <Bell className="h-5 w-5" />
               </button>
@@ -283,27 +274,26 @@ const MainLayout: React.FC = () => {
                 <div>
                   <button
                     onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                    className="flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] focus:ring-offset-2 hover:bg-white/5 transition-all"
+                    className="flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:bg-gray-50 transition-all"
                   >
                     <span className="sr-only">Open user menu</span>
                     <div className="flex items-center space-x-3 px-3 py-2">
                       <div 
-                        className="h-8 w-8 rounded-full flex items-center justify-center"
-                        style={{ background: currentTheme.gradient }}
+                        className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center"
                       >
                         <span className="text-white font-medium text-sm">
                           {user?.first_name?.[0]}{user?.last_name?.[0]}
                         </span>
                       </div>
                       <div className="hidden md:block text-left">
-                        <p className="text-base font-semibold text-foreground">
+                        <p className="text-base font-semibold text-gray-900">
                           {user?.first_name} {user?.last_name}
                         </p>
-                        <p className="text-sm text-muted-foreground capitalize">
+                        <p className="text-sm text-gray-500 capitalize">
                           {user?.role}
                         </p>
                       </div>
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
                     </div>
                   </button>
                 </div>

@@ -171,8 +171,8 @@ const demoPatients: Patient[] = [
 const MyPatients = () => {
   const { theme, isDark } = useTheme();
   const themeColors = getThemeColors(theme);
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [patients, setPatients] = useState<Patient[]>(demoPatients); // Initialize with demo data immediately
+  const [loading, setLoading] = useState(false); // Start as false since we have data
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
   const [activeTab, setActiveTab] = useState<'patients' | 'reports'>('patients');
@@ -184,27 +184,29 @@ const MyPatients = () => {
     fetchPatients();
   }, []);
 
+
+
   const fetchPatients = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/doctor-dashboard/my-patients?limit=100');
-      const realPatients = response.data.data.patients || [];
+      let realPatients: Patient[] = [];
+      
+      try {
+        const response = await api.get('/doctor-dashboard/my-patients?limit=100');
+        realPatients = response.data?.data?.patients || [];
+      } catch (apiError) {
+        console.log('API error or no real data, keeping demo patients');
+      }
       
       // Merge real patients with demo patients
-      if (realPatients.length === 0) {
-        setPatients(demoPatients);
-      } else {
-        // Add demo indicator to demo patients
-        const markedDemoPatients = demoPatients.map(p => ({
-          ...p,
-          id: p.id // Keep demo prefix
-        }));
-        setPatients([...realPatients, ...markedDemoPatients]);
+      if (realPatients.length > 0) {
+        console.log(`Found ${realPatients.length} real patients, merging with demo patients`);
+        setPatients([...realPatients, ...demoPatients]);
       }
+      // If no real patients, keep the existing demo patients (already set in initial state)
     } catch (error) {
-      console.error('Error fetching patients:', error);
-      // Use demo patients on error
-      setPatients(demoPatients);
+      console.error('Error in fetchPatients:', error);
+      // Keep existing demo patients on error
     } finally {
       setLoading(false);
     }
@@ -220,6 +222,9 @@ const MyPatients = () => {
     if (filter === 'outpatient') return matchesSearch && !patient.has_bed;
     return matchesSearch;
   });
+
+  // Debug: log patient counts
+  console.log('Total patients:', patients.length, 'Filtered patients:', filteredPatients.length);
 
   const handleViewReports = (patient: Patient) => {
     setSelectedPatient(patient);
@@ -511,8 +516,10 @@ const MyPatients = () => {
             </div>
             
             {filteredPatients.length === 0 && (
-              <div className={`text-center py-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                No patients found matching your criteria
+              <div className={`text-center py-12 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No patients found</p>
+                <p className="text-sm mt-2">{patients.length === 0 ? 'Loading patient data...' : 'Try adjusting your search or filter'}</p>
               </div>
             )}
           </div>

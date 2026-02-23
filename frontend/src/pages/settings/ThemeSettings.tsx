@@ -207,10 +207,10 @@ const ThemeSettings: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
                       }`}
                     >
                       {/* Gradient Background */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${t.colors}`} />
-                      
-                      {/* Glass Overlay */}
-                      <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]" />
+                      <div 
+                        className="absolute inset-0"
+                        style={{ background: t.gradient }}
+                      />
                       
                       {/* Shine Effect */}
                       <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

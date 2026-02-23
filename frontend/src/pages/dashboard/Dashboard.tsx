@@ -99,13 +99,13 @@ const StatCard = ({
   color: string;
   onClick?: () => void;
 }) => {
-  const colorClasses: Record<string, { bg: string; iconBg: string; text: string }> = {
-    blue: { bg: 'bg-blue-50', iconBg: 'bg-blue-100', text: 'text-blue-600' },
-    emerald: { bg: 'bg-emerald-50', iconBg: 'bg-emerald-100', text: 'text-emerald-600' },
-    purple: { bg: 'bg-purple-50', iconBg: 'bg-purple-100', text: 'text-purple-600' },
-    amber: { bg: 'bg-amber-50', iconBg: 'bg-amber-100', text: 'text-amber-600' },
-    rose: { bg: 'bg-rose-50', iconBg: 'bg-rose-100', text: 'text-rose-600' },
-    cyan: { bg: 'bg-cyan-50', iconBg: 'bg-cyan-100', text: 'text-cyan-600' },
+  const colorClasses: Record<string, { iconBg: string; text: string; border: string }> = {
+    blue: { iconBg: 'bg-blue-500/20', text: 'text-blue-600', border: 'border-blue-200' },
+    emerald: { iconBg: 'bg-emerald-500/20', text: 'text-emerald-600', border: 'border-emerald-200' },
+    purple: { iconBg: 'bg-purple-500/20', text: 'text-purple-600', border: 'border-purple-200' },
+    amber: { iconBg: 'bg-amber-500/20', text: 'text-amber-600', border: 'border-amber-200' },
+    rose: { iconBg: 'bg-rose-500/20', text: 'text-rose-600', border: 'border-rose-200' },
+    cyan: { iconBg: 'bg-cyan-500/20', text: 'text-cyan-600', border: 'border-cyan-200' },
   };
   
   const colors = colorClasses[color] || colorClasses.blue;
@@ -113,10 +113,10 @@ const StatCard = ({
   return (
     <div 
       onClick={onClick}
-      className={`${colors.bg} rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-all duration-300 border border-gray-100`}
+      className={`bg-white/70 backdrop-blur-md rounded-2xl p-6 cursor-pointer hover:shadow-xl transition-all duration-300 border ${colors.border} hover:bg-white/80`}
     >
       <div className="flex items-start justify-between">
-        <div className={`${colors.iconBg} ${colors.text} p-3 rounded-xl`}>
+        <div className={`${colors.iconBg} ${colors.text} p-3 rounded-xl backdrop-blur-sm`}>
           <Icon className="w-6 h-6" />
         </div>
         {trend && (
@@ -128,8 +128,8 @@ const StatCard = ({
       </div>
       
       <div className="mt-4">
-        <p className="text-gray-500 text-sm font-medium">{label}</p>
-        <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+        <p className="text-gray-600 text-sm font-medium">{label}</p>
+        <p className="text-3xl font-bold text-gray-800 mt-1">{value}</p>
       </div>
     </div>
   );
@@ -238,10 +238,10 @@ const QuickActionButton = ({
   return (
     <button
       onClick={onClick}
-      className={`${colorClasses[color]} text-white p-4 rounded-xl font-medium flex flex-col items-center justify-center gap-2 transition-all hover:shadow-lg hover:scale-105`}
+      className={`${colorClasses[color]} text-white py-3 px-2 rounded-xl font-medium flex flex-col items-center justify-center gap-1.5 transition-all hover:shadow-lg hover:scale-105 text-xs`}
     >
-      <Icon className="w-6 h-6" />
-      <span className="text-sm">{label}</span>
+      <Icon className="w-5 h-5" />
+      <span>{label}</span>
     </button>
   );
 };
@@ -714,7 +714,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8 min-h-screen">
         {activeTab === 'overview' && (
           <>
             {/* Stats Grid */}
@@ -767,7 +767,7 @@ const Dashboard = () => {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Patient History Chart */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Patient History</h3>
@@ -824,7 +824,7 @@ const Dashboard = () => {
               </div>
 
               {/* Major Conditions Pie Chart */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Major Conditions</h3>
@@ -871,7 +871,7 @@ const Dashboard = () => {
             </div>
 
             {/* Revenue Chart */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-8">
+            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg mb-8">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">Weekly Revenue</h3>
@@ -910,48 +910,40 @@ const Dashboard = () => {
             </div>
 
             {/* Recent Activity & Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Recent Activity */}
-              <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
-                    <p className="text-gray-500 text-sm">Latest updates from your practice</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Recent Activity - Compact Card */}
+              <div 
+                onClick={() => setActiveTab('activity')}
+                className="bg-white/70 backdrop-blur-md rounded-2xl p-5 border border-white/50 shadow-lg cursor-pointer hover:shadow-xl hover:border-white/70 transition-all flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-blue-100 p-3 rounded-xl">
+                    <Activity className="w-6 h-6 text-blue-600" />
                   </div>
-                  <button 
-                    onClick={() => setActiveTab('activity')}
-                    className="text-blue-600 text-sm font-medium hover:underline"
-                  >
-                    View All
-                  </button>
+                  <div>
+                    <p className="text-gray-900 font-semibold">Recent Activity</p>
+                    <p className="text-gray-500 text-sm">{activities.length || 0} updates today</p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {activities.length > 0 ? (
-                    activities.slice(0, 5).map((activity, index) => (
-                      <ActivityItem key={index} activity={activity} />
-                    ))
-                  ) : (
-                    <div className="text-center py-12">
-                      <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-400">No recent activity</p>
-                    </div>
-                  )}
+                <div className="flex items-center gap-1 text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">
+                  View All
+                  <ArrowUpRight className="w-4 h-4" />
                 </div>
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
-                <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl p-5 border border-white/50 shadow-lg">
+                <h3 className="text-base font-semibold text-gray-900 mb-3">Quick Actions</h3>
+                <div className="grid grid-cols-3 gap-3">
                   <QuickActionButton
                     icon={UserPlus}
-                    label="Add Patient"
+                    label="Patient"
                     color="emerald"
                     onClick={() => setShowAddPatient(true)}
                   />
                   <QuickActionButton
                     icon={Bed}
-                    label="Allocate Bed"
+                    label="Bed"
                     color="blue"
                     onClick={() => setShowAllocateBed(true)}
                   />
@@ -963,19 +955,19 @@ const Dashboard = () => {
                   />
                   <QuickActionButton
                     icon={Calendar}
-                    label="Book Appt"
+                    label="Appointment"
                     color="cyan"
                     onClick={() => setShowBookAppointment(true)}
                   />
                   <QuickActionButton
                     icon={Brain}
-                    label="AI Assistant"
+                    label="AI"
                     color="pink"
                     onClick={() => setShowAISymptomChecker(true)}
                   />
                   <QuickActionButton
                     icon={Pill}
-                label="Medicine"
+                    label="Medicine"
                     color="amber"
                     onClick={() => setShowMedicineOrder(true)}
                   />
@@ -987,7 +979,7 @@ const Dashboard = () => {
 
         {/* Appointments Tab */}
         {activeTab === 'appointments' && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">Appointments</h3>
@@ -1090,7 +1082,7 @@ const Dashboard = () => {
 
         {/* Activity Tab */}
         {activeTab === 'activity' && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">All Activity</h3>
@@ -1122,7 +1114,7 @@ const Dashboard = () => {
 
         {/* Patients Tab */}
         {activeTab === 'patients' && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">My Patients</h3>
@@ -1197,7 +1189,7 @@ const Dashboard = () => {
 
         {/* Payments Tab */}
         {activeTab === 'payments' && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">Payment History</h3>
@@ -1217,7 +1209,7 @@ const Dashboard = () => {
 
         {/* Medicines Tab */}
         {activeTab === 'medicines' && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">Medicine Management</h3>

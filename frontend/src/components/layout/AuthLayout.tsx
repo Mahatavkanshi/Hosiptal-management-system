@@ -11,10 +11,10 @@ const AuthLayout: React.FC = () => {
             <Building2 className="h-12 w-12 text-primary-600" />
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-white drop-shadow-lg">
           Hospital Management System
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-white/90 drop-shadow-md">
           Your health, our priority
         </p>
       </div>

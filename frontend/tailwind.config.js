@@ -5,6 +5,25 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    // Gradient themes - prevent purging
+    'from-indigo-500', 'to-purple-600',
+    'from-pink-400', 'to-rose-500',
+    'from-blue-400', 'to-cyan-400',
+    'from-emerald-400', 'to-teal-400',
+    'from-rose-400', 'to-amber-400',
+    'from-teal-300', 'to-pink-300',
+    'from-purple-600', 'to-cyan-400',
+    'from-rose-300', 'to-pink-300',
+    'from-blue-800', 'to-blue-400',
+    'from-emerald-500', 'to-teal-500',
+    'from-violet-500', 'via-fuchsia-500', 'to-rose-500',
+    'from-slate-700', 'to-slate-600',
+    'from-amber-400', 'to-orange-500',
+    'from-lime-400', 'to-green-500',
+    'from-cyan-500', 'to-blue-600',
+    'from-fuchsia-500', 'to-purple-600',
+  ],
   theme: {
     extend: {
       fontFamily: {

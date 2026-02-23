@@ -22,6 +22,7 @@ export const gradientThemes = [
     id: 'purple-dream',
     name: 'Purple Dream',
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    colors: 'from-indigo-500 to-purple-600',
     isDark: true,
     cardBg: 'bg-indigo-950',
     cardBorder: 'border-indigo-800/50',
@@ -31,6 +32,7 @@ export const gradientThemes = [
     id: 'sunset',
     name: 'Sunset',
     gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    colors: 'from-pink-400 to-rose-500',
     isDark: true,
     cardBg: 'bg-rose-950',
     cardBorder: 'border-rose-800/50',
@@ -40,6 +42,7 @@ export const gradientThemes = [
     id: 'ocean',
     name: 'Ocean',
     gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    colors: 'from-blue-400 to-cyan-400',
     isDark: false,
     cardBg: 'bg-cyan-950',
     cardBorder: 'border-cyan-800/50',
@@ -49,6 +52,7 @@ export const gradientThemes = [
     id: 'mint',
     name: 'Mint',
     gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    colors: 'from-emerald-400 to-teal-400',
     isDark: false,
     cardBg: 'bg-emerald-950',
     cardBorder: 'border-emerald-800/50',
@@ -58,6 +62,7 @@ export const gradientThemes = [
     id: 'peach',
     name: 'Peach',
     gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    colors: 'from-rose-400 to-amber-400',
     isDark: false,
     cardBg: 'bg-orange-950',
     cardBorder: 'border-orange-800/50',
@@ -67,6 +72,7 @@ export const gradientThemes = [
     id: 'cotton-candy',
     name: 'Cotton Candy',
     gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    colors: 'from-teal-300 to-pink-300',
     isDark: false,
     cardBg: 'bg-pink-950',
     cardBorder: 'border-pink-800/50',
@@ -76,6 +82,7 @@ export const gradientThemes = [
     id: 'neon',
     name: 'Neon',
     gradient: 'linear-gradient(135deg, #b721ff 0%, #21d4fd 100%)',
+    colors: 'from-purple-600 to-cyan-400',
     isDark: true,
     cardBg: 'bg-purple-950',
     cardBorder: 'border-purple-800/50',
@@ -85,6 +92,7 @@ export const gradientThemes = [
     id: 'cherry-blossom',
     name: 'Cherry Blossom',
     gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)',
+    colors: 'from-rose-300 to-pink-300',
     isDark: false,
     cardBg: 'bg-pink-950',
     cardBorder: 'border-pink-800/50',
@@ -94,6 +102,7 @@ export const gradientThemes = [
     id: 'midnight',
     name: 'Midnight',
     gradient: 'linear-gradient(135deg, #0c3483 0%, #a2b6df 100%)',
+    colors: 'from-blue-800 to-blue-400',
     isDark: true,
     cardBg: 'bg-blue-950',
     cardBorder: 'border-blue-800/50',
@@ -103,6 +112,7 @@ export const gradientThemes = [
     id: 'forest',
     name: 'Forest',
     gradient: 'linear-gradient(135deg, #42e695 0%, #3bb2b8 100%)',
+    colors: 'from-emerald-500 to-teal-500',
     isDark: false,
     cardBg: 'bg-teal-950',
     cardBorder: 'border-teal-800/50',
@@ -112,6 +122,7 @@ export const gradientThemes = [
     id: 'rainbow',
     name: 'Rainbow',
     gradient: 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 50%, #f43f5e 100%)',
+    colors: 'from-violet-500 via-fuchsia-500 to-rose-500',
     isDark: true,
     cardBg: 'bg-purple-950',
     cardBorder: 'border-purple-800/50',
@@ -404,15 +415,36 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     localStorage.setItem(STORAGE_KEYS.WALLPAPER_OPACITY, opacity.toString());
   };
 
-  // Get effective background style
+  // Get effective background style - White center with subtle theme color on edges
   const getEffectiveBackground = () => {
     const theme = gradientThemes.find(t => t.id === gradientTheme);
-    if (theme) {
-      return theme.gradient;
+    
+    if (isDark) {
+      // Dark mode: Keep the theme gradient
+      return theme?.gradient || 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)';
     }
-    return isDark 
-      ? 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)'
-      : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
+    
+    // Light mode: White center with subtle theme color on edges
+    // Extract color from theme gradient (first color stop)
+    const gradientColors: Record<string, string> = {
+      'purple-dream': '#667eea',
+      'ocean-blue': '#0ea5e9',
+      'emerald-city': '#10b981',
+      'sunset-glow': '#f97316',
+      'berry-smoothie': '#ec4899',
+      'mint-fresh': '#06b6d4',
+      'coral-reef': '#f43f5e',
+      'lavender-fields': '#a855f7',
+      'golden-hour': '#eab308',
+      'slate-professional': '#64748b',
+      'midnight-gradient': '#1e293b',
+      'neon-dreams': '#0f172a',
+    };
+    
+    const accentColor = gradientColors[gradientTheme] || '#667eea';
+    
+    // Create a radial gradient: white in center (70%), theme color fading on edges (30%)
+    return `radial-gradient(circle at 50% 50%, #ffffff 0%, #ffffff 65%, ${accentColor}15 100%)`;
   };
 
   // Get glassmorphism styles
@@ -515,10 +547,12 @@ export const getThemeColors = (theme: string) => {
   const isDarkTheme = currentTheme?.isDark ?? false;
   
   return {
-    // Background
-    bodyBg: currentTheme?.gradient || (isDarkTheme 
-      ? 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)'
-      : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'),
+    isDark: isDarkTheme,
+    
+    // Background - solid color for light mode, gradient for dark mode
+    bodyBg: isDarkTheme 
+      ? (currentTheme?.gradient || 'bg-slate-900')
+      : 'bg-slate-50', // Clean uniform light gray background
     
     // Glassmorphism
     glassBg: isDarkTheme ? 'bg-slate-900/75' : 'bg-white/70',
