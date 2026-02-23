@@ -501,7 +501,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
-              <CreditCard className="h-5 w-5 mr-2 text-primary-600" />
+              <CreditCard className="h-5 w-5 mr-2 text-blue-600" />
               Payment Details
             </h2>
             <button onClick={() => setStep('payment')} className="text-gray-400 hover:text-gray-600">
@@ -523,7 +523,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
               </div>
               <div className="mt-4 pt-4 border-t border-gray-300 flex justify-between items-center">
                 <span className="font-bold text-gray-900">Total Amount:</span>
-                <span className="text-2xl font-bold text-primary-600">₹{totalAmount}</span>
+                <span className="text-2xl font-bold text-blue-600">₹{totalAmount}</span>
               </div>
             </div>
 
@@ -546,7 +546,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
               </p>
               <div className="bg-white rounded p-3 border border-yellow-300">
                 <p className="text-sm font-medium text-gray-900">Doctor UPI ID:</p>
-                <p className="text-lg font-bold text-primary-600">{DOCTOR_UPID}</p>
+                <p className="text-lg font-bold text-blue-600">{DOCTOR_UPID}</p>
                 <p className="text-sm text-gray-600 mt-2">WhatsApp: {DOCTOR_WHATSAPP_NUMBER}</p>
               </div>
             </div>
@@ -564,7 +564,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
               <button
                 onClick={handleProceedAfterPaymentScreenshot}
                 disabled={loading}
-                className="w-full py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 font-medium flex items-center justify-center disabled:opacity-50"
+                className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium flex items-center justify-center disabled:opacity-50 shadow-lg border-2 border-blue-700"
               >
                 {loading ? (
                   <>
@@ -648,7 +648,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
           <h2 className="text-xl font-bold text-gray-900 flex items-center">
-            <Video className="h-5 w-5 mr-2 text-primary-600" />
+            <Video className="h-5 w-5 mr-2 text-blue-600" />
             Book Video Consultation
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -666,7 +666,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
               }}
               className={`flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center ${
                 activeTab === 'doctor-to-patient'
-                  ? 'border-primary-500 text-primary-600'
+                  ? 'border-blue-500 text-blue-600 bg-blue-50'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -680,7 +680,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
               }}
               className={`flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center ${
                 activeTab === 'doctor-to-doctor'
-                  ? 'border-primary-500 text-primary-600'
+                  ? 'border-blue-500 text-blue-600 bg-blue-50'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -719,12 +719,12 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                           setRequirePayment(false);
                         }
                       }}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                       required
                     >
-                      <option value="">Choose a doctor...</option>
+                      <option value="" className="text-gray-900">Choose a doctor...</option>
                       {doctors.map((doctor) => (
-                        <option key={doctor.id} value={doctor.id}>
+                        <option key={doctor.id} value={doctor.id} className="text-gray-900">
                           Dr. {doctor.first_name} {doctor.last_name} - {doctor.specialization} 
                           {doctor.consultation_fee ? `(₹${doctor.consultation_fee})` : '(Free)'}
                         </option>
@@ -741,7 +741,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                       type="text"
                       value={meetingTopic}
                       onChange={(e) => setMeetingTopic(e.target.value)}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                       placeholder="e.g., Case discussion, Second opinion required..."
                       required
                     />
@@ -759,7 +759,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                         value={meetingDate}
                         onChange={(e) => setMeetingDate(e.target.value)}
                         min={today}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                         required
                       />
                     </div>
@@ -773,7 +773,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                         type="time"
                         value={meetingTime}
                         onChange={(e) => setMeetingTime(e.target.value)}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                         required
                       />
                     </div>
@@ -801,7 +801,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 font-medium flex items-center"
+                      className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium flex items-center shadow-lg border-2 border-blue-700"
                     >
                       <Video className="h-4 w-4 mr-2" />
                       Start Video Call
@@ -826,12 +826,12 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                     <select
                       value={selectedPatient}
                       onChange={(e) => setSelectedPatient(e.target.value)}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                       required
                     >
-                      <option value="">Choose a patient...</option>
+                      <option value="" className="text-gray-900">Choose a patient...</option>
                       {patients.map((patient) => (
-                        <option key={patient.id} value={patient.id}>
+                        <option key={patient.id} value={patient.id} className="text-gray-900">
                           {patient.first_name} {patient.last_name} ({patient.age} years)
                           {patient.disease ? ` - ${patient.disease}` : ''}
                         </option>
@@ -848,7 +848,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                       type="text"
                       value={patientDisease}
                       onChange={(e) => setPatientDisease(e.target.value)}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                       placeholder="e.g., Diabetes, Hypertension..."
                     />
                   </div>
@@ -862,7 +862,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                       value={consultationReason}
                       onChange={(e) => setConsultationReason(e.target.value)}
                       rows={3}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                       placeholder="Describe the patient's symptoms and reason for consultation..."
                       required
                     />
@@ -936,7 +936,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                         value={appointmentDate}
                         onChange={(e) => setAppointmentDate(e.target.value)}
                         min={today}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                         required
                       />
                     </div>
@@ -950,7 +950,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                         type="time"
                         value={appointmentTime}
                         onChange={(e) => setAppointmentTime(e.target.value)}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
                         required
                       />
                     </div>
@@ -966,7 +966,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 font-medium"
+                      className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium shadow-lg border-2 border-blue-700"
                     >
                       Continue →
                     </button>
@@ -1038,7 +1038,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
 
                   <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
                     <span className="font-medium text-gray-900">Total Amount:</span>
-                    <span className="text-2xl font-bold text-primary-600 flex items-center">
+                    <span className="text-2xl font-bold text-blue-600 flex items-center">
                       <IndianRupee className="h-6 w-6 mr-1" />
                       {totalAmount}
                     </span>
@@ -1053,12 +1053,12 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                     onClick={() => handlePaymentOptionSelect('with-payment')}
                     className={`p-6 border-2 rounded-lg text-left transition-all ${
                       paymentOption === 'with-payment'
-                        ? 'border-primary-500 bg-primary-50'
-                        : 'border-gray-200 hover:border-primary-300'
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-blue-300'
                     }`}
                   >
                     <div className="flex items-center mb-3">
-                      <CreditCard className="h-8 w-8 text-primary-600 mr-3" />
+                      <CreditCard className="h-8 w-8 text-blue-600 mr-3" />
                       <div>
                         <h4 className="font-medium text-gray-900">Collect Payment</h4>
                         <p className="text-sm text-gray-500">₹{totalAmount}</p>
@@ -1095,7 +1095,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
               {activeTab === 'doctor-to-doctor' && (
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <Phone className="h-5 w-5 text-primary-600" />
+                    <Phone className="h-5 w-5 text-blue-600" />
                     <span className="font-medium text-gray-900">Secure Payment via Razorpay</span>
                   </div>
                   <p className="text-sm text-gray-600">
@@ -1116,7 +1116,7 @@ After payment, please share the screenshot on this WhatsApp number to start the 
                   <button
                     onClick={handlePayment}
                     disabled={loading || billItems.length === 0}
-                    className="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 font-medium flex items-center"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 font-medium flex items-center shadow-lg border-2 border-blue-700"
                   >
                     {loading ? (
                       <>

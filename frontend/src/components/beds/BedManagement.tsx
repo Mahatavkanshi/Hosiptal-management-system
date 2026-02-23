@@ -24,9 +24,17 @@ interface BedManagementProps {
   onAllocateBed: () => void;
 }
 
+const GlassCard = ({ children, className = '', cardColors }: { children: React.ReactNode; className?: string; cardColors: any }) => (
+  <div className={`relative overflow-hidden rounded-3xl backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] ${cardColors.bg} ${cardColors.border} ${className}`}>
+    <div className={`absolute inset-0 bg-gradient-to-br ${cardColors.inputBg} to-transparent pointer-events-none`} />
+    <div className={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${cardColors.inputBg} to-transparent rounded-full blur-3xl pointer-events-none`} />
+    <div className="relative z-10">{children}</div>
+  </div>
+);
+
 const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
   const { user } = useAuth();
-  const { isDark } = useTheme();
+  const { cardColors } = useTheme();
   const [activeView, setActiveView] = useState<'available' | 'occupied'>('available');
   const [availableBeds, setAvailableBeds] = useState<Bed[]>([]);
   const [occupiedBeds, setOccupiedBeds] = useState<Bed[]>([]);
@@ -70,26 +78,15 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
   };
 
   const getWardColor = (wardType: string) => {
-    if (isDark) {
-      const colors: { [key: string]: string } = {
-        general: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
-        semi_private: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
-        private: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
-        icu: 'bg-rose-500/20 text-rose-400 border border-rose-500/30',
-        ccu: 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
-        emergency: 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-      };
-      return colors[wardType] || 'bg-gray-700 text-gray-400 border border-gray-600';
-    }
     const colors: { [key: string]: string } = {
-      general: 'bg-emerald-100 text-emerald-800',
-      semi_private: 'bg-blue-100 text-blue-800',
-      private: 'bg-purple-100 text-purple-800',
-      icu: 'bg-rose-100 text-rose-800',
-      ccu: 'bg-orange-100 text-orange-800',
-      emergency: 'bg-amber-100 text-amber-800'
+      general: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
+      semi_private: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      private: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      icu: 'bg-rose-500/20 text-rose-400 border border-rose-500/30',
+      ccu: 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      emergency: 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
     };
-    return colors[wardType] || 'bg-gray-100 text-gray-800';
+    return colors[wardType] || `${cardColors.inputBgClass} text-slate-400 ${cardColors.inputBorder}`;
   };
 
   const formatWardName = (wardType: string) => {
@@ -98,44 +95,36 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
 
   if (loading) {
     return (
-      <div className={`rounded-2xl overflow-hidden ${
-        isDark 
-          ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 shadow-2xl' 
-          : 'bg-white border border-gray-200 shadow-xl'
-      }`}>
-        <div className={`px-6 py-5 border-b ${isDark ? 'border-slate-700/50' : 'border-gray-200'}`}>
+      <GlassCard cardColors={cardColors}>
+        <div className={`px-6 py-5 border-b ${cardColors.inputBorder}`}>
           <div className="flex items-center justify-between">
-            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Bed Management</h3>
+            <h3 className="text-xl font-bold text-white">Bed Management</h3>
           </div>
         </div>
         <div className="p-6 flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
-      </div>
+      </GlassCard>
     );
   }
 
   return (
-    <div className={`rounded-2xl overflow-hidden ${
-      isDark 
-        ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 shadow-2xl' 
-        : 'bg-white border border-gray-200 shadow-xl'
-    }`}>
+    <GlassCard cardColors={cardColors}>
       {/* Header */}
-      <div className={`px-6 py-5 border-b ${isDark ? 'border-slate-700/50' : 'border-gray-200'}`}>
+      <div className={`px-6 py-5 border-b ${cardColors.inputBorder}`}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className={`p-2.5 rounded-xl ${isDark ? 'bg-cyan-500/20' : 'bg-cyan-100'}`}>
-              <BedDouble className={`h-6 w-6 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
+            <div className="p-2.5 rounded-xl bg-cyan-500/20">
+              <BedDouble className="h-6 w-6 text-cyan-400" />
             </div>
             <div>
-              <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Bed Management</h3>
+              <h3 className="text-xl font-bold text-white">Bed Management</h3>
               <div className="flex items-center space-x-4 mt-1">
-                <span className={`flex items-center text-sm ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                <span className="flex items-center text-sm text-emerald-400">
                   <CheckCircle className="h-4 w-4 mr-1" />
                   {availableBeds.length} Available
                 </span>
-                <span className={`flex items-center text-sm ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
+                <span className="flex items-center text-sm text-blue-400">
                   <Users className="h-4 w-4 mr-1" />
                   {occupiedBeds.length} Occupied
                 </span>
@@ -152,11 +141,7 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
             </button>
             <button 
               onClick={onBack} 
-              className={`px-4 py-2 rounded-xl font-semibold transition-all ${
-                isDark 
-                  ? 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
-              }`}
+              className={`px-4 py-2 rounded-xl font-semibold transition-all text-white/80 border ${cardColors.inputBgClass} ${cardColors.inputBorder} ${cardColors.hover}`}
             >
               ← Back
             </button>
@@ -165,16 +150,14 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
       </div>
 
       {/* Toggle Tabs */}
-      <div className={`border-b ${isDark ? 'border-slate-700/50' : 'border-gray-200'}`}>
+      <div className={`border-b ${cardColors.inputBorder}`}>
         <nav className="-mb-px flex">
           <button
             onClick={() => setActiveView('available')}
             className={`w-1/2 py-4 px-1 text-center border-b-2 font-semibold text-sm transition-all ${
               activeView === 'available'
                 ? 'border-blue-500 text-blue-500'
-                : isDark 
-                  ? 'border-transparent text-gray-400 hover:text-gray-300'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                : 'border-transparent text-white/50 hover:text-white/70'
             }`}
           >
             <div className="flex items-center justify-center">
@@ -187,9 +170,7 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
             className={`w-1/2 py-4 px-1 text-center border-b-2 font-semibold text-sm transition-all ${
               activeView === 'occupied'
                 ? 'border-blue-500 text-blue-500'
-                : isDark 
-                  ? 'border-transparent text-gray-400 hover:text-gray-300'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                : 'border-transparent text-white/50 hover:text-white/70'
             }`}
           >
             <div className="flex items-center justify-center">
@@ -205,14 +186,12 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
         {activeView === 'available' ? (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h4 className={`text-lg font-bold flex items-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <h4 className="text-lg font-bold flex items-center text-white">
                 <BedDouble className="h-5 w-5 mr-2 text-emerald-500" />
                 Available Beds - Assign Patient
               </h4>
               {availableBeds.some((bed: Bed) => bed.id.startsWith('dummy-')) && (
-                <span className={`text-xs px-3 py-1 rounded-full ${
-                  isDark ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-amber-100 text-amber-800'
-                }`}>
+                <span className="text-xs px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
                   Demo Data - Real beds will appear here
                 </span>
               )}
@@ -220,55 +199,55 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
             
             {availableBeds.length === 0 ? (
               <div className="text-center py-12">
-                <BedDouble className={`h-12 w-12 mx-auto mb-4 ${isDark ? 'text-gray-600' : 'text-gray-300'}`} />
-                <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>No available beds found</p>
-                <p className={`text-sm mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>All beds are currently occupied</p>
+                <BedDouble className="h-12 w-12 mx-auto mb-4 text-white/30" />
+                <p className="text-white/50">No available beds found</p>
+                <p className="text-sm mt-1 text-white/40">All beds are currently occupied</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className={`min-w-full ${isDark ? 'bg-slate-900/30' : 'bg-white'}`}>
+                <table className={`min-w-full ${cardColors.inputBg}`}>
                   <thead>
-                    <tr className={`${isDark ? 'bg-slate-800/80' : 'bg-gray-50'}`}>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <tr className={cardColors.inputBg}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Room Number
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Bed Details
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Patient Name
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Supervising Doctor
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Action
                       </th>
                     </tr>
                   </thead>
-                  <tbody className={`divide-y ${isDark ? 'divide-slate-700/50' : 'divide-gray-100'}`}>
+                  <tbody className={`divide-y ${cardColors.tableDivide}`}>
                     {availableBeds.map((bed) => (
-                      <tr key={bed.id} className={`transition-colors ${isDark ? 'hover:bg-slate-800/30' : 'hover:bg-gray-50'}`}>
+                      <tr key={bed.id} className={`transition-colors ${cardColors.rowHover}`}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
-                              <BedDouble className={`h-5 w-5 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
+                            <div className="flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center bg-emerald-500/20">
+                              <BedDouble className="h-5 w-5 text-emerald-400" />
                             </div>
                             <div className="ml-4">
-                              <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              <div className="text-sm font-bold text-white">
                                 Room {bed.room_number}
                               </div>
-                              <div className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                              <div className="text-xs text-white/50">
                                 Floor {bed.floor_number}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                          <div className="text-sm font-medium text-white">
                             Bed {bed.bed_number}
                           </div>
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold mt-1 ${getWardColor(bed.ward_type)}`}>
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold ${getWardColor(bed.ward_type)}`}>
                             {formatWardName(bed.ward_type)}
                           </span>
                         </td>
@@ -276,16 +255,12 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
                           <input
                             type="text"
                             placeholder="Enter patient name"
-                            className={`block w-full rounded-lg shadow-sm px-3 py-2 text-sm transition-all ${
-                              isDark 
-                                ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500' 
-                                : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500'
-                            }`}
+                            className={`block w-full rounded-lg shadow-sm px-3 py-2 text-sm transition-all text-white placeholder-white/30 focus:border-blue-500 focus:ring-blue-500 ${cardColors.inputBgClass} ${cardColors.inputBorder}`}
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className={`flex items-center text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            <UserCheck className={`h-4 w-4 mr-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                          <div className="flex items-center text-sm font-medium text-white/70">
+                            <UserCheck className="h-4 w-4 mr-2 text-white/50" />
                             Dr. {user?.first_name} {user?.last_name}
                           </div>
                         </td>
@@ -306,58 +281,58 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
           </div>
         ) : (
           <div>
-            <h4 className={`text-lg font-bold mb-4 flex items-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h4 className="text-lg font-bold mb-4 flex items-center text-white">
               <Users className="h-5 w-5 mr-2 text-blue-500" />
               Occupied Beds
             </h4>
             
             {occupiedBeds.length === 0 ? (
               <div className="text-center py-12">
-                <Users className={`h-12 w-12 mx-auto mb-4 ${isDark ? 'text-gray-600' : 'text-gray-300'}`} />
-                <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>No occupied beds found</p>
-                <p className={`text-sm mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>No patients are currently admitted</p>
+                <Users className="h-12 w-12 mx-auto mb-4 text-white/30" />
+                <p className="text-white/50">No occupied beds found</p>
+                <p className="text-sm mt-1 text-white/40">No patients are currently admitted</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className={`min-w-full ${isDark ? 'bg-slate-900/30' : 'bg-white'}`}>
+                <table className={`min-w-full ${cardColors.inputBg}`}>
                   <thead>
-                    <tr className={`${isDark ? 'bg-slate-800/80' : 'bg-gray-50'}`}>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <tr className={cardColors.inputBg}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Room / Bed
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Patient Name
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Ward Type
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Supervising Doctor
                       </th>
-                      <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-white/50">
                         Admitted Date
                       </th>
                     </tr>
                   </thead>
-                  <tbody className={`divide-y ${isDark ? 'divide-slate-700/50' : 'divide-gray-100'}`}>
+                  <tbody className={`divide-y ${cardColors.tableDivide}`}>
                     {occupiedBeds.map((bed) => (
-                      <tr key={bed.id} className={`transition-colors ${isDark ? 'hover:bg-slate-800/30' : 'hover:bg-gray-50'}`}>
+                      <tr key={bed.id} className={`transition-colors ${cardColors.rowHover}`}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
-                              <BedDouble className={`h-5 w-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                            <div className="flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center bg-blue-500/20">
+                              <BedDouble className="h-5 w-5 text-blue-400" />
                             </div>
                             <div className="ml-4">
-                              <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              <div className="text-sm font-bold text-white">
                                 Room {bed.room_number}
                               </div>
-                              <div className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                              <div className="text-xs text-white/50">
                                 Bed {bed.bed_number}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-white">
                           {bed.patient_first_name} {bed.patient_last_name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -365,10 +340,10 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
                             {formatWardName(bed.ward_type)}
                           </span>
                         </td>
-                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white/70">
                           Dr. {user?.first_name} {user?.last_name}
                         </td>
-                        <td className={`px-6 py-4 whitespace-nowrap text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white/50">
                           {bed.assigned_date ? new Date(bed.assigned_date).toLocaleDateString() : 'N/A'}
                         </td>
                       </tr>
@@ -380,7 +355,7 @@ const BedManagement = ({ onBack, onAllocateBed }: BedManagementProps) => {
           </div>
         )}
       </div>
-    </div>
+    </GlassCard>
   );
 };
 

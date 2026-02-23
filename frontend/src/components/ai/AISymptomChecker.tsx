@@ -278,11 +278,11 @@ const AISymptomChecker = ({ onClose, preselectedPatientId }: AISymptomCheckerPro
                 <select
                   value={selectedPatient}
                   onChange={(e) => setSelectedPatient(e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 bg-white"
                 >
-                  <option value="">Select a patient...</option>
+                  <option value="" className="text-gray-900">Select a patient...</option>
                   {patients.map((patient) => (
-                    <option key={patient.id} value={patient.id}>
+                    <option key={patient.id} value={patient.id} className="text-gray-900">
                       {patient.first_name} {patient.last_name} ({patient.age} years)
                       {patient.disease ? ` - ${patient.disease}` : ''}
                       {patient.id.startsWith('demo-') ? ' [Demo]' : ''}
@@ -306,7 +306,7 @@ const AISymptomChecker = ({ onClose, preselectedPatientId }: AISymptomCheckerPro
                     value={symptoms}
                     onChange={(e) => setSymptoms(e.target.value)}
                     rows={6}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 pr-12"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 bg-white pr-12"
                     placeholder="Describe the patient's symptoms in detail. Example: Patient has fever for 3 days, headache, body ache, loss of appetite..."
                   />
                   <button

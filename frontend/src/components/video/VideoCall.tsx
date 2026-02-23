@@ -205,7 +205,7 @@ const VideoCall = ({ isOpen, onClose, peerName, roomId, patientId }: VideoCallPr
       {/* Header */}
       <div className="bg-gray-900 text-white px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <Video className="h-5 w-5 text-primary-400" />
+          <Video className="h-5 w-5 text-blue-400" />
           <div>
             <p className="font-medium">{peerName}</p>
             <p className="text-xs text-gray-400">
@@ -234,17 +234,17 @@ const VideoCall = ({ isOpen, onClose, peerName, roomId, patientId }: VideoCallPr
           ) : step === 'connected' ? (
             <div className="w-full h-full flex items-center justify-center bg-gray-900">
               <div className="text-center">
-                <div className="w-32 h-32 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-32 h-32 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-4xl font-bold text-white">{peerName.charAt(0)}</span>
                 </div>
                 <p className="text-white text-2xl font-medium">{peerName}</p>
                 <p className="text-gray-400 mt-2">Video call in progress</p>
-                <p className="text-primary-400 text-xl mt-4 font-mono">{formatDuration(callDuration)}</p>
+                <p className="text-blue-400 text-xl mt-4 font-mono">{formatDuration(callDuration)}</p>
               </div>
             </div>
           ) : (
             <div className="text-center">
-              <Loader2 className="h-12 w-12 text-primary-400 animate-spin mx-auto mb-4" />
+              <Loader2 className="h-12 w-12 text-blue-400 animate-spin mx-auto mb-4" />
               <p className="text-white">Setting up video call...</p>
             </div>
           )}
@@ -310,7 +310,7 @@ const VideoCall = ({ isOpen, onClose, peerName, roomId, patientId }: VideoCallPr
             onClick={toggleScreenShare}
             className={`p-4 rounded-full transition-colors ${
               isScreenSharing 
-                ? 'bg-primary-600 hover:bg-primary-700 text-white' 
+                ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                 : 'bg-gray-700 hover:bg-gray-600 text-white'
             }`}
           >

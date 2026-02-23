@@ -1,220 +1,137 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type Theme = 
-  // Basic modes
-  | 'light' 
-  | 'dark'
-  // Special Gradient Themes
-  | 'midnight-gradient'
-  | 'sunset-boulevard'
-  | 'ocean-breeze'
-  | 'forest-mist'
-  | 'golden-hour'
-  | 'arctic-frost'
-  | 'neon-dreams'
-  | 'warm-ember'
-  | 'deep-space'
-  | 'tropical-paradise'
-  | 'berry-smoothie'
-  | 'monochrome-dark';
+// Accent Colors
+export const accentColors = [
+  { name: 'Blue', value: '#3b82f6', rgb: '59, 130, 246' },
+  { name: 'Purple', value: '#8b5cf6', rgb: '139, 92, 246' },
+  { name: 'Pink', value: '#ec4899', rgb: '236, 72, 153' },
+  { name: 'Red', value: '#ef4444', rgb: '239, 68, 68' },
+  { name: 'Orange', value: '#f97316', rgb: '249, 115, 22' },
+  { name: 'Yellow', value: '#eab308', rgb: '234, 179, 8' },
+  { name: 'Green', value: '#22c55e', rgb: '34, 197, 94' },
+  { name: 'Teal', value: '#14b8a6', rgb: '20, 184, 166' },
+  { name: 'Cyan', value: '#06b6d4', rgb: '6, 182, 212' },
+  { name: 'Indigo', value: '#6366f1', rgb: '99, 102, 241' },
+  { name: 'Violet', value: '#a855f7', rgb: '168, 85, 247' },
+  { name: 'Rose', value: '#f43f5e', rgb: '244, 63, 94' },
+] as const;
 
+// Gradient Themes with card colors that match the theme
+export const gradientThemes = [
+  {
+    id: 'purple-dream',
+    name: 'Purple Dream',
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    isDark: true,
+    cardBg: 'bg-indigo-950',
+    cardBorder: 'border-indigo-800/50',
+    cardHover: 'hover:bg-indigo-900',
+  },
+  {
+    id: 'sunset',
+    name: 'Sunset',
+    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    isDark: true,
+    cardBg: 'bg-rose-950',
+    cardBorder: 'border-rose-800/50',
+    cardHover: 'hover:bg-rose-900',
+  },
+  {
+    id: 'ocean',
+    name: 'Ocean',
+    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    isDark: false,
+    cardBg: 'bg-cyan-950',
+    cardBorder: 'border-cyan-800/50',
+    cardHover: 'hover:bg-cyan-900',
+  },
+  {
+    id: 'mint',
+    name: 'Mint',
+    gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    isDark: false,
+    cardBg: 'bg-emerald-950',
+    cardBorder: 'border-emerald-800/50',
+    cardHover: 'hover:bg-emerald-900',
+  },
+  {
+    id: 'peach',
+    name: 'Peach',
+    gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    isDark: false,
+    cardBg: 'bg-orange-950',
+    cardBorder: 'border-orange-800/50',
+    cardHover: 'hover:bg-orange-900',
+  },
+  {
+    id: 'cotton-candy',
+    name: 'Cotton Candy',
+    gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    isDark: false,
+    cardBg: 'bg-pink-950',
+    cardBorder: 'border-pink-800/50',
+    cardHover: 'hover:bg-pink-900',
+  },
+  {
+    id: 'neon',
+    name: 'Neon',
+    gradient: 'linear-gradient(135deg, #b721ff 0%, #21d4fd 100%)',
+    isDark: true,
+    cardBg: 'bg-purple-950',
+    cardBorder: 'border-purple-800/50',
+    cardHover: 'hover:bg-purple-900',
+  },
+  {
+    id: 'cherry-blossom',
+    name: 'Cherry Blossom',
+    gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)',
+    isDark: false,
+    cardBg: 'bg-pink-950',
+    cardBorder: 'border-pink-800/50',
+    cardHover: 'hover:bg-pink-900',
+  },
+  {
+    id: 'midnight',
+    name: 'Midnight',
+    gradient: 'linear-gradient(135deg, #0c3483 0%, #a2b6df 100%)',
+    isDark: true,
+    cardBg: 'bg-blue-950',
+    cardBorder: 'border-blue-800/50',
+    cardHover: 'hover:bg-blue-900',
+  },
+  {
+    id: 'forest',
+    name: 'Forest',
+    gradient: 'linear-gradient(135deg, #42e695 0%, #3bb2b8 100%)',
+    isDark: false,
+    cardBg: 'bg-teal-950',
+    cardBorder: 'border-teal-800/50',
+    cardHover: 'hover:bg-teal-900',
+  },
+  {
+    id: 'rainbow',
+    name: 'Rainbow',
+    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 50%, #f43f5e 100%)',
+    isDark: true,
+    cardBg: 'bg-purple-950',
+    cardBorder: 'border-purple-800/50',
+    cardHover: 'hover:bg-purple-900',
+  },
+  {
+    id: 'dark',
+    name: 'Dark Mode',
+    gradient: 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)',
+    isDark: true,
+    cardBg: 'bg-slate-950',
+    cardBorder: 'border-slate-800/50',
+    cardHover: 'hover:bg-slate-900',
+  },
+] as const;
+
+// Wallpaper Types
 export type Wallpaper = 'none' | 'grid' | 'dots' | 'medical' | 'gradient-mesh';
 
-interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  wallpaper: Wallpaper;
-  setWallpaper: (wallpaper: Wallpaper) => void;
-  isDark: boolean;
-}
-
-// Theme color definitions with beautiful gradients
-export const themeColors: Record<Theme, {
-  name: string;
-  gradient: string;
-  bgGradient: string;
-  cardBg: string;
-  textPrimary: string;
-  textSecondary: string;
-  borderColor: string;
-  accentColor: string;
-  bodyBg: string;
-  isDark: boolean;
-}> = {
-  // Basic modes
-  light: {
-    name: 'Light Mode',
-    gradient: 'from-blue-400 to-cyan-300',
-    bgGradient: 'from-slate-50 via-blue-50/30 to-purple-50/20',
-    cardBg: 'bg-white/90 backdrop-blur-sm',
-    textPrimary: 'text-slate-800',
-    textSecondary: 'text-slate-500',
-    borderColor: 'border-white/50',
-    accentColor: 'blue',
-    bodyBg: 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20',
-    isDark: false,
-  },
-  dark: {
-    name: 'Dark Mode',
-    gradient: 'from-slate-700 to-slate-900',
-    bgGradient: 'from-slate-900 via-blue-900/50 to-slate-900',
-    cardBg: 'bg-slate-800/90 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-slate-400',
-    borderColor: 'border-slate-700/50',
-    accentColor: 'cyan',
-    bodyBg: 'bg-gradient-to-br from-slate-900 via-blue-900/50 to-slate-900',
-    isDark: true,
-  },
-  
-  // Special Gradient Themes
-  'midnight-gradient': {
-    name: 'Midnight Gradient',
-    gradient: 'from-indigo-600 via-purple-600 to-blue-600',
-    bgGradient: 'from-indigo-950 via-purple-950 to-slate-950',
-    cardBg: 'bg-indigo-900/40 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-indigo-200',
-    borderColor: 'border-indigo-500/30',
-    accentColor: 'indigo',
-    bodyBg: 'bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950',
-    isDark: true,
-  },
-  'sunset-boulevard': {
-    name: 'Sunset Boulevard',
-    gradient: 'from-rose-500 via-pink-500 to-orange-400',
-    bgGradient: 'from-rose-950 via-pink-950 to-orange-950',
-    cardBg: 'bg-rose-900/40 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-rose-200',
-    borderColor: 'border-rose-500/30',
-    accentColor: 'rose',
-    bodyBg: 'bg-gradient-to-br from-rose-950 via-pink-950 to-orange-950',
-    isDark: true,
-  },
-  'ocean-breeze': {
-    name: 'Ocean Breeze',
-    gradient: 'from-cyan-400 via-blue-400 to-teal-400',
-    bgGradient: 'from-cyan-50 via-blue-50 to-teal-50',
-    cardBg: 'bg-white/80 backdrop-blur-sm',
-    textPrimary: 'text-slate-800',
-    textSecondary: 'text-cyan-700',
-    borderColor: 'border-cyan-200/50',
-    accentColor: 'cyan',
-    bodyBg: 'bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50',
-    isDark: false,
-  },
-  'forest-mist': {
-    name: 'Forest Mist',
-    gradient: 'from-emerald-400 via-green-400 to-teal-400',
-    bgGradient: 'from-emerald-50 via-green-50 to-teal-50',
-    cardBg: 'bg-white/80 backdrop-blur-sm',
-    textPrimary: 'text-slate-800',
-    textSecondary: 'text-emerald-700',
-    borderColor: 'border-emerald-200/50',
-    accentColor: 'emerald',
-    bodyBg: 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50',
-    isDark: false,
-  },
-  'golden-hour': {
-    name: 'Golden Hour',
-    gradient: 'from-amber-400 via-orange-400 to-yellow-400',
-    bgGradient: 'from-amber-50 via-orange-50 to-yellow-50',
-    cardBg: 'bg-white/80 backdrop-blur-sm',
-    textPrimary: 'text-slate-800',
-    textSecondary: 'text-amber-700',
-    borderColor: 'border-amber-200/50',
-    accentColor: 'amber',
-    bodyBg: 'bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50',
-    isDark: false,
-  },
-  'arctic-frost': {
-    name: 'Arctic Frost',
-    gradient: 'from-sky-200 via-blue-100 to-white',
-    bgGradient: 'from-slate-50 via-sky-50 to-white',
-    cardBg: 'bg-white/90 backdrop-blur-sm',
-    textPrimary: 'text-slate-800',
-    textSecondary: 'text-sky-600',
-    borderColor: 'border-sky-100/50',
-    accentColor: 'sky',
-    bodyBg: 'bg-gradient-to-br from-slate-50 via-sky-50 to-white',
-    isDark: false,
-  },
-  'neon-dreams': {
-    name: 'Neon Dreams',
-    gradient: 'from-fuchsia-500 via-purple-500 to-pink-500',
-    bgGradient: 'from-fuchsia-950 via-purple-950 to-slate-950',
-    cardBg: 'bg-fuchsia-900/40 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-fuchsia-200',
-    borderColor: 'border-fuchsia-500/30',
-    accentColor: 'fuchsia',
-    bodyBg: 'bg-gradient-to-br from-fuchsia-950 via-purple-950 to-slate-950',
-    isDark: true,
-  },
-  'warm-ember': {
-    name: 'Warm Ember',
-    gradient: 'from-orange-500 via-red-400 to-pink-400',
-    bgGradient: 'from-orange-950 via-red-950 to-pink-950',
-    cardBg: 'bg-orange-900/40 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-orange-200',
-    borderColor: 'border-orange-500/30',
-    accentColor: 'orange',
-    bodyBg: 'bg-gradient-to-br from-orange-950 via-red-950 to-pink-950',
-    isDark: true,
-  },
-  'deep-space': {
-    name: 'Deep Space',
-    gradient: 'from-slate-700 via-blue-800 to-indigo-900',
-    bgGradient: 'from-slate-950 via-blue-950 to-indigo-950',
-    cardBg: 'bg-slate-800/60 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-slate-300',
-    borderColor: 'border-slate-600/50',
-    accentColor: 'slate',
-    bodyBg: 'bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950',
-    isDark: true,
-  },
-  'tropical-paradise': {
-    name: 'Tropical Paradise',
-    gradient: 'from-teal-400 via-emerald-400 to-cyan-400',
-    bgGradient: 'from-teal-50 via-emerald-50 to-cyan-50',
-    cardBg: 'bg-white/80 backdrop-blur-sm',
-    textPrimary: 'text-slate-800',
-    textSecondary: 'text-teal-700',
-    borderColor: 'border-teal-200/50',
-    accentColor: 'teal',
-    bodyBg: 'bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50',
-    isDark: false,
-  },
-  'berry-smoothie': {
-    name: 'Berry Smoothie',
-    gradient: 'from-pink-500 via-rose-400 to-purple-500',
-    bgGradient: 'from-pink-950 via-rose-950 to-purple-950',
-    cardBg: 'bg-pink-900/40 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-pink-200',
-    borderColor: 'border-pink-500/30',
-    accentColor: 'pink',
-    bodyBg: 'bg-gradient-to-br from-pink-950 via-rose-950 to-purple-950',
-    isDark: true,
-  },
-  'monochrome-dark': {
-    name: 'Monochrome Dark',
-    gradient: 'from-gray-600 via-gray-700 to-gray-800',
-    bgGradient: 'from-gray-900 via-gray-950 to-black',
-    cardBg: 'bg-gray-800/60 backdrop-blur-sm',
-    textPrimary: 'text-white',
-    textSecondary: 'text-gray-400',
-    borderColor: 'border-gray-600/50',
-    accentColor: 'gray',
-    bodyBg: 'bg-gradient-to-br from-gray-900 via-gray-950 to-black',
-    isDark: true,
-  },
-};
-
-// Wallpaper patterns
+// Wallpaper Styles
 export const wallpaperStyles: Record<Wallpaper, React.CSSProperties> = {
   none: {},
   grid: {
@@ -237,38 +154,348 @@ export const wallpaperStyles: Record<Wallpaper, React.CSSProperties> = {
   },
 };
 
+// Highlight Colors for Notes
+export const highlightColors = [
+  { name: 'Yellow', value: '#fef08a', textColor: '#854d0e' },
+  { name: 'Green', value: '#86efac', textColor: '#166534' },
+  { name: 'Blue', value: '#93c5fd', textColor: '#1e40af' },
+  { name: 'Pink', value: '#f9a8d4', textColor: '#9d174d' },
+  { name: 'Orange', value: '#fdba74', textColor: '#9a3412' },
+  { name: 'Purple', value: '#d8b4fe', textColor: '#6b21a8' },
+  { name: 'Red', value: '#fca5a5', textColor: '#991b1b' },
+  { name: 'Cyan', value: '#67e8f9', textColor: '#155e75' },
+] as const;
+
+// Theme Mode Type
+type ThemeMode = 'light' | 'dark' | 'system';
+
+// Wallpaper Mode Type
+type WallpaperMode = 'cover' | 'contain' | 'repeat';
+
+// Wallpaper Pattern Type (for backward compatibility)
+export type WallpaperPattern = 'none' | 'grid' | 'dots' | 'medical' | 'gradient-mesh';
+
+// Theme Context Interface
+interface ThemeContextType {
+  // Mode
+  themeMode: ThemeMode;
+  setThemeMode: (mode: ThemeMode) => void;
+  isDark: boolean;
+  
+  // Accent Color
+  accentColor: string;
+  accentColorRgb: string;
+  setAccentColor: (color: string) => void;
+  
+  // Gradient Theme
+  gradientTheme: string;
+  setGradientTheme: (gradient: string) => void;
+  
+  // Backward compatibility - alias for gradientTheme
+  theme: string;
+  setTheme: (theme: string) => void;
+  
+  // Wallpaper Pattern (for backward compatibility)
+  wallpaperPattern: WallpaperPattern;
+  setWallpaperPattern: (pattern: WallpaperPattern) => void;
+  
+  // Wallpaper (custom image)
+  wallpaper: string | null;
+  setWallpaper: (wallpaper: string | null) => void;
+  wallpaperMode: WallpaperMode;
+  setWallpaperMode: (mode: WallpaperMode) => void;
+  wallpaperBlur: number;
+  setWallpaperBlur: (blur: number) => void;
+  wallpaperOpacity: number;
+  setWallpaperOpacity: (opacity: number) => void;
+  
+  // Utility Functions
+  getEffectiveBackground: () => string;
+  getGlassStyles: () => React.CSSProperties;
+  
+  // Theme-aware card colors
+  cardColors: {
+    bg: string;
+    border: string;
+    hover: string;
+    inputBg: string;
+    inputBorder: string;
+    inputBgClass: string;
+    tableBorder: string;
+    tableDivide: string;
+    rowHover: string;
+  };
+}
+
+// Storage Keys
+const STORAGE_KEYS = {
+  THEME_MODE: 'hms-theme-mode',
+  ACCENT_COLOR: 'hms-accent-color',
+  GRADIENT_THEME: 'hms-gradient-theme',
+  WALLPAPER_PATTERN: 'hms-wallpaper-pattern',
+  WALLPAPER: 'hms-wallpaper',
+  WALLPAPER_MODE: 'hms-wallpaper-mode',
+  WALLPAPER_BLUR: 'hms-wallpaper-blur',
+  WALLPAPER_OPACITY: 'hms-wallpaper-opacity',
+};
+
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>('light');
-  const [wallpaper, setWallpaper] = useState<Wallpaper>('none');
+export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // Theme Mode State
+  const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
+  const [isDark, setIsDark] = useState(false);
+  
+  // Accent Color State
+  const [accentColor, setAccentColorState] = useState(accentColors[0].value);
+  const [accentColorRgb, setAccentColorRgb] = useState(accentColors[0].rgb);
+  
+  // Gradient Theme State
+  const [gradientTheme, setGradientThemeState] = useState(gradientThemes[0].id);
+  
+  // Wallpaper Pattern State (backward compatibility)
+  const [wallpaperPattern, setWallpaperPatternState] = useState<WallpaperPattern>('none');
+  
+  // Wallpaper State (custom image)
+  const [wallpaper, setWallpaperState] = useState<string | null>(null);
+  const [wallpaperMode, setWallpaperModeState] = useState<WallpaperMode>('cover');
+  const [wallpaperBlur, setWallpaperBlurState] = useState(0);
+  const [wallpaperOpacity, setWallpaperOpacityState] = useState(8);
 
+  // Load preferences from localStorage on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('hms-theme') as Theme;
-    const savedWallpaper = localStorage.getItem('hms-wallpaper') as Wallpaper;
+    const loadPreferences = () => {
+      try {
+        // Theme Mode
+        const savedThemeMode = localStorage.getItem(STORAGE_KEYS.THEME_MODE) as ThemeMode;
+        if (savedThemeMode && ['light', 'dark', 'system'].includes(savedThemeMode)) {
+          setThemeModeState(savedThemeMode);
+        }
+        
+        // Accent Color
+        const savedAccentColor = localStorage.getItem(STORAGE_KEYS.ACCENT_COLOR);
+        if (savedAccentColor) {
+          const colorObj = accentColors.find(c => c.value === savedAccentColor);
+          if (colorObj) {
+            setAccentColorState(colorObj.value);
+            setAccentColorRgb(colorObj.rgb);
+          }
+        }
+        
+        // Gradient Theme
+        const savedGradient = localStorage.getItem(STORAGE_KEYS.GRADIENT_THEME);
+        if (savedGradient) {
+          setGradientThemeState(savedGradient);
+        }
+        
+        // Wallpaper Pattern (backward compatibility)
+        const savedWallpaperPattern = localStorage.getItem(STORAGE_KEYS.WALLPAPER_PATTERN) as WallpaperPattern;
+        if (savedWallpaperPattern && ['none', 'grid', 'dots', 'medical', 'gradient-mesh'].includes(savedWallpaperPattern)) {
+          setWallpaperPatternState(savedWallpaperPattern);
+        }
+        
+        // Wallpaper (custom image)
+        const savedWallpaper = localStorage.getItem(STORAGE_KEYS.WALLPAPER);
+        if (savedWallpaper) {
+          setWallpaperState(savedWallpaper);
+        }
+        
+        // Wallpaper Settings
+        const savedWallpaperMode = localStorage.getItem(STORAGE_KEYS.WALLPAPER_MODE) as WallpaperMode;
+        if (savedWallpaperMode) {
+          setWallpaperModeState(savedWallpaperMode);
+        }
+        
+        const savedWallpaperBlur = localStorage.getItem(STORAGE_KEYS.WALLPAPER_BLUR);
+        if (savedWallpaperBlur) {
+          setWallpaperBlurState(parseInt(savedWallpaperBlur));
+        }
+        
+        const savedWallpaperOpacity = localStorage.getItem(STORAGE_KEYS.WALLPAPER_OPACITY);
+        if (savedWallpaperOpacity) {
+          setWallpaperOpacityState(parseInt(savedWallpaperOpacity));
+        }
+      } catch (error) {
+        console.error('Error loading theme preferences:', error);
+      }
+    };
     
-    if (savedTheme && themeColors[savedTheme]) {
-      setTheme(savedTheme);
-    }
-    if (savedWallpaper) {
-      setWallpaper(savedWallpaper);
-    }
+    loadPreferences();
   }, []);
 
+  // Handle system theme preference
   useEffect(() => {
-    localStorage.setItem('hms-theme', theme);
-    localStorage.setItem('hms-wallpaper', wallpaper);
-    document.documentElement.setAttribute('data-theme', theme);
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
-    // Apply theme-based classes to body
-    const colors = themeColors[theme];
-    document.body.className = colors.bodyBg;
-  }, [theme, wallpaper]);
+    const handleChange = () => {
+      if (themeMode === 'system') {
+        setIsDark(mediaQuery.matches);
+        document.documentElement.classList.toggle('dark', mediaQuery.matches);
+      }
+    };
+    
+    if (themeMode === 'system') {
+      setIsDark(mediaQuery.matches);
+      document.documentElement.classList.toggle('dark', mediaQuery.matches);
+    } else {
+      setIsDark(themeMode === 'dark');
+      document.documentElement.classList.toggle('dark', themeMode === 'dark');
+    }
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [themeMode]);
 
-  const isDark = themeColors[theme].isDark;
+  // Update CSS Variables when accent color changes
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent-color', accentColor);
+    document.documentElement.style.setProperty('--accent-color-rgb', accentColorRgb);
+  }, [accentColor, accentColorRgb]);
+
+  // Save functions
+  const setThemeMode = (mode: ThemeMode) => {
+    setThemeModeState(mode);
+    localStorage.setItem(STORAGE_KEYS.THEME_MODE, mode);
+  };
+
+  const setAccentColor = (color: string) => {
+    const colorObj = accentColors.find(c => c.value === color);
+    if (colorObj) {
+      setAccentColorState(colorObj.value);
+      setAccentColorRgb(colorObj.rgb);
+      localStorage.setItem(STORAGE_KEYS.ACCENT_COLOR, colorObj.value);
+    }
+  };
+
+  const setGradientTheme = (gradient: string) => {
+    setGradientThemeState(gradient);
+    localStorage.setItem(STORAGE_KEYS.GRADIENT_THEME, gradient);
+  };
+
+  // Backward compatibility alias
+  const setTheme = setGradientTheme;
+
+  const setWallpaperPattern = (pattern: WallpaperPattern) => {
+    setWallpaperPatternState(pattern);
+    localStorage.setItem(STORAGE_KEYS.WALLPAPER_PATTERN, pattern);
+  };
+
+  const setWallpaper = (wallpaper: string | null) => {
+    setWallpaperState(wallpaper);
+    if (wallpaper) {
+      localStorage.setItem(STORAGE_KEYS.WALLPAPER, wallpaper);
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.WALLPAPER);
+    }
+  };
+
+  const setWallpaperMode = (mode: WallpaperMode) => {
+    setWallpaperModeState(mode);
+    localStorage.setItem(STORAGE_KEYS.WALLPAPER_MODE, mode);
+  };
+
+  const setWallpaperBlur = (blur: number) => {
+    setWallpaperBlurState(blur);
+    localStorage.setItem(STORAGE_KEYS.WALLPAPER_BLUR, blur.toString());
+  };
+
+  const setWallpaperOpacity = (opacity: number) => {
+    setWallpaperOpacityState(opacity);
+    localStorage.setItem(STORAGE_KEYS.WALLPAPER_OPACITY, opacity.toString());
+  };
+
+  // Get effective background style
+  const getEffectiveBackground = () => {
+    const theme = gradientThemes.find(t => t.id === gradientTheme);
+    if (theme) {
+      return theme.gradient;
+    }
+    return isDark 
+      ? 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)'
+      : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
+  };
+
+  // Get glassmorphism styles
+  const getGlassStyles = (): React.CSSProperties => {
+    const baseOpacity = isDark ? 0.75 : 0.7;
+    return {
+      background: isDark 
+        ? `rgba(20, 20, 25, ${baseOpacity})`
+        : `rgba(255, 255, 255, ${baseOpacity})`,
+      backdropFilter: `blur(${20}px) saturate(180%)`,
+      WebkitBackdropFilter: `blur(${20}px) saturate(180%)`,
+      border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'}`,
+      boxShadow: isDark 
+        ? '0 8px 32px 0 rgba(0, 0, 0, 0.5)'
+        : '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+    };
+  };
+
+  // Get theme-aware card colors
+  const cardColors = React.useMemo(() => {
+    const currentTheme = gradientThemes.find(t => t.id === gradientTheme);
+    if (!currentTheme) {
+      return {
+        bg: 'bg-slate-950',
+        border: 'border-slate-800/60',
+        hover: 'hover:bg-slate-900',
+        inputBg: 'bg-slate-900/60',
+        inputBorder: 'border-slate-800/60',
+        inputBgClass: 'bg-slate-900',
+        tableBorder: 'border-slate-800/60',
+        tableDivide: 'divide-slate-800/30',
+        rowHover: 'hover:bg-slate-900/40',
+      };
+    }
+    
+    // Extract color name from cardBg (e.g., 'bg-emerald-950' -> 'emerald')
+    const colorMatch = currentTheme.cardBg.match(/bg-(\w+)-950/);
+    const colorName = colorMatch ? colorMatch[1] : 'slate';
+    
+    return {
+      bg: currentTheme.cardBg,
+      border: currentTheme.cardBorder,
+      hover: currentTheme.cardHover,
+      inputBg: `bg-${colorName}-900/60`,
+      inputBorder: `border-${colorName}-800/60`,
+      inputBgClass: `bg-${colorName}-900`,
+      tableBorder: `border-${colorName}-800/60`,
+      tableDivide: `divide-${colorName}-800/30`,
+      rowHover: `hover:bg-${colorName}-900/40`,
+    };
+  }, [gradientTheme]);
+
+  const value: ThemeContextType = {
+    themeMode,
+    setThemeMode,
+    isDark,
+    accentColor,
+    accentColorRgb,
+    setAccentColor,
+    gradientTheme,
+    setGradientTheme,
+    // Backward compatibility aliases
+    theme: gradientTheme,
+    setTheme,
+    // Wallpaper Pattern (backward compatibility)
+    wallpaperPattern,
+    setWallpaperPattern,
+    // Wallpaper (custom image)
+    wallpaper,
+    setWallpaper,
+    wallpaperMode,
+    setWallpaperMode,
+    wallpaperBlur,
+    setWallpaperBlur,
+    wallpaperOpacity,
+    setWallpaperOpacity,
+    getEffectiveBackground,
+    getGlassStyles,
+    cardColors,
+  };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, wallpaper, setWallpaper, isDark }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
@@ -282,20 +509,46 @@ export const useTheme = () => {
   return context;
 };
 
-export const getThemeColors = (theme: Theme) => themeColors[theme];
-export const getWallpaperStyle = (wallpaper: Wallpaper) => wallpaperStyles[wallpaper];
+// Helper function to get theme colors (for backward compatibility)
+export const getThemeColors = (theme: string) => {
+  const currentTheme = gradientThemes.find(t => t.id === theme);
+  const isDarkTheme = currentTheme?.isDark ?? false;
+  
+  return {
+    // Background
+    bodyBg: currentTheme?.gradient || (isDarkTheme 
+      ? 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)'
+      : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'),
+    
+    // Glassmorphism
+    glassBg: isDarkTheme ? 'bg-slate-900/75' : 'bg-white/70',
+    glassBorder: isDarkTheme ? 'border-white/10' : 'border-black/5',
+    glassHover: isDarkTheme ? 'bg-slate-800/60' : 'bg-white/80',
+    
+    // Text
+    textPrimary: isDarkTheme ? 'text-white' : 'text-slate-900',
+    textSecondary: isDarkTheme ? 'text-slate-400' : 'text-slate-600',
+    
+    // Gradient for headers
+    gradient: currentTheme?.gradient || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    
+    // Other properties for compatibility
+    borderColor: isDarkTheme ? 'border-slate-700' : 'border-slate-200',
+    cardBg: isDarkTheme ? 'bg-slate-800/50' : 'bg-white/80',
+  };
+};
 
-export const gradientThemes = [
-  { id: 'midnight-gradient', name: 'Midnight Gradient', colors: 'from-indigo-600 via-purple-600 to-blue-600' },
-  { id: 'sunset-boulevard', name: 'Sunset Boulevard', colors: 'from-rose-500 via-pink-500 to-orange-400' },
-  { id: 'ocean-breeze', name: 'Ocean Breeze', colors: 'from-cyan-400 via-blue-400 to-teal-400' },
-  { id: 'forest-mist', name: 'Forest Mist', colors: 'from-emerald-400 via-green-400 to-teal-400' },
-  { id: 'golden-hour', name: 'Golden Hour', colors: 'from-amber-400 via-orange-400 to-yellow-400' },
-  { id: 'arctic-frost', name: 'Arctic Frost', colors: 'from-sky-200 via-blue-100 to-white' },
-  { id: 'neon-dreams', name: 'Neon Dreams', colors: 'from-fuchsia-500 via-purple-500 to-pink-500' },
-  { id: 'warm-ember', name: 'Warm Ember', colors: 'from-orange-500 via-red-400 to-pink-400' },
-  { id: 'deep-space', name: 'Deep Space', colors: 'from-slate-700 via-blue-800 to-indigo-900' },
-  { id: 'tropical-paradise', name: 'Tropical Paradise', colors: 'from-teal-400 via-emerald-400 to-cyan-400' },
-  { id: 'berry-smoothie', name: 'Berry Smoothie', colors: 'from-pink-500 via-rose-400 to-purple-500' },
-  { id: 'monochrome-dark', name: 'Monochrome Dark', colors: 'from-gray-600 via-gray-700 to-gray-800' },
-] as const;
+// Helper function to get wallpaper styles (for backward compatibility)
+export const getWallpaperStyle = (wallpaper: string | null): React.CSSProperties => {
+  if (!wallpaper) return {};
+  
+  return {
+    backgroundImage: `url(${wallpaper})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    opacity: 0.08,
+  };
+};
+
+export default ThemeContext;

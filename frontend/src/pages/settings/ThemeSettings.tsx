@@ -17,13 +17,13 @@ import {
   getThemeColors, 
   gradientThemes,
   wallpaperStyles,
-  type Wallpaper
+  type WallpaperPattern
 } from '../../contexts/ThemeContext';
 
 type TabType = 'color' | 'special' | 'wallpaper';
 
 const ThemeSettings: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
-  const { theme, setTheme, wallpaper, setWallpaper, isDark } = useTheme();
+  const { theme, setTheme, wallpaperPattern, setWallpaperPattern, isDark } = useTheme();
   const [activeTab, setActiveTab] = useState<TabType>('special');
   const colors = getThemeColors(theme);
 
@@ -42,7 +42,7 @@ const ThemeSettings: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
     },
   ];
 
-  const wallpapers: { id: Wallpaper; name: string; icon: React.ReactNode }[] = [
+  const wallpapers: { id: WallpaperPattern; name: string; icon: React.ReactNode }[] = [
     { id: 'none', name: 'None', icon: <div className="w-4 h-4 border border-current rounded" /> },
     { id: 'grid', name: 'Grid', icon: <Grid3X3 className="h-4 w-4" /> },
     { id: 'dots', name: 'Dots', icon: <CircleDot className="h-4 w-4" /> },
@@ -77,7 +77,7 @@ const ThemeSettings: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
       {/* Background Pattern based on wallpaper */}
       <div 
         className="fixed inset-0 pointer-events-none transition-all duration-500"
-        style={wallpaperStyles[wallpaper]}
+        style={wallpaperStyles[wallpaperPattern]}
       />
 
       {/* Header */}
@@ -256,9 +256,9 @@ const ThemeSettings: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
                   {wallpapers.map((w) => (
                     <button
                       key={w.id}
-                      onClick={() => setWallpaper(w.id)}
+                      onClick={() => setWallpaperPattern(w.id)}
                       className={`relative group p-6 rounded-2xl transition-all duration-300 ${
-                        wallpaper === w.id
+                        wallpaperPattern === w.id
                           ? 'ring-4 ring-blue-500/30 scale-[1.02]'
                           : 'hover:scale-[1.01]'
                       } ${
@@ -278,7 +278,7 @@ const ThemeSettings: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
                         
                         <span className={`font-medium ${colors.textPrimary}`}>{w.name}</span>
 
-                        {wallpaper === w.id && (
+                        {wallpaperPattern === w.id && (
                           <div className={`absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center ${
                             isDark ? 'bg-blue-500' : 'bg-blue-500 text-white'
                           }`}>
@@ -302,12 +302,12 @@ const ThemeSettings: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
                       background: isDark 
                         ? 'linear-gradient(to bottom right, rgba(30, 41, 59, 0.8), rgba(30, 58, 138, 0.6))'
                         : 'linear-gradient(to bottom right, rgba(255,255,255,0.9), rgba(219, 234, 254, 0.8))',
-                      ...wallpaperStyles[wallpaper]
+                      ...wallpaperStyles[wallpaperPattern]
                     }}
                   >
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className={`text-sm font-medium ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
-                        {wallpaper === 'none' ? 'No pattern selected' : `${wallpapers.find(w => w.id === wallpaper)?.name} pattern`}
+                        {wallpaperPattern === 'none' ? 'No pattern selected' : `${wallpapers.find(w => w.id === wallpaperPattern)?.name} pattern`}
                       </span>
                     </div>
                   </div>

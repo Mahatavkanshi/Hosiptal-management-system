@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IndianRupee, Search, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Search, AlertCircle, CheckCircle, Clock, Filter, CreditCard } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface Payment {
@@ -11,17 +11,29 @@ interface Payment {
   status: string;
 }
 
+const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
+  const { cardColors } = useTheme();
+  
+  return (
+    <div className={`relative overflow-hidden rounded-3xl ${cardColors.bg} backdrop-blur-xl border ${cardColors.border} shadow-[0_8px_32px_rgba(0,0,0,0.5)] ${className}`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent pointer-events-none" />
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+};
+
 const OutstandingPayments = () => {
-  const { isDark } = useTheme();
+  const { cardColors } = useTheme();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  
+
   useEffect(() => {
-    // Load from localStorage
     const savedPayments = JSON.parse(localStorage.getItem('payments') || '[]');
     
-    // Add some demo unpaid bills if empty
     if (savedPayments.length === 0) {
       const demoPayments: Payment[] = [
         {
@@ -29,7 +41,7 @@ const OutstandingPayments = () => {
           patient_name: 'John Doe',
           amount: 3850,
           payment_method: 'pending',
-          date: new Date(Date.now() - 86400000).toISOString(), // yesterday
+          date: new Date(Date.now() - 86400000).toISOString(),
           status: 'pending'
         },
         {
@@ -37,7 +49,7 @@ const OutstandingPayments = () => {
           patient_name: 'Jane Smith',
           amount: 2500,
           payment_method: 'pending',
-          date: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          date: new Date(Date.now() - 172800000).toISOString(),
           status: 'overdue'
         }
       ];
@@ -67,167 +79,125 @@ const OutstandingPayments = () => {
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className={`rounded-2xl border-2 shadow-2xl overflow-hidden backdrop-blur-sm ${
-      isDark 
-        ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-600 shadow-slate-900/80' 
-        : 'bg-gradient-to-br from-white to-gray-50 border-gray-300 shadow-gray-300/60'
-    }`}>
-      <div className={`p-6 ${isDark ? 'bg-gradient-to-br from-slate-800/80 to-slate-900/80' : 'bg-gradient-to-br from-white to-gray-50'}`}>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <GlassCard className="p-6">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-purple-500/20">
+            <CreditCard className="w-6 h-6 text-purple-400" />
+          </div>
           <div>
-            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Payment History</h3>
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Track all payments and outstanding bills</p>
-          </div>
-          
-          <div className="flex gap-4">
-            <div className={`text-right px-4 py-2 rounded-xl border-2 ${
-              isDark 
-                ? 'bg-rose-500/10 border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.3)]' 
-                : 'bg-rose-50 border-rose-200 shadow-rose-200/50'
-            }`}>
-              <p className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>Outstanding</p>
-              <p className="text-2xl font-black text-rose-500 drop-shadow-lg">₹{totalOutstanding.toLocaleString()}</p>
-            </div>
-            <div className={`text-right px-4 py-2 rounded-xl border-2 ${
-              isDark 
-                ? 'bg-emerald-500/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.3)]' 
-                : 'bg-emerald-50 border-emerald-200 shadow-emerald-200/50'
-            }`}>
-              <p className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>Collected</p>
-              <p className="text-2xl font-black text-emerald-500 drop-shadow-lg">₹{totalCollected.toLocaleString()}</p>
-            </div>
+            <h3 className="text-xl font-bold text-white">Payment History</h3>
+            <p className="text-white/50 text-sm">Track all payments and outstanding bills</p>
           </div>
         </div>
-
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
-            <input
-              type="text"
-              placeholder="Search patient or receipt..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                isDark 
-                  ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-400' 
-                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-              }`}
-            />
+        
+        {/* Stats Cards */}
+        <div className="flex gap-4">
+          <div className="px-5 py-3 rounded-2xl bg-rose-500/10 border border-rose-500/30">
+            <p className="text-xs font-bold uppercase tracking-wider text-rose-400 mb-1">Outstanding</p>
+            <p className="text-2xl font-black text-rose-400">₹{totalOutstanding.toLocaleString()}</p>
           </div>
-          
-          <div className="flex gap-2">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                filter === 'all'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                  : isDark 
-                    ? 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
-              }`}
-            >
-              All
-            </button>
-            
-            <button
-              onClick={() => setFilter('paid')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center transition-all ${
-                filter === 'paid'
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30'
-                  : isDark 
-                    ? 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
-              }`}
-            >
-              <CheckCircle className="h-4 w-4 mr-1" />
-              Paid
-            </button>
-            
-            <button
-              onClick={() => setFilter('pending')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center transition-all ${
-                filter === 'pending'
-                  ? 'bg-amber-600 text-white shadow-lg shadow-amber-500/30'
-                  : isDark 
-                    ? 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
-              }`}
-            >
-              <AlertCircle className="h-4 w-4 mr-1" />
-              Pending
-            </button>
+          <div className="px-5 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">Collected</p>
+            <p className="text-2xl font-black text-emerald-400">₹{totalCollected.toLocaleString()}</p>
           </div>
-        </div>
-
-        {/* Payments List */}
-        <div className="overflow-x-auto">
-          <table className={`min-w-full divide-y ${isDark ? 'divide-slate-700' : 'divide-gray-200'}`}>
-            <thead className={`${isDark ? 'bg-slate-700/50' : 'bg-gray-50'}`}>
-              <tr>
-                <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Receipt
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Patient
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Amount
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Date
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody className={`divide-y ${isDark ? 'divide-slate-700 bg-slate-800' : 'divide-gray-200 bg-white'}`}>
-              {filteredPayments.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className={`px-6 py-8 text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                    No payments found
-                  </td>
-                </tr>
-              ) : (
-                filteredPayments.map((payment, index) => (
-                  <tr key={index} className={`transition-colors ${isDark ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'}`}>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-mono ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>
-                      {payment.receipt_number}
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {payment.patient_name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">
-                      <span className={payment.status === 'completed' ? 'text-emerald-500' : isDark ? 'text-gray-300' : 'text-gray-900'}>
-                        ₹{payment.amount.toLocaleString()}
-                      </span>
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {new Date(payment.date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full border ${
-                        payment.status === 'completed'
-                          ? (isDark ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' : 'bg-emerald-100 border-emerald-200 text-emerald-800')
-                          : payment.status === 'overdue'
-                          ? (isDark ? 'bg-rose-500/20 border-rose-500/30 text-rose-400' : 'bg-rose-100 border-rose-200 text-rose-800')
-                          : (isDark ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'bg-amber-100 border-amber-200 text-amber-800')
-                      }`}>
-                        {payment.status === 'completed' && <CheckCircle className="h-3 w-3 mr-1" />}
-                        {payment.status === 'overdue' && <AlertCircle className="h-3 w-3 mr-1" />}
-                        {payment.status === 'pending' && <Clock className="h-3 w-3 mr-1" />}
-                        {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
         </div>
       </div>
-    </div>
+
+      {/* Search & Filters */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+          <input
+            type="text"
+            placeholder="Search patient or receipt..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={"w-full pl-12 pr-4 py-3 rounded-2xl " + cardColors.inputBg + " " + cardColors.inputBorder + " text-white placeholder-white/30 focus:outline-none focus:border-slate-700 transition-all"}
+          />
+        </div>
+        
+        <div className="flex gap-2">
+          {[
+            { key: 'all', label: 'All', icon: Filter },
+            { key: 'paid', label: 'Paid', icon: CheckCircle },
+            { key: 'pending', label: 'Pending', icon: AlertCircle },
+          ].map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setFilter(key as any)}
+              className={"px-4 py-3 rounded-2xl text-sm font-semibold flex items-center gap-2 transition-all " + (filter === key ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : cardColors.inputBg + " text-white/70 " + cardColors.inputBgClass + " " + cardColors.inputBorder)}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Payments Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className={"border-b " + cardColors.tableBorder}>
+              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Receipt</th>
+              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Patient</th>
+              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Amount</th>
+              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Date</th>
+              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody className={"divide-y " + cardColors.tableDivide}>
+            {filteredPayments.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-12 text-center">
+                  <div className={"w-16 h-16 mx-auto mb-4 rounded-2xl " + cardColors.inputBg + " flex items-center justify-center"}>
+                    <CreditCard className="w-8 h-8 text-white/30" />
+                  </div>
+                  <p className="text-white/50">No payments found</p>
+                </td>
+              </tr>
+            ) : (
+              filteredPayments.map((payment, index) => (
+                <tr key={index} className={cardColors.rowHover + " transition-colors"}>
+                  <td className="py-4 px-4">
+                    <span className="font-mono text-white/70 text-sm">{payment.receipt_number}</span>
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className="text-white font-medium">{payment.patient_name}</span>
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className={`font-bold ${
+                      payment.status === 'completed' ? 'text-emerald-400' : 'text-white'
+                    }`}>
+                      ₹{payment.amount.toLocaleString()}
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 text-white/50 text-sm">
+                    {new Date(payment.date).toLocaleDateString()}
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${
+                      payment.status === 'completed'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                        : payment.status === 'overdue'
+                        ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                        : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                    }`}>
+                      {payment.status === 'completed' && <CheckCircle className="w-3 h-3" />}
+                      {payment.status === 'overdue' && <AlertCircle className="w-3 h-3" />}
+                      {payment.status === 'pending' && <Clock className="w-3 h-3" />}
+                      {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </GlassCard>
   );
 };
 

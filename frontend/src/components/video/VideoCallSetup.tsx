@@ -226,7 +226,7 @@ const VideoCallSetup = ({ isOpen, onClose, onStartCall, peerName, appointmentTyp
         {/* Header */}
         <div className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Video className="h-6 w-6 text-primary-400" />
+            <Video className="h-6 w-6 text-blue-400" />
             <div>
               <h2 className="text-lg font-bold">Video Call Setup</h2>
               <p className="text-sm text-gray-400">
@@ -243,22 +243,22 @@ const VideoCallSetup = ({ isOpen, onClose, onStartCall, peerName, appointmentTyp
           {/* Progress Steps */}
           <div className="w-64 bg-gray-50 border-r border-gray-200 p-6">
             <div className="space-y-6">
-              <div className={`flex items-center gap-3 ${step === 'permissions' ? 'text-primary-600' : cameraPermission === 'granted' ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'permissions' ? 'bg-primary-100' : cameraPermission === 'granted' ? 'bg-green-100' : 'bg-gray-200'}`}>
+              <div className={`flex items-center gap-3 ${step === 'permissions' ? 'text-blue-600' : cameraPermission === 'granted' ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'permissions' ? 'bg-blue-100' : cameraPermission === 'granted' ? 'bg-green-100' : 'bg-gray-200'}`}>
                   {cameraPermission === 'granted' ? <CheckCircle className="h-5 w-5" /> : <span>1</span>}
                 </div>
                 <span className="font-medium">Permissions</span>
               </div>
 
-              <div className={`flex items-center gap-3 ${step === 'test' ? 'text-primary-600' : step === 'settings' ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'test' ? 'bg-primary-100' : step === 'settings' ? 'bg-green-100' : 'bg-gray-200'}`}>
+              <div className={`flex items-center gap-3 ${step === 'test' ? 'text-blue-600' : step === 'settings' ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'test' ? 'bg-blue-100' : step === 'settings' ? 'bg-green-100' : 'bg-gray-200'}`}>
                   {step === 'settings' ? <CheckCircle className="h-5 w-5" /> : <span>2</span>}
                 </div>
                 <span className="font-medium">Test Video</span>
               </div>
 
-              <div className={`flex items-center gap-3 ${step === 'settings' ? 'text-primary-600' : 'text-gray-400'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'settings' ? 'bg-primary-100' : 'bg-gray-200'}`}>
+              <div className={`flex items-center gap-3 ${step === 'settings' ? 'text-blue-600' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'settings' ? 'bg-blue-100' : 'bg-gray-200'}`}>
                   <span>3</span>
                 </div>
                 <span className="font-medium">Settings</span>
@@ -365,7 +365,7 @@ const VideoCallSetup = ({ isOpen, onClose, onStartCall, peerName, appointmentTyp
                   <button
                     onClick={requestPermissions}
                     disabled={isLoading || cameraPermission === 'denied'}
-                    className="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg border-2 border-blue-700"
                   >
                     {isLoading ? 'Requesting...' : cameraPermission === 'denied' ? 'Permissions Blocked' : 'Allow Access'}
                     {!isLoading && cameraPermission !== 'denied' && <ArrowRight className="h-4 w-4" />}
@@ -438,7 +438,7 @@ const VideoCallSetup = ({ isOpen, onClose, onStartCall, peerName, appointmentTyp
                   
                   <button
                     onClick={() => setStep('settings')}
-                    className="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 flex items-center gap-2"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2 shadow-lg border-2 border-blue-700"
                   >
                     Continue to Settings
                     <ArrowRight className="h-4 w-4" />
@@ -467,7 +467,7 @@ const VideoCallSetup = ({ isOpen, onClose, onStartCall, peerName, appointmentTyp
                         }
                         setTimeout(startTestVideo, 100);
                       }}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 bg-white"
                     >
                       {cameras.map((camera) => (
                         <option key={camera.deviceId} value={camera.deviceId}>
@@ -489,7 +489,7 @@ const VideoCallSetup = ({ isOpen, onClose, onStartCall, peerName, appointmentTyp
                         }
                         setTimeout(startTestVideo, 100);
                       }}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 bg-white"
                     >
                       {microphones.map((mic) => (
                         <option key={mic.deviceId} value={mic.deviceId}>

@@ -135,12 +135,12 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
             <select
               value={selectedPatient}
               onChange={(e) => setSelectedPatient(e.target.value)}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               required
             >
               <option value="">Choose a patient...</option>
               {patients.map((patient) => (
-                <option key={patient.id} value={patient.id}>
+                <option key={patient.id} value={patient.id} className="text-gray-900">
                   {patient.first_name} {patient.last_name} ({patient.age} years)
                 </option>
               ))}
@@ -159,12 +159,12 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
             <select
               value={selectedBed}
               onChange={(e) => setSelectedBed(e.target.value)}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               required
             >
               <option value="">Choose a bed...</option>
               {availableBeds.map((bed) => (
-                <option key={bed.id} value={bed.id}>
+                <option key={bed.id} value={bed.id} className="text-gray-900">
                   Bed {bed.bed_number} - Room {bed.room_number} ({bed.ward_type}) - Floor {bed.floor_number}
                 </option>
               ))}
@@ -197,7 +197,7 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               placeholder="Any special instructions or notes..."
             />
           </div>
@@ -213,7 +213,7 @@ const AllocateBedModal = ({ onClose, onSuccess }: AllocateBedModalProps) => {
             <button
               type="submit"
               disabled={loading || !selectedPatient || !selectedBed}
-              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 font-semibold shadow-lg"
             >
               {loading ? 'Allocating...' : 'Allocate Bed'}
             </button>

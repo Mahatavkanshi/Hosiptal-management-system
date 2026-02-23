@@ -582,7 +582,7 @@ const MedicineOrderModal = ({ onClose, lowStockMedicines, onSuccess }: MedicineO
                   className={`px-4 py-2 rounded-lg font-semibold transition-all ${
                     isDark 
                       ? 'bg-emerald-500/80 text-white hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 disabled:opacity-50' 
-                      : 'bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50'
+                      : 'bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 shadow-lg border-2 border-blue-700'
                   }`}
                 >
                   {loading ? 'Creating Order...' : 'Create Order'}

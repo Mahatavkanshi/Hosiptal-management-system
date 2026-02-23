@@ -157,7 +157,7 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
             
             <button
               onClick={onSuccess}
-              className="w-full bg-primary-600 text-white py-2 rounded-md hover:bg-primary-700"
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-semibold shadow-lg border-2 border-blue-700"
             >
               Done
             </button>
@@ -172,7 +172,7 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
           <h2 className="text-xl font-bold text-gray-900 flex items-center">
-            <Building2 className="h-5 w-5 mr-2 text-primary-600" />
+            <Building2 className="h-5 w-5 mr-2 text-blue-600" />
             Pay Hospital Fees
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -184,8 +184,8 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
           {/* Doctor Info */}
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                <Stethoscope className="h-5 w-5 text-primary-600" />
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <Stethoscope className="h-5 w-5 text-blue-600" />
               </div>
               <div>
                 <p className="font-medium text-gray-900">Dr. {user?.first_name} {user?.last_name}</p>
@@ -212,7 +212,7 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
                     }`}>
                       {item.type}
                     </span>
-                    <span className="text-sm text-gray-700">{item.description}</span>
+                    <span className="text-sm text-gray-900">{item.description}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium">₹{item.amount}</span>
@@ -231,7 +231,7 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
 
             <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
               <span className="font-medium text-gray-900">Total Amount:</span>
-              <span className="text-2xl font-bold text-primary-600 flex items-center">
+              <span className="text-2xl font-bold text-blue-600 flex items-center">
                 <IndianRupee className="h-6 w-6 mr-1" />
                 {totalAmount}
               </span>
@@ -250,7 +250,7 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
                   className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-left transition-colors"
                 >
                   <p className="text-sm font-medium text-gray-900">{option.description}</p>
-                  <p className="text-sm text-primary-600 font-medium">+ ₹{option.amount}</p>
+                  <p className="text-sm text-blue-600 font-medium">+ ₹{option.amount}</p>
                 </button>
               ))}
             </div>
@@ -277,7 +277,7 @@ const ProcessPaymentModal = ({ onClose, onSuccess }: ProcessPaymentModalProps) =
           <button
             onClick={handlePayment}
             disabled={loading || feeItems.length === 0}
-            className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg border-2 border-blue-700"
           >
             {loading ? (
               <>

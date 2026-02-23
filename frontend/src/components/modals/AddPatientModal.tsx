@@ -86,7 +86,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 required
                 value={formData.first_name}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
             <div>
@@ -97,7 +97,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 required
                 value={formData.last_name}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -111,7 +111,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
             <div>
@@ -121,7 +121,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -135,7 +135,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
               minLength={6}
               value={formData.password}
               onChange={handleChange}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               placeholder="Min 6 characters"
             />
           </div>
@@ -148,7 +148,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="date_of_birth"
                 value={formData.date_of_birth}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
             <div>
@@ -157,7 +157,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="blood_group"
                 value={formData.blood_group}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               >
                 <option value="">Select</option>
                 <option value="A+">A+</option>
@@ -176,7 +176,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               >
                 <option value="">Select</option>
                 <option value="male">Male</option>
@@ -193,7 +193,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
               rows={2}
               value={formData.address}
               onChange={handleChange}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
             />
           </div>
 
@@ -205,7 +205,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
             <div>
@@ -215,7 +215,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -228,7 +228,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="emergency_contact_name"
                 value={formData.emergency_contact_name}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
             <div>
@@ -238,7 +238,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
                 name="emergency_contact_phone"
                 value={formData.emergency_contact_phone}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -250,7 +250,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
               name="allergies"
               value={formData.allergies}
               onChange={handleChange}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               placeholder="e.g., Penicillin, Peanuts"
             />
           </div>
@@ -262,7 +262,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
               name="chronic_conditions"
               value={formData.chronic_conditions}
               onChange={handleChange}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 bg-white"
               placeholder="e.g., Diabetes, Hypertension"
             />
           </div>
@@ -278,7 +278,7 @@ const AddPatientModal = ({ onClose, onSuccess }: AddPatientModalProps) => {
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 font-semibold shadow-lg"
             >
               {loading ? 'Adding...' : 'Add Patient'}
             </button>

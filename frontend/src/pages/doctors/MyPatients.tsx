@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, UserPlus, Filter, Users, Bed, FileText, ChevronLeft } from 'lucide-react';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme, getThemeColors } from '../../contexts/ThemeContext';
 import ThemeWrapper from '../../components/theme/ThemeWrapper';
 import api from '../../services/api';
 import ReportList from '../../components/reports/ReportList';
@@ -169,7 +169,8 @@ const demoPatients: Patient[] = [
 ];
 
 const MyPatients = () => {
-  const { isDark } = useTheme();
+  const { theme, isDark } = useTheme();
+  const themeColors = getThemeColors(theme);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -232,8 +233,8 @@ const MyPatients = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className={`flex items-center justify-center h-64 ${isDark ? 'bg-slate-900/50 rounded-2xl' : ''}`}>
+        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${isDark ? 'border-blue-400' : 'border-blue-600'}`}></div>
       </div>
     );
   }
@@ -249,14 +250,18 @@ const MyPatients = () => {
         </div>
         <button 
           onClick={() => setShowAddPatient(true)}
-          className="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className={`mt-4 md:mt-0 inline-flex items-center px-6 py-3 rounded-xl font-bold transition-all transform hover:scale-105 ${
+            isDark 
+              ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-500 hover:to-blue-600' 
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
         >
           <UserPlus className="h-5 w-5 mr-2" />
           Add Patient
         </button>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs - Dark Theme */}
       <div className={`border-b ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
         <nav className="flex space-x-8">
           <button
@@ -264,16 +269,20 @@ const MyPatients = () => {
               setActiveTab('patients');
               setSelectedPatient(null);
             }}
-            className={`py-4 px-1 border-b-2 font-medium text-base flex items-center ${
+            className={`py-4 px-1 border-b-2 font-bold text-base flex items-center transition-colors ${
               activeTab === 'patients'
-                ? 'border-blue-500 text-blue-600'
+                ? (isDark ? 'border-blue-500 text-blue-400' : 'border-blue-500 text-blue-600')
                 : `border-transparent ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`
             }`}
           >
-            <Users className="h-5 w-5 mr-2" />
+            <div className={`p-1.5 rounded-lg mr-2 ${activeTab === 'patients' && isDark ? 'bg-blue-500/20' : ''}`}>
+              <Users className="h-5 w-5" />
+            </div>
             Patient List
             {patients.some(p => p.id.startsWith('demo-')) && (
-              <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+              <span className={`ml-2 text-xs px-2 py-0.5 rounded-full font-semibold ${
+                isDark ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-blue-100 text-blue-800'
+              }`}>
                 Demo
               </span>
             )}
@@ -281,16 +290,18 @@ const MyPatients = () => {
           
           <button
             onClick={() => setActiveTab('reports')}
-            className={`py-4 px-1 border-b-2 font-medium text-base flex items-center ${
+            className={`py-4 px-1 border-b-2 font-bold text-base flex items-center transition-colors ${
               activeTab === 'reports'
-                ? 'border-blue-500 text-blue-600'
+                ? (isDark ? 'border-blue-500 text-blue-400' : 'border-blue-500 text-blue-600')
                 : `border-transparent ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`
             }`}
           >
-            <FileText className="h-5 w-5 mr-2" />
+            <div className={`p-1.5 rounded-lg mr-2 ${activeTab === 'reports' && isDark ? 'bg-blue-500/20' : ''}`}>
+              <FileText className="h-5 w-5" />
+            </div>
             Medical Reports
             {selectedPatient && (
-              <span className={`ml-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              <span className={`ml-2 font-normal ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                 {selectedPatient.first_name} {selectedPatient.last_name}
               </span>
             )}
@@ -304,146 +315,190 @@ const MyPatients = () => {
           {/* Search and Filter */}
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 ${isDark ? 'text-gray-400' : 'text-gray-400'}`} />
               <input
                 type="text"
                 placeholder="Search patients by name or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full pl-12 pr-4 py-3 rounded-xl transition-all ${
+                  isDark 
+                    ? 'bg-slate-800 border border-slate-600 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20' 
+                    : 'border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                }`}
               />
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Filter className="h-5 w-5 text-gray-400" />
+            <div className="flex items-center space-x-3">
+              <div className={`p-2 rounded-lg ${isDark ? 'bg-slate-700' : 'bg-gray-100'}`}>
+                <Filter className={`h-5 w-5 ${isDark ? 'text-blue-400' : 'text-gray-400'}`} />
+              </div>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                className={`rounded-xl px-4 py-3 transition-all ${
+                  isDark 
+                    ? 'bg-slate-800 border border-slate-600 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20' 
+                    : 'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
+                }`}
               >
-                <option value="all">All Patients</option>
-                <option value="admitted">Admitted</option>
-                <option value="outpatient">Outpatients</option>
+                <option value="all" className={isDark ? 'bg-slate-800' : ''}>All Patients</option>
+                <option value="admitted" className={isDark ? 'bg-slate-800' : ''}>Admitted</option>
+                <option value="outpatient" className={isDark ? 'bg-slate-800' : ''}>Outpatients</option>
               </select>
             </div>
           </div>
 
-          {/* Stats */}
+          {/* Stats - Dark Theme Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <div className={`rounded-2xl p-5 transition-all duration-300 hover:scale-105 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 hover:border-blue-500/50 shadow-lg' 
+                : 'bg-white border border-gray-200 shadow-md'
+            }`}>
               <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className={`p-3 rounded-xl ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                  <Users className={`h-7 w-7 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600">Total Patients</p>
-                  <p className="text-2xl font-bold text-gray-900">{filteredPatients.length}</p>
+                  <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Patients</p>
+                  <p className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{filteredPatients.length}</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <div className={`rounded-2xl p-5 transition-all duration-300 hover:scale-105 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 hover:border-emerald-500/50 shadow-lg' 
+                : 'bg-white border border-gray-200 shadow-md'
+            }`}>
               <div className="flex items-center">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <Bed className="h-6 w-6 text-green-600" />
+                <div className={`p-3 rounded-xl ${isDark ? 'bg-emerald-500/20' : 'bg-green-100'}`}>
+                  <Bed className={`h-7 w-7 ${isDark ? 'text-emerald-400' : 'text-green-600'}`} />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600">Admitted</p>
-                  <p className="text-2xl font-bold text-green-600">{filteredPatients.filter(p => p.has_bed).length}</p>
+                  <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Admitted</p>
+                  <p className={`text-3xl font-bold ${isDark ? 'text-emerald-400' : 'text-green-600'}`}>{filteredPatients.filter(p => p.has_bed).length}</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <div className={`rounded-2xl p-5 transition-all duration-300 hover:scale-105 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 hover:border-purple-500/50 shadow-lg' 
+                : 'bg-white border border-gray-200 shadow-md'
+            }`}>
               <div className="flex items-center">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <FileText className="h-6 w-6 text-purple-600" />
+                <div className={`p-3 rounded-xl ${isDark ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+                  <FileText className={`h-7 w-7 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600">Outpatients</p>
-                  <p className="text-2xl font-bold text-purple-600">{filteredPatients.filter(p => !p.has_bed).length}</p>
+                  <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Outpatients</p>
+                  <p className={`text-3xl font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`}>{filteredPatients.filter(p => !p.has_bed).length}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Patients Table */}
-          <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
+          {/* Patients Table - Dark Theme */}
+          <div className={`rounded-2xl overflow-hidden border shadow-xl ${
+            isDark 
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700' 
+              : 'bg-white border-gray-200'
+          }`}>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y">
+                <thead className={`${isDark ? 'bg-slate-800/80' : 'bg-gray-50'}`}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age/Gender</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bed Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Patient</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Age/Gender</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Contact</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Address</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Bed Status</th>
+                    <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className={`divide-y ${isDark ? 'bg-slate-900/50 divide-slate-700/50' : 'bg-white divide-gray-200'}`}>
                   {filteredPatients.map((patient) => (
-                    <tr key={patient.id} className="hover:bg-gray-50">
+                    <tr key={patient.id} className={`transition-colors ${isDark ? 'hover:bg-slate-800/30' : 'hover:bg-gray-50'}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <span className="text-blue-700 font-medium">
+                          <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                            <span className={`font-bold text-lg ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>
                               {patient.first_name[0]}{patient.last_name[0]}
                             </span>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 flex items-center">
+                            <div className={`text-base font-bold flex items-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
                               {patient.first_name} {patient.last_name}
                               {patient.id.startsWith('demo-') && (
-                                <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded">
+                                <span className={`ml-2 px-2 py-0.5 text-xs rounded font-semibold ${
+                                  isDark ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-blue-100 text-blue-800'
+                                }`}>
                                   Demo
                                 </span>
                               )}
                             </div>
-                            <div className="text-sm text-gray-500">{patient.blood_group}</div>
+                            <div className={`text-sm mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>{patient.blood_group}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{patient.age} years</div>
-                        <div className="text-sm text-gray-500 capitalize">{patient.gender}</div>
+                        <div className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{patient.age} years</div>
+                        <div className={`text-sm capitalize ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{patient.gender}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{patient.phone || 'N/A'}</div>
+                        <div className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{patient.phone || 'N/A'}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{patient.address}</div>
-                        <div className="text-sm text-gray-500">{patient.city}, {patient.state}</div>
+                        <div className={`text-base font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{patient.address}</div>
+                        <div className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{patient.city}, {patient.state}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {patient.has_bed ? (
                           <div>
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <span className={`px-3 py-1.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              isDark 
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                                : 'bg-green-100 text-green-800'
+                            }`}>
                               Admitted
                             </span>
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className={`text-xs mt-1 font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                               Bed {patient.bed_number}, Room {patient.room_number}
                             </div>
-                            <div className="text-xs text-gray-400">{patient.ward_type}</div>
+                            <div className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{patient.ward_type}</div>
                           </div>
                         ) : (
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                          <span className={`px-3 py-1.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            isDark 
+                              ? 'bg-gray-700 text-gray-400 border border-gray-600' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
                             Outpatient
                           </span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-3">
                           <button
                             onClick={() => handleViewReports(patient)}
-                            className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                            className={`font-bold transition-colors ${
+                              isDark 
+                                ? 'text-blue-400 hover:text-blue-300' 
+                                : 'text-blue-600 hover:text-blue-900'
+                            }`}
                           >
                             View Reports
                           </button>
-                          <span className="text-gray-300">|</span>
+                          <span className={isDark ? 'text-slate-600' : 'text-gray-300'}>|</span>
                           <button
                             onClick={() => handleGenerateReport(patient)}
-                            className="text-green-600 hover:text-green-900 text-sm font-medium"
+                            className={`font-bold transition-colors ${
+                              isDark 
+                                ? 'text-emerald-400 hover:text-emerald-300' 
+                                : 'text-green-600 hover:text-green-900'
+                            }`}
                           >
                             New Report
                           </button>
@@ -456,7 +511,7 @@ const MyPatients = () => {
             </div>
             
             {filteredPatients.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className={`text-center py-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 No patients found matching your criteria
               </div>
             )}
@@ -466,44 +521,67 @@ const MyPatients = () => {
 
       {/* Medical Reports Tab */}
       {activeTab === 'reports' && selectedPatient && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
             <button
               onClick={() => {
                 setActiveTab('patients');
                 setSelectedPatient(null);
               }}
-              className="flex items-center text-blue-600 hover:text-blue-800"
+              className={`flex items-center font-bold transition-colors ${
+                isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'
+              }`}
             >
-              <ChevronLeft className="h-5 w-5 mr-1" />
+              <div className={`p-2 rounded-lg mr-2 ${isDark ? 'bg-blue-500/20' : ''}`}>
+                <ChevronLeft className="h-5 w-5" />
+              </div>
               Back to Patient List
             </button>
             
             <button
               onClick={() => setShowReportGenerator(true)}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className={`flex items-center px-5 py-2.5 rounded-xl font-bold transition-all ${
+                isDark 
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50' 
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
             >
               <FileText className="h-5 w-5 mr-2" />
               Generate New Report
             </button>
           </div>
 
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <div className={`rounded-xl border p-6 ${
+            isDark 
+              ? 'bg-gradient-to-r from-blue-900/20 to-slate-800 border-blue-500/30' 
+              : 'bg-blue-50 border-blue-200'
+          }`}>
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-blue-600">Viewing reports for</p>
-                <p className="text-lg font-bold text-blue-900">
-                  {selectedPatient.first_name} {selectedPatient.last_name}
-                  {selectedPatient.id.startsWith('demo-') && (
-                    <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded">
-                      Demo Patient
-                    </span>
-                  )}
-                </p>
+              <div className="flex items-center">
+                <div className={`p-3 rounded-xl mr-4 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                  <Users className={`h-8 w-8 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                </div>
+                <div>
+                  <p className={`text-sm font-medium ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>Viewing reports for</p>
+                  <p className={`text-xl font-bold mt-1 ${isDark ? 'text-white' : 'text-blue-900'}`}>
+                    {selectedPatient.first_name} {selectedPatient.last_name}
+                    {selectedPatient.id.startsWith('demo-') && (
+                      <span className={`ml-2 px-2 py-0.5 text-xs rounded font-semibold ${
+                        isDark ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        Demo Patient
+                      </span>
+                    )}
+                  </p>
+                </div>
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-700">{selectedPatient.age} years, {selectedPatient.gender}</p>
-                <p className="text-sm text-blue-600">Blood Group: {selectedPatient.blood_group}</p>
+                <p className={`text-base font-semibold ${isDark ? 'text-white' : 'text-blue-700'}`}>
+                  {selectedPatient.age} years, <span className="capitalize">{selectedPatient.gender}</span>
+                </p>
+                <p className={`text-sm mt-1 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
+                  Blood Group: {selectedPatient.blood_group}
+                </p>
               </div>
             </div>
           </div>

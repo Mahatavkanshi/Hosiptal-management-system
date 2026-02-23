@@ -64,3 +64,13 @@ Thumbs.db
 *.bak
 *.tmp
 *.temp
+
+# Windows reserved names that cause issues
+nul
+NUL
+con
+CON
+prn
+PRN
+aux
+AUX
