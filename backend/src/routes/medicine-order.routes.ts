@@ -117,30 +117,53 @@ router.post('/orders',
     const userId = (req as any).user?.id;
     const { medicine_id, quantity, priority = 'normal', notes } = req.body;
     
+    console.log('=== CREATE MEDICINE ORDER DEBUG ===');
+    console.log('User ID:', userId);
+    console.log('Request body:', { medicine_id, quantity, priority, notes });
+    
+    // Validate required fields
+    if (!medicine_id) {
+      throw new AppError('Medicine ID is required', 400);
+    }
+    if (!quantity || quantity < 1) {
+      throw new AppError('Quantity must be at least 1', 400);
+    }
+    
     // Verify medicine exists
     const medicineResult = await query('SELECT * FROM medicines WHERE id = $1', [medicine_id]);
+    console.log('Medicine lookup result:', medicineResult.rows.length, 'rows found');
+    
     if (medicineResult.rows.length === 0) {
+      console.error('Medicine not found with ID:', medicine_id);
       throw new AppError('Medicine not found', 404);
     }
     
     const medicine = medicineResult.rows[0];
+    console.log('Found medicine:', medicine.name);
     
-    // Create order
-    const result = await query(
-      `INSERT INTO medicine_orders (medicine_id, doctor_id, quantity, priority, notes, status)
-       VALUES ($1, $2, $3, $4, $5, 'pending')
-       RETURNING *`,
-      [medicine_id, userId, quantity, priority, notes]
-    );
-    
-    res.status(201).json({
-      success: true,
-      message: 'Medicine order created successfully',
-      data: {
-        order: result.rows[0],
-        medicine_name: medicine.name
-      }
-    });
+    try {
+      // Create order
+      const result = await query(
+        `INSERT INTO medicine_orders (medicine_id, doctor_id, quantity, priority, notes, status)
+         VALUES ($1, $2, $3, $4, $5, 'pending')
+         RETURNING *`,
+        [medicine_id, userId, quantity, priority, notes]
+      );
+      
+      console.log('Order created successfully:', result.rows[0].id);
+      
+      res.status(201).json({
+        success: true,
+        message: 'Medicine order created successfully',
+        data: {
+          order: result.rows[0],
+          medicine_name: medicine.name
+        }
+      });
+    } catch (dbError: any) {
+      console.error('Database error creating order:', dbError);
+      throw new AppError(`Database error: ${dbError.message}`, 500);
+    }
   })
 );
 

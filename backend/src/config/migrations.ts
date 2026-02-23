@@ -262,6 +262,26 @@ export const createTables = async (): Promise<void> => {
     await query('CREATE INDEX IF NOT EXISTS idx_medicine_orders_medicine_id ON medicine_orders(medicine_id)');
     await query('CREATE INDEX IF NOT EXISTS idx_medicine_orders_status ON medicine_orders(status)');
 
+    // Seed dummy medicines if none exist
+    const medicinesCount = await query('SELECT COUNT(*) as count FROM medicines');
+    if (parseInt(medicinesCount.rows[0].count) === 0) {
+      console.log('Seeding dummy medicines...');
+      await query(`
+        INSERT INTO medicines (name, generic_name, manufacturer, category, description, dosage_form, strength, stock_quantity, unit_price, cost_price, reorder_level, storage_conditions)
+        VALUES 
+          ('Ibuprofen', 'Ibuprofen', 'Generic Pharma', 'Pain Relief', 'Nonsteroidal anti-inflammatory drug', 'Tablet', '400mg', 2, 15.00, 8.00, 25, 'Store at room temperature'),
+          ('Aspirin', 'Acetylsalicylic Acid', 'Bayer', 'Pain Relief', 'Pain reliever and fever reducer', 'Tablet', '325mg', 8, 12.00, 6.00, 30, 'Store in cool dry place'),
+          ('Omeprazole', 'Omeprazole Magnesium', 'Dr. Reddys', 'Gastrointestinal', 'Proton pump inhibitor for acid reflux', 'Capsule', '20mg', 4, 45.00, 25.00, 25, 'Store below 30°C'),
+          ('Paracetamol', 'Acetaminophen', 'Cipla', 'Pain Relief', 'Pain reliever and fever reducer', 'Tablet', '500mg', 5, 10.00, 5.00, 20, 'Store at room temperature'),
+          ('Metformin', 'Metformin Hydrochloride', 'Sun Pharma', 'Diabetes', 'Oral diabetes medicine', 'Tablet', '500mg', 6, 35.00, 18.00, 20, 'Store in cool dry place'),
+          ('Salbutamol', 'Salbutamol Sulfate', 'Cipla', 'Respiratory', 'Bronchodilator for asthma', 'Inhaler', '100mcg', 2, 125.00, 70.00, 15, 'Store below 25°C'),
+          ('Amoxicillin', 'Amoxicillin Trihydrate', 'Lupin', 'Antibiotic', 'Penicillin antibiotic', 'Capsule', '500mg', 3, 25.00, 12.00, 15, 'Store in refrigerator'),
+          ('Cetirizine', 'Cetirizine Hydrochloride', 'Dr. Reddys', 'Antihistamine', 'Antihistamine for allergies', 'Tablet', '10mg', 4, 18.00, 9.00, 15, 'Store at room temperature'),
+          ('Azithromycin', 'Azithromycin Dihydrate', 'Pfizer', 'Antibiotic', 'Macrolide antibiotic', 'Tablet', '500mg', 3, 55.00, 28.00, 12, 'Store below 30°C')
+      `);
+      console.log('Dummy medicines seeded successfully!');
+    }
+
     console.log('All tables created successfully!');
   } catch (error) {
     console.error('Error creating tables:', error);
