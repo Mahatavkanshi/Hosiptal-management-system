@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { 
   Calendar, Users, BedDouble, Pill, Plus, UserPlus, CreditCard, 
-  Activity, Clock, Bed, IndianRupee, User, Brain,
+  Activity, Bed, IndianRupee, User, Brain,
   ArrowUpRight, ArrowDownRight, MoreHorizontal, Filter
 } from 'lucide-react';
 import api from '../../services/api';
@@ -369,10 +369,9 @@ const Dashboard = () => {
 
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [medicineAlerts, setMedicineAlerts] = useState<any[]>([]);
-  const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
+  const [paymentsCount, setPaymentsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddPatient, setShowAddPatient] = useState(false);
@@ -390,29 +389,27 @@ const Dashboard = () => {
     try {
       setLoading(true);
       
-      const [statsRes, appointmentsRes, activityRes, medicinesRes] = await Promise.all([
+      const [statsRes, activityRes, medicinesRes] = await Promise.all([
         api.get('/doctor-dashboard/dashboard-stats'),
-        api.get('/doctor-dashboard/today-appointments'),
         api.get('/doctor-dashboard/activity?limit=5'),
         api.get('/doctor-dashboard/medicine-alerts')
       ]);
-      
+
       const paymentActivities = JSON.parse(localStorage.getItem('payment_activities') || '[]');
       const allActivities = [...paymentActivities, ...activityRes.data.data].slice(0, 10);
-      const doctorPayments = JSON.parse(localStorage.getItem('doctor_payments') || '[]');
+      const allPayments = JSON.parse(localStorage.getItem('payments') || '[]');
       const localAppointments = JSON.parse(localStorage.getItem('doctor_appointments') || '[]');
-      
+
       const apiStats = statsRes.data.data;
       const mergedStats = {
         ...apiStats,
         total_appointments: apiStats.total_appointments + localAppointments.length
       };
-      
+
       setStats(mergedStats);
-      setTodayAppointments(appointmentsRes.data.data);
       setActivities(allActivities);
       setMedicineAlerts(medicinesRes.data.data);
-      setPaymentHistory(doctorPayments);
+      setPaymentsCount(allPayments.length);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       toast.error('Failed to load dashboard data');
@@ -515,7 +512,7 @@ const Dashboard = () => {
         <StatCard
           icon={IndianRupee}
           label="Payments"
-          value={paymentHistory?.length || 0}
+          value={paymentsCount}
           color="purple"
           
           onClick={() => setActiveTab('payments')}
@@ -558,41 +555,6 @@ const Dashboard = () => {
             </div>
           </GlassCard>
 
-          {/* Today's Appointments */}
-          <GlassCard className="p-6" glow={true} glowColor="purple" >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-purple-500/20">
-                  <Clock className="w-6 h-6 text-purple-400" />
-                </div>
-                <div>
-                  <h3 className={`text-xl font-bold ${textPrimary}`}>Today's Appointments</h3>
-                  <p className={`${textTertiary} text-sm opacity-70`}>{todayAppointments.length} scheduled today</p>
-                </div>
-              </div>
-              <span className={`px-4 py-2 rounded-full ${'bg-slate-800/50'} ${textSecondary} text-sm font-medium`}>
-                {todayAppointments.length} total
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              {todayAppointments.length > 0 ? (
-                todayAppointments.map((apt) => (
-                  <AppointmentItem key={apt.id} apt={apt}  />
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl ${'bg-slate-800/50'} flex items-center justify-center`}>
-                    <Calendar className={`w-8 h-8 ${textTertiary} opacity-30`} />
-                  </div>
-                  <p className={`${textTertiary} opacity-60`}>No appointments today</p>
-                </div>
-              )}
-            </div>
-          </GlassCard>
-
-          {/* Payment History Preview */}
-          <OutstandingPayments />
         </div>
       )}
 
@@ -725,63 +687,7 @@ const Dashboard = () => {
 
       {/* Payment History Tab */}
       {activeTab === 'payments' && (
-        <GlassCard className="p-6" >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-purple-500/20">
-                <CreditCard className="w-6 h-6 text-purple-400" />
-              </div>
-              <h3 className={`text-xl font-bold ${textPrimary}`}>Payment History</h3>
-            </div>
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`px-4 py-2 rounded-xl ${'bg-slate-800/50'} ${textSecondary} hover:${'bg-slate-800/70'} transition-colors`}
-            >
-              ← Back
-            </button>
-          </div>
-          
-          {paymentHistory.length === 0 ? (
-            <div className="text-center py-12">
-              <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl ${'bg-slate-800/50'} flex items-center justify-center`}>
-                <CreditCard className={`w-8 h-8 ${textTertiary} opacity-30`} />
-              </div>
-              <p className={`${textTertiary} opacity-60`}>No payment history found</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {paymentHistory.map((payment, index) => (
-                <div 
-                  key={index} 
-                  className={`p-5 rounded-2xl ${'bg-slate-800/50'} border ${'border-slate-700/30'} hover:${'bg-slate-800/70'} transition-colors`}
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <p className={`${textPrimary} font-bold text-lg`}>Receipt #{payment.receipt_number}</p>
-                      <p className={`${textTertiary} text-sm mt-1 opacity-60`}>{new Date(payment.date).toLocaleDateString()}</p>
-                    </div>
-                    <span className="text-2xl font-bold text-emerald-400">₹{payment.amount}</span>
-                  </div>
-                  
-                  <div className="space-y-2 mb-4">
-                    {payment.fee_items?.map((item: any, idx: number) => (
-                      <div key={idx} className="flex justify-between text-sm">
-                        <span className={`${textTertiary} opacity-70`}>{item.description}</span>
-                        <span className={`${textPrimary} font-medium`}>₹{item.amount}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className={`pt-4 border-t ${'border-slate-700/30'}`}>
-                    <span className="px-4 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                      Paid
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </GlassCard>
+        <OutstandingPayments />
       )}
 
       {/* Modals */}

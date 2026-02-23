@@ -9,6 +9,8 @@ interface Payment {
   payment_method: string;
   date: string;
   status: string;
+  type?: string;
+  description?: string;
 }
 
 const GlassCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
@@ -94,13 +96,23 @@ const OutstandingPayments = () => {
         
         {/* Stats Cards */}
         <div className="flex gap-4">
-          <div className="px-5 py-3 rounded-2xl bg-rose-500/10 border border-rose-500/30">
-            <p className="text-xs font-bold uppercase tracking-wider text-rose-400 mb-1">Outstanding</p>
-            <p className="text-2xl font-black text-rose-400">₹{totalOutstanding.toLocaleString()}</p>
+          <div className="px-5 py-3 rounded-2xl bg-blue-500/10 border border-blue-500/30">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-400 mb-1">Hospital Fees</p>
+            <p className="text-2xl font-black text-blue-400">
+              ₹{payments.filter(p => p.type === 'doctor_hospital_payment').reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
+            </p>
+          </div>
+          <div className="px-5 py-3 rounded-2xl bg-purple-500/10 border border-purple-500/30">
+            <p className="text-xs font-bold uppercase tracking-wider text-purple-400 mb-1">Peer Consultations</p>
+            <p className="text-2xl font-black text-purple-400">
+              ₹{payments.filter(p => p.type === 'peer_consultation').reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
+            </p>
           </div>
           <div className="px-5 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
-            <p className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">Collected</p>
-            <p className="text-2xl font-black text-emerald-400">₹{totalCollected.toLocaleString()}</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">Patient Collections</p>
+            <p className="text-2xl font-black text-emerald-400">
+              ₹{payments.filter(p => p.type === 'patient_consultation').reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
+            </p>
           </div>
         </div>
       </div>
@@ -142,7 +154,8 @@ const OutstandingPayments = () => {
           <thead>
             <tr className={"border-b " + cardColors.tableBorder}>
               <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Receipt</th>
-              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Patient</th>
+              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Type</th>
+              <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Patient/Doctor</th>
               <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Amount</th>
               <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Date</th>
               <th className="text-left py-4 px-4 text-white/50 text-sm font-medium">Status</th>
@@ -151,7 +164,7 @@ const OutstandingPayments = () => {
           <tbody className={"divide-y " + cardColors.tableDivide}>
             {filteredPayments.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-12 text-center">
+                <td colSpan={6} className="py-12 text-center">
                   <div className={"w-16 h-16 mx-auto mb-4 rounded-2xl " + cardColors.inputBg + " flex items-center justify-center"}>
                     <CreditCard className="w-8 h-8 text-white/30" />
                   </div>
@@ -163,6 +176,26 @@ const OutstandingPayments = () => {
                 <tr key={index} className={cardColors.rowHover + " transition-colors"}>
                   <td className="py-4 px-4">
                     <span className="font-mono text-white/70 text-sm">{payment.receipt_number}</span>
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${
+                      payment.type === 'doctor_hospital_payment' 
+                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
+                        : payment.type === 'peer_consultation'
+                        ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                        : payment.type === 'patient_consultation'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                        : 'bg-gray-500/10 text-gray-400 border-gray-500/30'
+                    }`}>
+                      {payment.type === 'doctor_hospital_payment' 
+                        ? 'Hospital Fee'
+                        : payment.type === 'peer_consultation'
+                        ? 'Peer Consult'
+                        : payment.type === 'patient_consultation'
+                        ? 'Patient Consult'
+                        : 'General'
+                      }
+                    </span>
                   </td>
                   <td className="py-4 px-4">
                     <span className="text-white font-medium">{payment.patient_name}</span>
