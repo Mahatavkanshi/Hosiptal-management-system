@@ -114,6 +114,10 @@ export const register = asyncHandler(
       // For admin, we just create the user record - no additional profile table needed
       // Or you can create an admin_profiles table if needed
       console.log('Admin user created:', user.id);
+    } else if (role === 'nurse') {
+      // For nurse, we just create the user record
+      // You can create a nurses table if you need to store additional nurse-specific data
+      console.log('Nurse user created:', user.id);
     }
 
     // Generate tokens

@@ -556,4 +556,34 @@ router.get('/test/pdf',
   })
 );
 
+// Nurse Reports Routes
+import {
+  getPerformanceMetrics,
+  recordPerformanceMetric,
+  getTeamPerformance,
+  submitDailyReport,
+  getDailyReports,
+  reportIncident,
+  getIncidents,
+  updateIncidentStatus,
+  getNurseDashboardSummary
+} from '../controllers/reports.controller';
+
+// Nurse Performance metrics
+router.get('/nurse/performance', authenticate, authorize('nurse'), getPerformanceMetrics);
+router.post('/nurse/performance', authenticate, authorize('nurse'), recordPerformanceMetric);
+router.get('/nurse/team-performance', authenticate, authorize('admin', 'super_admin'), getTeamPerformance);
+
+// Daily reports
+router.post('/nurse/daily', authenticate, authorize('nurse'), submitDailyReport);
+router.get('/nurse/daily', authenticate, authorize('nurse', 'admin'), getDailyReports);
+
+// Incidents
+router.post('/nurse/incidents', authenticate, authorize('nurse', 'doctor', 'admin'), reportIncident);
+router.get('/nurse/incidents', authenticate, authorize('nurse', 'doctor', 'admin'), getIncidents);
+router.put('/nurse/incidents/:id', authenticate, authorize('admin', 'super_admin'), updateIncidentStatus);
+
+// Nurse Dashboard summary
+router.get('/nurse/dashboard-summary', authenticate, authorize('nurse'), getNurseDashboardSummary);
+
 export default router;

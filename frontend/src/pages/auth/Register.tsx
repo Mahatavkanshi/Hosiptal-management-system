@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, Eye, EyeOff, User, Stethoscope, Building2, Shield, ArrowLeft } from 'lucide-react';
+import { Loader2, Eye, EyeOff, User, Stethoscope, Building2, Shield, ArrowLeft, UserCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { register, user, getDashboardRoute } = useAuth();
-  const [userType, setUserType] = useState<'patient' | 'doctor' | 'admin'>('patient');
+  const [userType, setUserType] = useState<'patient' | 'doctor' | 'admin' | 'nurse'>('patient');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -19,6 +19,7 @@ const Register: React.FC = () => {
     if (deptFromUrl) {
       if (deptFromUrl === 'admin') setUserType('admin');
       else if (deptFromUrl === 'doctor') setUserType('doctor');
+      else if (deptFromUrl === 'nurse') setUserType('nurse');
       else if (deptFromUrl === 'patient') setUserType('patient');
     }
   }, [deptFromUrl]);
@@ -58,7 +59,12 @@ const Register: React.FC = () => {
     slot_duration: '30',
     // Admin fields
     employee_id: '',
-    admin_code: ''
+    admin_code: '',
+    // Nurse fields
+    nurse_department: '',
+    nursing_license: '',
+    nursing_experience: '',
+    shift_preference: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -96,7 +102,7 @@ const Register: React.FC = () => {
         first_name: formData.first_name,
         last_name: formData.last_name,
         phone: formData.phone,
-        role: userType === 'admin' ? 'admin' : userType
+        role: userType
       };
 
       if (userType === 'patient') {
@@ -122,13 +128,18 @@ const Register: React.FC = () => {
       } else if (userType === 'admin') {
         userData.department = formData.department;
         userData.employee_id = formData.employee_id;
+      } else if (userType === 'nurse') {
+        userData.nurse_department = formData.nurse_department;
+        userData.nursing_license = formData.nursing_license;
+        userData.nursing_experience = parseInt(formData.nursing_experience) || 0;
+        userData.shift_preference = formData.shift_preference;
       }
 
       await register(userData);
       toast.success('Registration successful!');
       
       // Redirect based on user role
-      const dashboardRoute = getDashboardRoute(userType === 'admin' ? 'admin' : userType);
+      const dashboardRoute = getDashboardRoute(userType);
       navigate(dashboardRoute);
     } catch (error: any) {
       toast.error(error.message || 'Registration failed');
@@ -143,11 +154,13 @@ const Register: React.FC = () => {
   const getTitle = () => {
     if (deptFromUrl === 'admin') return 'Create Admin Account';
     if (deptFromUrl === 'doctor') return 'Create Doctor Account';
+    if (deptFromUrl === 'nurse') return 'Create Nurse Account';
     if (deptFromUrl === 'patient') return 'Create Patient Account';
     
     switch (userType) {
       case 'admin': return 'Create Admin Account';
       case 'doctor': return 'Create Doctor Account';
+      case 'nurse': return 'Create Nurse Account';
       default: return 'Create Patient Account';
     }
   };
@@ -650,6 +663,89 @@ const Register: React.FC = () => {
           </>
         )}
 
+        {/* Nurse-specific fields */}
+        {userType === 'nurse' && (
+          <>
+            <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center mb-2">
+                <span className="font-medium text-pink-900">Nurse Registration</span>
+              </div>
+              <p className="text-sm text-pink-700">
+                Register as a nursing staff member. You will be able to manage patient care, vitals, and bed assignments.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="nurse_department" className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
+              <select
+                id="nurse_department"
+                name="nurse_department"
+                required
+                value={formData.nurse_department}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+              >
+                <option value="">Select Department</option>
+                <option value="general_ward">General Ward</option>
+                <option value="icu">ICU</option>
+                <option value="ccu">CCU</option>
+                <option value="emergency">Emergency</option>
+                <option value="pediatrics">Pediatrics</option>
+                <option value="ot">Operation Theater</option>
+                <option value="opd">OPD</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="nursing_license" className="block text-sm font-medium text-gray-700 mb-1">Nursing License Number *</label>
+              <input
+                id="nursing_license"
+                name="nursing_license"
+                type="text"
+                required
+                value={formData.nursing_license}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="e.g., NCI-12345 or state nursing council number"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="nursing_experience" className="block text-sm font-medium text-gray-700 mb-1">Experience (Years) *</label>
+                <input
+                  id="nursing_experience"
+                  name="nursing_experience"
+                  type="number"
+                  min="0"
+                  max="50"
+                  required
+                  value={formData.nursing_experience}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  placeholder="e.g., 5"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="shift_preference" className="block text-sm font-medium text-gray-700 mb-1">Shift Preference</label>
+                <select
+                  id="shift_preference"
+                  name="shift_preference"
+                  value={formData.shift_preference}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+                >
+                  <option value="">Select Shift</option>
+                  <option value="day">Day Shift</option>
+                  <option value="night">Night Shift</option>
+                  <option value="rotating">Rotating</option>
+                </select>
+              </div>
+            </div>
+          </>
+        )}
+
         <div className="pt-4">
           <button
             type="submit"
@@ -657,6 +753,8 @@ const Register: React.FC = () => {
             className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white transition-colors ${
               userType === 'admin' 
                 ? 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500' 
+                : userType === 'nurse'
+                ? 'bg-pink-600 hover:bg-pink-700 focus:ring-pink-500'
                 : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
             } focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed`}
           >

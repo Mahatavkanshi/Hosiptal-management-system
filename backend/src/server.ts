@@ -25,6 +25,10 @@ import doctorDashboardRoutes from './routes/doctor-dashboard.routes';
 import medicineOrderRoutes from './routes/medicine-order.routes';
 import aiRoutes from './routes/ai.routes';
 import reportsRoutes from './routes/reports.routes';
+import financialRoutes from './routes/financial.routes';
+import shiftRoutes from './routes/shift.routes';
+import careRoutes from './routes/care.routes';
+import communicationRoutes from './routes/communication.routes';
 
 dotenv.config();
 
@@ -81,6 +85,9 @@ app.use('/api/doctor-dashboard', doctorDashboardRoutes);
 app.use('/api/medicine-orders', medicineOrderRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/shifts', shiftRoutes);
+app.use('/api/care', careRoutes);
+app.use('/api/communication', communicationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req: Request, res: Response) => {

@@ -19,6 +19,11 @@ import Dashboard from '../pages/dashboard/Dashboard';
 // Department Dashboards
 import AdminDashboard from '../pages/dashboard/AdminDashboard';
 import NurseDashboard from '../pages/dashboard/NurseDashboard';
+import NurseShifts from '../pages/nurse/NurseShifts';
+import NurseChat from '../pages/nurse/NurseChat';
+import NurseCarePlans from '../pages/nurse/NurseCarePlans';
+import NurseGCSAssessment from '../pages/nurse/NurseGCSAssessment';
+import NurseReports from '../pages/nurse/NurseReports';
 import ReceptionDashboard from '../pages/dashboard/ReceptionDashboard';
 import PharmacyDashboard from '../pages/dashboard/PharmacyDashboard';
 import PatientPortalDashboard from '../pages/dashboard/PatientPortalDashboard';
@@ -110,6 +115,13 @@ const AppRoutes = () => {
         
         {/* Nurse Dashboard */}
         <Route path="/nurse-dashboard" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseDashboard /></ProtectedRoute>} />
+        <Route path="/nurse/shifts" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseShifts /></ProtectedRoute>} />
+        <Route path="/nurse/chat" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseChat /></ProtectedRoute>} />
+        <Route path="/nurse/care-plans/new" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseCarePlans /></ProtectedRoute>} />
+        <Route path="/nurse/gcs-assessment" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseGCSAssessment /></ProtectedRoute>} />
+        <Route path="/nurse/daily-report" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseReports /></ProtectedRoute>} />
+        <Route path="/nurse/performance" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseReports /></ProtectedRoute>} />
+        <Route path="/nurse/shifts/handovers" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseShifts /></ProtectedRoute>} />
         
         {/* Reception Dashboard */}
         <Route path="/reception-dashboard" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
