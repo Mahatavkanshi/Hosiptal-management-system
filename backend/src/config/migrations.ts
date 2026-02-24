@@ -8,7 +8,7 @@ export const createTables = async (): Promise<void> => {
     await query(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        email VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         role VARCHAR(20) NOT NULL CHECK (role IN ('super_admin', 'admin', 'doctor', 'nurse', 'receptionist', 'patient', 'pharmacist')),
         first_name VARCHAR(100) NOT NULL,
@@ -20,9 +20,33 @@ export const createTables = async (): Promise<void> => {
         phone_verified BOOLEAN DEFAULT false,
         last_login TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(email, role)
       )
     `);
+
+    // Alter existing table to support multiple roles per email (if table already exists)
+    try {
+      // First, drop the old unique constraint on email only
+      await query(`
+        ALTER TABLE users 
+        DROP CONSTRAINT IF EXISTS users_email_key
+      `);
+      console.log('Dropped old email unique constraint');
+    } catch (err) {
+      console.log('Old constraint not found or already dropped');
+    }
+    
+    try {
+      // Add new composite unique constraint
+      await query(`
+        ALTER TABLE users 
+        ADD CONSTRAINT users_email_role_key UNIQUE (email, role)
+      `);
+      console.log('Added new email+role unique constraint');
+    } catch (err) {
+      console.log('Composite constraint may already exist or conflict with existing data');
+    }
 
     // Doctors profile
     await query(`

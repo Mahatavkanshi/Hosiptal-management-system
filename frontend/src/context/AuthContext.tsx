@@ -21,6 +21,7 @@ interface AuthContextType {
   register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
+  getDashboardRoute: (role: UserRole) => string;
 }
 
 interface RegisterData {
@@ -28,7 +29,7 @@ interface RegisterData {
   password: string;
   first_name: string;
   last_name: string;
-  role: 'patient' | 'doctor';
+  role: UserRole;
   phone?: string;
   // Patient fields
   date_of_birth?: string;
@@ -88,6 +89,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const getDashboardRoute = (role: UserRole): string => {
+    switch (role) {
+      case 'doctor':
+        return '/dashboard';
+      case 'admin':
+      case 'super_admin':
+        return '/admin-dashboard';
+      case 'nurse':
+        return '/nurse-dashboard';
+      case 'receptionist':
+        return '/reception-dashboard';
+      case 'pharmacist':
+        return '/pharmacy-dashboard';
+      case 'patient':
+        return '/patient-portal';
+      default:
+        return '/dashboard';
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
       const response = await api.post('/auth/login', { email, password });
@@ -138,7 +159,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         login,
         register,
         logout,
-        updateUser
+        updateUser,
+        getDashboardRoute
       }}
     >
       {children}

@@ -17,7 +17,7 @@ export const registerValidation = [
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   body('first_name').trim().notEmpty().withMessage('First name is required'),
   body('last_name').trim().notEmpty().withMessage('Last name is required'),
-  body('role').isIn(['patient', 'doctor']).withMessage('Invalid role'),
+  body('role').isIn(['patient', 'doctor', 'admin', 'nurse', 'receptionist', 'pharmacist']).withMessage('Invalid role'),
   body('phone').optional().isMobilePhone('any').withMessage('Invalid phone number')
 ];
 
@@ -36,24 +36,36 @@ export const register = asyncHandler(
 
     const { email, password, first_name, last_name, role, phone, ...additionalData } = req.body;
 
-    // Check if user already exists
-    const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
+    // Check if user already exists with the SAME role
+    const existingUser = await query('SELECT * FROM users WHERE email = $1 AND role = $2', [email, role]);
     if (existingUser.rows.length > 0) {
-      throw new AppError('User already exists with this email', 409);
+      throw new AppError(`User already exists with this email as a ${role}`, 409);
     }
 
     // Hash password
     const passwordHash = await hashPassword(password);
 
     // Create user
-    const userResult = await query(
-      `INSERT INTO users (email, password_hash, role, first_name, last_name, phone) 
-       VALUES ($1, $2, $3, $4, $5, $6) 
-       RETURNING id, email, role, first_name, last_name, phone, created_at`,
-      [email, passwordHash, role, first_name, last_name, phone]
-    );
-
-    const user = userResult.rows[0];
+    let user;
+    try {
+      const userResult = await query(
+        `INSERT INTO users (email, password_hash, role, first_name, last_name, phone) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         RETURNING id, email, role, first_name, last_name, phone, created_at`,
+        [email, passwordHash, role, first_name, last_name, phone]
+      );
+      user = userResult.rows[0];
+    } catch (dbError: any) {
+      // Check if it's a unique constraint violation
+      if (dbError.code === '23505' || dbError.message?.includes('unique constraint')) {
+        throw new AppError(
+          `An account with this email already exists. Please use a different email or login with your existing account.`,
+          409
+        );
+      }
+      // Re-throw other database errors
+      throw dbError;
+    }
 
     // Create profile based on role
     if (role === 'patient') {
@@ -98,6 +110,10 @@ export const register = asyncHandler(
           additionalData.about || null
         ]
       );
+    } else if (role === 'admin') {
+      // For admin, we just create the user record - no additional profile table needed
+      // Or you can create an admin_profiles table if needed
+      console.log('Admin user created:', user.id);
     }
 
     // Generate tokens

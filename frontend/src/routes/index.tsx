@@ -10,8 +10,18 @@ import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 
+// Portal Page
+import DepartmentPortal from '../pages/portal/DepartmentPortal';
+
 // Dashboard Pages
 import Dashboard from '../pages/dashboard/Dashboard';
+
+// Department Dashboards
+import AdminDashboard from '../pages/dashboard/AdminDashboard';
+import NurseDashboard from '../pages/dashboard/NurseDashboard';
+import ReceptionDashboard from '../pages/dashboard/ReceptionDashboard';
+import PharmacyDashboard from '../pages/dashboard/PharmacyDashboard';
+import PatientPortalDashboard from '../pages/dashboard/PatientPortalDashboard';
 
 // Appointment Pages
 import Appointments from '../pages/appointments/Appointments';
@@ -55,7 +65,7 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: JSX.Element; all
   const { isAuthenticated, user } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/portal" replace />;
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
@@ -80,6 +90,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
+      <Route path="/portal" element={<DepartmentPortal />} />
+      
       <Route element={<PublicRoute><AuthLayout /></PublicRoute>}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -89,7 +101,24 @@ const AppRoutes = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        
+        {/* Doctor Dashboard */}
         <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Admin Dashboard */}
+        <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['admin', 'super_admin']}><AdminDashboard /></ProtectedRoute>} />
+        
+        {/* Nurse Dashboard */}
+        <Route path="/nurse-dashboard" element={<ProtectedRoute allowedRoles={['nurse', 'admin', 'super_admin']}><NurseDashboard /></ProtectedRoute>} />
+        
+        {/* Reception Dashboard */}
+        <Route path="/reception-dashboard" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
+        
+        {/* Pharmacy Dashboard */}
+        <Route path="/pharmacy-dashboard" element={<ProtectedRoute allowedRoles={['pharmacist', 'admin', 'super_admin']}><PharmacyDashboard /></ProtectedRoute>} />
+        
+        {/* Patient Portal Dashboard */}
+        <Route path="/patient-portal" element={<ProtectedRoute allowedRoles={['patient']}><PatientPortalDashboard /></ProtectedRoute>} />
         
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/appointments/book" element={<BookAppointment />} />

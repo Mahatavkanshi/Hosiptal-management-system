@@ -46,15 +46,11 @@ const MainLayout: React.FC = () => {
   };
 
   const getNavigation = () => {
-    const baseNavigation = [
-      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { name: 'Appointments', href: '/appointments', icon: Calendar },
-    ];
-
     switch (user?.role) {
       case 'patient':
         return [
-          ...baseNavigation,
+          { name: 'Dashboard', href: '/patient-portal', icon: LayoutDashboard },
+          { name: 'Appointments', href: '/appointments', icon: Calendar },
           { name: 'Find Doctors', href: '/doctors', icon: Stethoscope },
           { name: 'Medical History', href: '/medical-history', icon: FileText },
           { name: 'Prescriptions', href: '/prescriptions', icon: Pill },
@@ -62,7 +58,8 @@ const MainLayout: React.FC = () => {
       
       case 'doctor':
         return [
-          ...baseNavigation,
+          { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+          { name: 'Appointments', href: '/appointments', icon: Calendar },
           { name: 'My Patients', href: '/patients', icon: Users },
           { name: 'Medical Records', href: '/medical-history', icon: FileText },
           { name: 'Prescriptions', href: '/prescriptions', icon: Pill },
@@ -71,7 +68,8 @@ const MainLayout: React.FC = () => {
       case 'admin':
       case 'super_admin':
         return [
-          ...baseNavigation,
+          { name: 'Dashboard', href: '/admin-dashboard', icon: LayoutDashboard },
+          { name: 'Appointments', href: '/appointments', icon: Calendar },
           { name: 'Doctors', href: '/doctors', icon: Stethoscope },
           { name: 'Bed Management', href: '/beds', icon: BedDouble },
           { name: 'Medicines', href: '/medicines', icon: Pill },
@@ -81,27 +79,32 @@ const MainLayout: React.FC = () => {
       
       case 'receptionist':
         return [
-          ...baseNavigation,
+          { name: 'Dashboard', href: '/reception-dashboard', icon: LayoutDashboard },
+          { name: 'Appointments', href: '/appointments', icon: Calendar },
           { name: 'Patients', href: '/patients', icon: Users },
           { name: 'Bed Management', href: '/beds', icon: BedDouble },
         ];
       
       case 'nurse':
         return [
-          ...baseNavigation,
+          { name: 'Dashboard', href: '/nurse-dashboard', icon: LayoutDashboard },
+          { name: 'Appointments', href: '/appointments', icon: Calendar },
           { name: 'Bed Management', href: '/beds', icon: BedDouble },
           { name: 'Medical Records', href: '/medical-history', icon: FileText },
         ];
       
       case 'pharmacist':
         return [
-          ...baseNavigation,
+          { name: 'Dashboard', href: '/pharmacy-dashboard', icon: LayoutDashboard },
           { name: 'Medicines', href: '/medicines', icon: Pill },
           { name: 'Inventory', href: '/medicines/inventory', icon: Settings },
         ];
       
       default:
-        return baseNavigation;
+        return [
+          { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+          { name: 'Appointments', href: '/appointments', icon: Calendar },
+        ];
     }
   };
 
