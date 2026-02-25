@@ -9,13 +9,15 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronRight,
-  Search,
   Stethoscope,
-  Plus
+  Plus,
+  ArrowLeft
 } from 'lucide-react';
 import api from '../../services/api';
 import { useTheme } from '../../contexts/ThemeContext';
 import ThemeSelector from '../theme/ThemeSelector';
+import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 // Body parts configuration with their positions and related medical keywords
 interface BodyPart {
@@ -118,20 +120,34 @@ const generateDemoRecords = (patientId: string): MedicalRecord[] => [
 
 const InteractiveBodyMap = () => {
   const { isDark } = useTheme();
+  const { user } = useAuth();
   
-  const [patients, setPatients] = useState<Patient[]>([]);
+  // Single patient - current logged in user
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
   const [bodyPartStats, setBodyPartStats] = useState<BodyPart[]>([]);
 
-  // Fetch patients on mount
+  // Set current user as patient on mount and load demo data
   useEffect(() => {
-    fetchPatients();
-  }, []);
+    const currentPatient: Patient = {
+      id: user?.id || 'demo-1',
+      first_name: user?.first_name || 'John',
+      last_name: user?.last_name || 'Doe',
+      age: 45,
+      gender: 'male',
+      blood_group: 'O+'
+    };
+    setSelectedPatient(currentPatient);
+    
+    // Load demo records immediately
+    const demoRecords = generateDemoRecords(currentPatient.id);
+    setMedicalRecords(demoRecords);
+    setLoading(false);
+  }, [user]);
 
-  // Fetch medical records when patient changes
+  // Fetch medical records when patient is set
   useEffect(() => {
     if (selectedPatient) {
       fetchMedicalRecords(selectedPatient.id);
@@ -144,39 +160,6 @@ const InteractiveBodyMap = () => {
       updateBodyPartStats();
     }
   }, [medicalRecords]);
-
-  const fetchPatients = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/doctor-dashboard/my-patients?limit=50');
-      const patientsData = response.data.data.patients || [];
-      
-      // Add demo patients if no real data
-      if (patientsData.length === 0) {
-        const demoPatients: Patient[] = [
-          { id: 'demo-1', first_name: 'John', last_name: 'Doe', age: 45, gender: 'male', blood_group: 'O+' },
-          { id: 'demo-2', first_name: 'Jane', last_name: 'Smith', age: 32, gender: 'female', blood_group: 'A+' },
-          { id: 'demo-3', first_name: 'Michael', last_name: 'Brown', age: 28, gender: 'male', blood_group: 'B+' },
-        ];
-        setPatients(demoPatients);
-        setSelectedPatient(demoPatients[0]);
-      } else {
-        setPatients(patientsData);
-        setSelectedPatient(patientsData[0]);
-      }
-    } catch (error) {
-      console.error('Error fetching patients:', error);
-      // Use demo data on error
-      const demoPatients: Patient[] = [
-        { id: 'demo-1', first_name: 'John', last_name: 'Doe', age: 45, gender: 'male', blood_group: 'O+' },
-        { id: 'demo-2', first_name: 'Jane', last_name: 'Smith', age: 32, gender: 'female', blood_group: 'A+' },
-      ];
-      setPatients(demoPatients);
-      setSelectedPatient(demoPatients[0]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchMedicalRecords = async (patientId: string) => {
     try {
@@ -277,11 +260,9 @@ const InteractiveBodyMap = () => {
     });
   };
 
-  const filteredPatients = patients;
-
   const filteredRecords = getFilteredRecords();
 
-  if (loading && patients.length === 0) {
+  if (loading && !selectedPatient) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -314,42 +295,29 @@ const InteractiveBodyMap = () => {
 
   return (
     <div className={`min-h-screen p-6 space-y-6 ${styles.container}`}>
+      {/* Back Button */}
+      <Link 
+        to="/patient-portal"
+        className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-2"
+      >
+        <ArrowLeft className="h-4 w-4 mr-1" />
+        Back to Dashboard
+      </Link>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Interactive Medical History
+            My Medical History
           </h1>
           <p className={`mt-1 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Visualize patient health by body system
+            Visualize your health by body system
           </p>
         </div>
         
         <div className="flex items-center gap-4">
           {/* Theme Selector */}
           <ThemeSelector />
-          
-          {/* Patient Selector */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <select
-              value={selectedPatient?.id || ''}
-              onChange={(e) => {
-                const patient = patients.find(p => p.id === e.target.value);
-                if (patient) {
-                  setSelectedPatient(patient);
-                  setSelectedBodyPart(null);
-                }
-              }}
-              className="pl-10 pr-8 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[250px] shadow-sm"
-            >
-              {filteredPatients.map(patient => (
-                <option key={patient.id} value={patient.id}>
-                  {patient.first_name} {patient.last_name} ({patient.age}y, {patient.blood_group})
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
       </div>
 

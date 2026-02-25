@@ -1,190 +1,184 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import ThemeWrapper from '../../components/theme/ThemeWrapper';
-import { Calendar, Clock, Users, Filter } from 'lucide-react';
+import { Calendar, Clock, Stethoscope, Filter } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 
 interface Appointment {
   id: string;
-  patient_first_name: string;
-  patient_last_name: string;
-  patient_age?: number;
-  patient_phone: string;
-  address: string;
-  city: string;
-  state: string;
+  doctor_first_name: string;
+  doctor_last_name: string;
+  doctor_specialization: string;
+  doctor_department: string;
   appointment_time: string;
   appointment_date: string;
   status: string;
   type: string;
   symptoms?: string;
-  date_of_birth?: string;
+  consultation_fee?: number;
 }
 
-// Dummy appointments data
+// Current patient (logged in user)
+const currentPatient = {
+  first_name: 'John',
+  last_name: 'Doe',
+  age: 45,
+  city: 'Mumbai'
+};
+
+// Dummy appointments data - Same patient with different doctors
 const dummyTodayAppointments: Appointment[] = [
   {
     id: 'apt-1',
-    patient_first_name: 'John',
-    patient_last_name: 'Doe',
-    patient_age: 45,
-    patient_phone: '+91 9876543210',
-    address: '123 Main Street',
-    city: 'Mumbai',
-    state: 'Maharashtra',
+    doctor_first_name: 'Dr. Sarah',
+    doctor_last_name: 'Johnson',
+    doctor_specialization: 'Cardiologist',
+    doctor_department: 'Cardiology',
     appointment_time: '09:30',
     appointment_date: new Date().toISOString().split('T')[0],
     status: 'completed',
     type: 'In Person',
-    symptoms: 'Fever, headache, body ache'
+    symptoms: 'Heart checkup, routine monitoring',
+    consultation_fee: 1500
   },
   {
     id: 'apt-2',
-    patient_first_name: 'Sarah',
-    patient_last_name: 'Smith',
-    patient_age: 32,
-    patient_phone: '+91 9876543211',
-    address: '456 Park Avenue',
-    city: 'Delhi',
-    state: 'Delhi',
+    doctor_first_name: 'Dr. Michael',
+    doctor_last_name: 'Chen',
+    doctor_specialization: 'General Physician',
+    doctor_department: 'General Medicine',
     appointment_time: '10:00',
     appointment_date: new Date().toISOString().split('T')[0],
     status: 'in_progress',
     type: 'Video',
-    symptoms: 'Chest pain, shortness of breath'
+    symptoms: 'Fever, headache, body ache',
+    consultation_fee: 800
   },
   {
     id: 'apt-3',
-    patient_first_name: 'Michael',
-    patient_last_name: 'Johnson',
-    patient_age: 58,
-    patient_phone: '+91 9876543212',
-    address: '789 Oak Road',
-    city: 'Bangalore',
-    state: 'Karnataka',
+    doctor_first_name: 'Dr. Emily',
+    doctor_last_name: 'Davis',
+    doctor_specialization: 'Dermatologist',
+    doctor_department: 'Dermatology',
     appointment_time: '11:30',
     appointment_date: new Date().toISOString().split('T')[0],
     status: 'pending',
     type: 'In Person',
-    symptoms: 'Diabetes checkup, routine monitoring'
+    symptoms: 'Skin rash, itching',
+    consultation_fee: 1200
   },
   {
     id: 'apt-4',
-    patient_first_name: 'Emily',
-    patient_last_name: 'Williams',
-    patient_age: 28,
-    patient_phone: '+91 9876543213',
-    address: '321 Elm Street',
-    city: 'Chennai',
-    state: 'Tamil Nadu',
+    doctor_first_name: 'Dr. Robert',
+    doctor_last_name: 'Wilson',
+    doctor_specialization: 'Orthopedic Surgeon',
+    doctor_department: 'Orthopedics',
     appointment_time: '14:00',
     appointment_date: new Date().toISOString().split('T')[0],
     status: 'confirmed',
     type: 'In Person',
-    symptoms: 'Skin rash, itching'
+    symptoms: 'Back pain, knee pain',
+    consultation_fee: 1800
   },
   {
     id: 'apt-5',
-    patient_first_name: 'Robert',
-    patient_last_name: 'Brown',
-    patient_age: 65,
-    patient_phone: '+91 9876543214',
-    address: '654 Pine Lane',
-    city: 'Hyderabad',
-    state: 'Telangana',
+    doctor_first_name: 'Dr. Lisa',
+    doctor_last_name: 'Anderson',
+    doctor_specialization: 'Pediatrician',
+    doctor_department: 'Pediatrics',
     appointment_time: '15:30',
     appointment_date: new Date().toISOString().split('T')[0],
     status: 'confirmed',
     type: 'Video',
-    symptoms: 'Heart checkup, follow-up'
+    symptoms: 'Regular health checkup',
+    consultation_fee: 1000
   }
 ];
 
 const dummyUpcomingAppointments: Appointment[] = [
   {
     id: 'apt-6',
-    patient_first_name: 'Lisa',
-    patient_last_name: 'Davis',
-    patient_age: 35,
-    patient_phone: '+91 9876543215',
-    address: '987 Cedar Lane',
-    city: 'Pune',
-    state: 'Maharashtra',
+    doctor_first_name: 'Dr. David',
+    doctor_last_name: 'Miller',
+    doctor_specialization: 'Neurologist',
+    doctor_department: 'Neurology',
     appointment_time: '09:00',
     appointment_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
     status: 'confirmed',
     type: 'In Person',
-    symptoms: 'Regular checkup'
+    symptoms: 'Headache, migraine',
+    consultation_fee: 2000
   },
   {
     id: 'apt-7',
-    patient_first_name: 'David',
-    patient_last_name: 'Miller',
-    patient_age: 42,
-    patient_phone: '+91 9876543216',
-    address: '147 Maple Drive',
-    city: 'Kolkata',
-    state: 'West Bengal',
+    doctor_first_name: 'Dr. Jennifer',
+    doctor_last_name: 'Wilson',
+    doctor_specialization: 'Gynecologist',
+    doctor_department: 'Gynecology',
     appointment_time: '10:30',
     appointment_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
     status: 'confirmed',
     type: 'In Person',
-    symptoms: 'Back pain, physiotherapy referral'
+    symptoms: 'Regular checkup',
+    consultation_fee: 1500
   },
   {
     id: 'apt-8',
-    patient_first_name: 'Jennifer',
-    patient_last_name: 'Wilson',
-    patient_age: 29,
-    patient_phone: '+91 9876543217',
-    address: '258 Birch Boulevard',
-    city: 'Ahmedabad',
-    state: 'Gujarat',
+    doctor_first_name: 'Dr. James',
+    doctor_last_name: 'Taylor',
+    doctor_specialization: 'ENT Specialist',
+    doctor_department: 'ENT',
     appointment_time: '14:30',
     appointment_date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
     status: 'confirmed',
     type: 'Video',
-    symptoms: 'Anxiety, stress management'
+    symptoms: 'Ear pain, throat infection',
+    consultation_fee: 1200
   },
   {
     id: 'apt-9',
-    patient_first_name: 'James',
-    patient_last_name: 'Taylor',
-    patient_age: 52,
-    patient_phone: '+91 9876543218',
-    address: '369 Willow Street',
-    city: 'Jaipur',
-    state: 'Rajasthan',
+    doctor_first_name: 'Dr. Maria',
+    doctor_last_name: 'Garcia',
+    doctor_specialization: 'Dentist',
+    doctor_department: 'Dental',
     appointment_time: '11:00',
     appointment_date: new Date(Date.now() + 259200000).toISOString().split('T')[0],
     status: 'pending',
     type: 'In Person',
-    symptoms: 'Blood pressure monitoring'
+    symptoms: 'Toothache, dental cleaning',
+    consultation_fee: 800
   },
   {
     id: 'apt-10',
-    patient_first_name: 'Maria',
-    patient_last_name: 'Anderson',
-    patient_age: 38,
-    patient_phone: '+91 9876543219',
-    address: '741 Spruce Avenue',
-    city: 'Lucknow',
-    state: 'Uttar Pradesh',
+    doctor_first_name: 'Dr. William',
+    doctor_last_name: 'Brown',
+    doctor_specialization: 'Ophthalmologist',
+    doctor_department: 'Ophthalmology',
     appointment_time: '16:00',
     appointment_date: new Date(Date.now() + 345600000).toISOString().split('T')[0],
     status: 'confirmed',
     type: 'In Person',
-    symptoms: 'Pregnancy checkup'
+    symptoms: 'Eye checkup, vision test',
+    consultation_fee: 1000
   }
 ];
 
 const Appointments = () => {
-  const { isDark, cardColors, textPrimary, textSecondary, textTertiary } = useTheme();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'today' | 'upcoming'>('today');
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>(dummyTodayAppointments);
   const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>(dummyUpcomingAppointments);
   const [loading, setLoading] = useState(false);
+
+  // Use logged in user data if available, otherwise use default
+  const patient = user ? {
+    first_name: user.first_name,
+    last_name: user.last_name,
+    age: 45,
+    city: 'Mumbai'
+  } : currentPatient;
 
   useEffect(() => {
     fetchAppointments();
@@ -197,16 +191,16 @@ const Appointments = () => {
       let realUpcomingAppointments: Appointment[] = [];
       
       try {
-        // Fetch today's appointments
-        const todayRes = await api.get('/doctor-dashboard/today-appointments');
+        // Fetch patient's today's appointments
+        const todayRes = await api.get('/appointments/patient/today');
         realTodayAppointments = todayRes.data?.data || [];
       } catch (apiError) {
         console.log('API error fetching today appointments, using dummy data');
       }
       
       try {
-        // Fetch all appointments for upcoming
-        const allRes = await api.get('/appointments');
+        // Fetch patient's all appointments for upcoming
+        const allRes = await api.get('/appointments/patient');
         const today = new Date().toISOString().split('T')[0];
         
         // Filter upcoming appointments (future dates, not today)
@@ -273,11 +267,11 @@ const Appointments = () => {
         {/* Divider */}
         <div className="w-0.5 h-14 bg-slate-600" />
 
-        {/* Patient Info */}
+        {/* Doctor Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <p className="text-white font-bold text-lg truncate">
-              {apt.patient_first_name} {apt.patient_last_name}
+              {apt.doctor_first_name} {apt.doctor_last_name}
             </p>
             {apt.id?.startsWith('apt-') && (
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-600 text-white border border-purple-400">
@@ -286,13 +280,13 @@ const Appointments = () => {
             )}
           </div>
           <p className="text-slate-300 text-sm font-medium">
-            {apt.patient_age 
-              ? `${apt.patient_age} years` 
-              : apt.date_of_birth 
-                ? `${Math.floor((new Date().getTime() - new Date(apt.date_of_birth).getTime()) / 31557600000)} years`
-                : 'Age unknown'
-            } • {apt.city || 'N/A'}
+            {apt.doctor_specialization} • {apt.doctor_department}
           </p>
+          {apt.consultation_fee && (
+            <p className="text-emerald-400 text-sm font-medium mt-1">
+              ₹{apt.consultation_fee} consultation fee
+            </p>
+          )}
           {apt.symptoms && (
             <p className="text-slate-400 text-sm mt-2">Symptoms: {apt.symptoms}</p>
           )}
@@ -315,10 +309,13 @@ const Appointments = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-black text-slate-900">
-              Appointments
+              My Appointments
             </h1>
             <p className="text-slate-700 text-lg font-bold mt-2">
-              Manage your patient appointments
+              View and manage your doctor appointments
+            </p>
+            <p className="text-slate-500 text-base mt-1">
+              {patient.first_name} {patient.last_name} • {patient.age} years • {patient.city}
             </p>
           </div>
           <div className="flex items-center gap-2 text-slate-800 font-bold text-base bg-white px-4 py-2 rounded-xl border-2 border-slate-300 shadow-lg">
@@ -327,8 +324,8 @@ const Appointments = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {/* Stats Cards - Removed Total Patients, only 2 cards now */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="p-6 rounded-2xl bg-slate-800 border-2 border-slate-600 shadow-xl hover:shadow-2xl hover:border-slate-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <div className="p-3 rounded-xl bg-blue-600">
@@ -349,20 +346,6 @@ const Appointments = () => {
               <div>
                 <p className="text-slate-300 text-sm font-bold">Upcoming</p>
                 <p className="text-white text-3xl font-bold">{upcomingAppointments.length}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-6 rounded-2xl bg-slate-800 border-2 border-slate-600 shadow-xl hover:shadow-2xl hover:border-slate-500 transition-all duration-300">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-emerald-600">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-slate-300 text-sm font-bold">Total Patients</p>
-                <p className="text-white text-3xl font-bold">
-                  {new Set([...todayAppointments, ...upcomingAppointments].map(a => a.patient_first_name + a.patient_last_name)).size}
-                </p>
               </div>
             </div>
           </div>
@@ -428,13 +411,16 @@ const Appointments = () => {
           ) : (
             <div className="text-center py-12">
               <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-slate-100 flex items-center justify-center border-2 border-slate-200">
-                <Calendar className="w-10 h-10 text-slate-400" />
+                <Stethoscope className="w-10 h-10 text-slate-400" />
               </div>
               <p className="text-slate-500 font-medium text-lg">
                 {activeTab === 'today' 
                   ? 'No appointments scheduled for today'
                   : 'No upcoming appointments'
                 }
+              </p>
+              <p className="text-slate-400 text-sm mt-2">
+                Book an appointment with your doctor
               </p>
             </div>
           )}
