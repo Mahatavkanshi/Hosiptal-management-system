@@ -1,367 +1,439 @@
-# Hospital Management System
+# 🏥 Hospital Management System
 
-A comprehensive full-stack Hospital Management System built with React, Node.js, Express, TypeScript, and PostgreSQL.
+A comprehensive, full-stack Hospital Management System built with modern technologies including React, Node.js, Express, TypeScript, and PostgreSQL. This system provides complete healthcare management with role-based access, video consultations, and integrated payments.
 
-## Features
+## 📸 Screenshots
 
-### Core Modules
+<div align="center">
 
-1. **User Management**
+### 🏥 Role Selection Portal
+*Clean role-based portal selection for different departments*
+
+![Role Selection Portal](screenshots/role-selection.png)
+
+---
+
+### 👨‍⚕️ Doctor Dashboard
+*Comprehensive dashboard with patient statistics, charts, and revenue analytics*
+
+![Doctor Dashboard](screenshots/doctor-dashboard.png)
+
+---
+
+### 🏥 Patient Portal
+*Modern patient dashboard with welcome banner, quick actions, appointments, and medical records*
+
+![Patient Dashboard](screenshots/patient-dashboard.png)
+
+---
+
+### 🎫 Receptionist Dashboard
+*Patient admissions management with token system and messaging*
+
+![Receptionist Dashboard](screenshots/receptionist-dashboard.png)
+
+---
+
+### 💊 Pharmacy Dashboard
+*Complete medicine inventory management with stock alerts and reorder functionality*
+
+![Pharmacy Dashboard](screenshots/pharmacy-dashboard.png)
+
+</div>
+
+---
+
+## ✨ Features
+
+### 🎯 Core Modules
+
+1. **👥 Multi-Role User Management**
    - 7 User Roles: Super Admin, Admin, Doctor, Nurse, Receptionist, Patient, Pharmacist
-   - JWT-based Authentication
+   - JWT-based Authentication with secure token handling
    - Role-based Access Control (RBAC)
-   - User Profile Management
+   - User Profile Management with medical history
 
-2. **Appointment System**
-   - Online appointment booking
-   - Real-time queue management
+2. **📅 Advanced Appointment System**
+   - Online appointment booking with doctor selection
+   - Real-time queue management with token numbers
    - Doctor availability management
-   - Video consultation support
+   - Video consultation support with payment integration
+   - In-person visit tracking with receptionist tokens
    - SMS/Email notifications
 
-3. **Patient Management**
-   - Patient registration
+3. **🏥 Patient Portal**
+   - Modern, responsive dashboard design
+   - Upcoming appointments with token numbers
    - Medical history tracking
-   - Digital prescriptions
-   - Document upload (OCR-based)
+   - Digital prescriptions with download/print
+   - Payment history and outstanding balance
+   - Telemedicine video calls
 
-4. **Bed Management**
-   - Visual floor plan
+4. **🩺 Interactive Medical History**
+   - Visual body system overview
+   - Critical, Monitor, and Healthy area tracking
+   - Detailed medical records by body part
+   - Prescription management
+   - Downloadable medical reports
+
+5. **🛏️ Bed Management**
+   - Visual floor plan interface
    - Real-time bed availability
    - Patient allocation/deallocation
    - Ward-wise categorization
 
-5. **Pharmacy & Inventory**
-   - Medicine stock management
-   - Low stock alerts
-   - Expiry tracking
+6. **💊 Pharmacy & Inventory**
+   - Complete medicine stock management
+   - Low stock alerts with reorder functionality
+   - Expiry tracking and alerts
    - Prescription fulfillment
+   - Purchase order management
+   - Financial tracking
 
-6. **Payment System**
-   - Razorpay integration
+7. **💳 Integrated Payment System**
+   - Razorpay integration for secure payments
    - Multiple payment methods (Cash, Card, UPI, Insurance)
-   - Invoice generation
-   - Revenue analytics
+   - Invoice generation and download
+   - Payment history tracking
+   - Outstanding balance management
 
-7. **Admin Dashboard**
+8. **📊 Admin Dashboard**
    - Analytics and reports
-   - User management
+   - User management and role assignment
    - Audit logs
+   - Revenue analytics
    - System configuration
 
-## Tech Stack
+9. **🎥 Video Consultation**
+   - WebRTC-based video calls
+   - Pre-payment integration
+   - Doctor availability display
+   - Call history and recordings
+
+## 🛠️ Tech Stack
 
 ### Backend
-- **Runtime**: Node.js
+- **Runtime**: Node.js 18+
 - **Framework**: Express.js
 - **Language**: TypeScript
 - **Database**: PostgreSQL
 - **Authentication**: JWT (JSON Web Tokens)
 - **Real-time**: Socket.io
 - **File Storage**: Cloudinary / AWS S3
-- **Payment**: Razorpay
+- **Payment Gateway**: Razorpay
 - **SMS**: Twilio
 - **Email**: Nodemailer / SendGrid
 
 ### Frontend
-- **Framework**: React 18
-- **Language**: TypeScript
+- **Framework**: React 18 with TypeScript
 - **Styling**: Tailwind CSS
-- **State Management**: Zustand
-- **Data Fetching**: React Query (TanStack)
+- **State Management**: React Context API
+- **Data Fetching**: REST API with Axios
 - **Routing**: React Router v6
-- **Forms**: React Hook Form + Zod
-- **Charts**: Recharts
+- **Icons**: Lucide React
+- **Charts**: Custom components
 - **Build Tool**: Vite
+- **Package Manager**: npm
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 hospital-management-system/
 ├── backend/
 │   ├── src/
-│   │   ├── config/
-│   │   │   ├── database.ts
-│   │   │   └── migrations.ts
-│   │   ├── controllers/
-│   │   │   └── auth.controller.ts
-│   │   ├── middleware/
-│   │   │   ├── auth.ts
-│   │   │   └── errorHandler.ts
-│   │   ├── routes/
-│   │   │   ├── auth.routes.ts
-│   │   │   ├── user.routes.ts
-│   │   │   ├── doctor.routes.ts
-│   │   │   ├── patient.routes.ts
-│   │   │   ├── appointment.routes.ts
-│   │   │   ├── bed.routes.ts
-│   │   │   ├── medicine.routes.ts
-│   │   │   ├── payment.routes.ts
-│   │   │   ├── admin.routes.ts
-│   │   │   └── video.routes.ts
-│   │   ├── types/
-│   │   │   └── index.ts
-│   │   ├── utils/
-│   │   │   └── helpers.ts
-│   │   └── server.ts
+│   │   ├── config/           # Database & app configuration
+│   │   ├── controllers/      # Route controllers
+│   │   ├── middleware/       # Auth & error handling
+│   │   ├── routes/           # API routes
+│   │   ├── types/            # TypeScript types
+│   │   └── server.ts         # Entry point
 │   ├── package.json
-│   ├── tsconfig.json
-│   └── .env.example
+│   └── tsconfig.json
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   │   └── layout/
-│   │   │       ├── AuthLayout.tsx
-│   │   │       └── MainLayout.tsx
-│   │   ├── context/
-│   │   │   └── AuthContext.tsx
-│   │   ├── pages/
-│   │   │   ├── auth/
-│   │   │   │   ├── Login.tsx
-│   │   │   │   ├── Register.tsx
-│   │   │   │   └── ForgotPassword.tsx
-│   │   │   ├── dashboard/
-│   │   │   │   └── Dashboard.tsx
-│   │   │   ├── appointments/
-│   │   │   ├── doctors/
-│   │   │   ├── patients/
-│   │   │   ├── beds/
-│   │   │   ├── medicines/
-│   │   │   ├── admin/
-│   │   │   ├── profile/
-│   │   │   ├── video/
-│   │   │   └── NotFound.tsx
-│   │   ├── routes/
-│   │   │   └── index.tsx
-│   │   ├── services/
-│   │   │   └── api.ts
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   └── index.css
-│   ├── index.html
+│   │   ├── components/       # Reusable components
+│   │   ├── context/          # React contexts
+│   │   ├── pages/            # Page components
+│   │   │   ├── dashboard/    # All dashboard pages
+│   │   │   ├── appointments/ # Appointment management
+│   │   │   ├── medicines/    # Pharmacy & inventory
+│   │   │   └── patients/     # Patient portal
+│   │   ├── routes/           # Route configuration
+│   │   └── services/         # API services
 │   ├── package.json
-│   ├── tsconfig.json
-│   ├── vite.config.ts
-│   ├── tailwind.config.js
-│   └── postcss.config.js
-├── database/
-│   ├── migrations/
-│   └── seeds/
-├── docs/
-├── package.json
+│   └── vite.config.ts
 └── README.md
 ```
 
-## Setup Instructions
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js (v18 or higher)
 - PostgreSQL (v14 or higher)
-- Redis (optional, for caching)
 - npm or yarn
 
-### Backend Setup
+### Installation
 
-1. **Install dependencies**:
+1. **Clone the repository**
    ```bash
-   cd backend
-   npm install
+   git clone https://github.com/yourusername/hospital-management-system.git
+   cd hospital-management-system
    ```
 
-2. **Environment Configuration**:
+2. **Install all dependencies**
    ```bash
-   cp .env.example .env
+   npm run install:all
    ```
-   Edit `.env` file with your configuration:
-   - Database credentials
-   - JWT secrets
-   - API keys (Razorpay, Twilio, Cloudinary)
-
-3. **Database Setup**:
+   Or manually:
    ```bash
-   # Create database
-   createdb hospital_management
-   
-   # Run migrations
-   npm run db:migrate
-   
-   # (Optional) Seed data
-   npm run db:seed
+   cd backend && npm install
+   cd ../frontend && npm install
    ```
 
-4. **Start the server**:
-   ```bash
-   # Development
-   npm run dev
-   
-   # Production
-   npm run build
-   npm start
+3. **Environment Setup**
+
+   Backend (`backend/.env`):
+   ```env
+   PORT=5000
+   DATABASE_URL=postgresql://username:password@localhost:5432/hospital_db
+   JWT_SECRET=your_jwt_secret_key
+   JWT_EXPIRES_IN=7d
+   RAZORPAY_KEY_ID=your_razorpay_key
+   RAZORPAY_KEY_SECRET=your_razorpay_secret
    ```
 
-### Frontend Setup
-
-1. **Install dependencies**:
-   ```bash
-   cd frontend
-   npm install
-   ```
-
-2. **Environment Configuration**:
-   ```bash
-   cp .env.example .env
-   ```
-   Edit `.env` file:
-   ```
+   Frontend (`frontend/.env`):
+   ```env
    VITE_API_URL=http://localhost:5000/api
    VITE_SOCKET_URL=http://localhost:5000
    VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
    ```
 
-3. **Start the development server**:
+4. **Database Setup**
    ```bash
+   cd backend
+   npx prisma migrate dev
+   npx prisma db seed
+   ```
+
+5. **Run the application**
+   ```bash
+   # From root directory
    npm run dev
+   
+   # Or run separately
+   cd backend && npm run dev
+   cd frontend && npm run dev
    ```
 
-4. **Build for production**:
-   ```bash
-   npm run build
-   ```
+6. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:5000/api
 
-### Running Both (Root Directory)
+## 📱 Application Flow
 
-```bash
-# Install all dependencies
-npm run install:all
+### For Patients:
+1. **Registration**: Create account with basic details
+2. **Dashboard**: View upcoming appointments, medical records, and balance
+3. **Book Appointment**: Select doctor, date, time, and consultation type
+4. **Hospital Visit**: Receive token number from receptionist
+5. **Video Consultation**: Join call after payment
+6. **Payments**: View and pay bills online
+7. **Records**: Access medical history and download prescriptions
 
-# Run both frontend and backend
-npm run dev
-```
+### For Doctors:
+1. **Dashboard**: View today's and upcoming appointments
+2. **Patient Management**: Access patient medical history
+3. **Video Calls**: Conduct online consultations
+4. **Prescriptions**: Write and manage prescriptions
+5. **Schedule**: Manage availability
 
-## API Endpoints
+### For Admin:
+1. **User Management**: Create and manage all users
+2. **Analytics**: View hospital statistics and revenue
+3. **System Config**: Manage beds, medicines, and settings
+4. **Reports**: Generate various reports
+
+## 🔐 User Roles & Permissions
+
+| Role | Description | Key Permissions |
+|------|-------------|----------------|
+| **Super Admin** | System administrator | Full system access, user management |
+| **Admin** | Hospital administrator | Manage staff, view reports, manage beds |
+| **Doctor** | Medical doctor | View patients, write prescriptions, video calls |
+| **Nurse** | Hospital nurse | Bed management, assist doctors |
+| **Receptionist** | Front desk staff | Appointment booking, token generation, patient registration |
+| **Patient** | Hospital patient | Book appointments, view history, payments, video calls |
+| **Pharmacist** | Pharmacy staff | Medicine management, prescriptions, inventory |
+
+## 🎨 UI/UX Features
+
+- **Modern Dashboard**: Clean, responsive design with Tailwind CSS
+- **Interactive Body Map**: Visual medical history representation
+- **Token System**: Receptionist-assigned appointment numbers
+- **Professional Prescriptions**: Downloadable PDF format
+- **Real-time Updates**: Live appointment status and notifications
+- **Mobile Responsive**: Works on all device sizes
+- **Theme Support**: Light and dark mode support
+
+## 💡 Key Features Implemented
+
+### Patient Dashboard
+- ✅ Welcome banner with quick actions
+- ✅ Stats cards (Records, Balance, Appointments, Prescriptions)
+- ✅ Upcoming appointments with token numbers
+- ✅ Recent medical records
+- ✅ Modern card-based layout
+- ✅ Video consultation integration
+
+### Appointment System
+- ✅ Multi-step booking wizard
+- ✅ Doctor search and selection
+- ✅ Date and time slot selection
+- ✅ Video vs In-person options
+- ✅ Token number assignment for hospital visits
+- ✅ Payment integration for video calls
+
+### Medical Records
+- ✅ Interactive body system visualization
+- ✅ Critical/Monitor/Healthy area tracking
+- ✅ Detailed record history
+- ✅ Prescription management
+- ✅ Downloadable reports
+
+### Pharmacy
+- ✅ Medicine inventory management
+- ✅ Stock movement tracking
+- ✅ Low stock alerts
+- ✅ Expiry tracking
+- ✅ Purchase order management
+- ✅ Financial reporting
+
+### Payments
+- ✅ Razorpay integration
+- ✅ Multiple payment methods
+- ✅ Bill management
+- ✅ Payment history
+- ✅ Invoice generation
+
+## 🔌 API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - User login
 - `GET /api/auth/profile` - Get user profile
 - `PUT /api/auth/profile` - Update profile
-- `POST /api/auth/refresh-token` - Refresh access token
-- `POST /api/auth/change-password` - Change password
-
-### Doctors
-- `GET /api/doctors` - List all doctors
-- `GET /api/doctors/:id` - Get doctor details
-- `GET /api/doctors/:id/availability` - Check availability
-- `PUT /api/doctors/:id/availability` - Update availability
-
-### Patients
-- `GET /api/patients/medical-history` - Get medical history
-- `GET /api/patients/prescriptions` - Get prescriptions
-- `GET /api/patients/appointments` - Get appointments
 
 ### Appointments
 - `GET /api/appointments` - List appointments
 - `POST /api/appointments` - Book appointment
 - `GET /api/appointments/:id` - Get appointment details
 - `PUT /api/appointments/:id/status` - Update status
-- `POST /api/appointments/:id/cancel` - Cancel appointment
 
-### Beds
-- `GET /api/beds` - List beds
-- `GET /api/beds/availability` - Get availability
-- `POST /api/beds/allocate` - Allocate bed
-- `POST /api/beds/:id/discharge` - Discharge patient
-- `POST /api/beds` - Create new bed (Admin)
-
-### Medicines
-- `GET /api/medicines` - List medicines
-- `POST /api/medicines` - Add medicine
-- `PUT /api/medicines/:id/stock` - Update stock
-- `GET /api/medicines/inventory/low-stock` - Get low stock
-- `GET /api/medicines/inventory/expiring` - Get expiring medicines
+### Patients
+- `GET /api/patients/medical-history` - Get medical history
+- `GET /api/patients/prescriptions` - Get prescriptions
+- `POST /api/patients/records` - Add medical record
 
 ### Payments
 - `POST /api/payments/create-order` - Create payment order
 - `POST /api/payments/verify` - Verify payment
 - `GET /api/payments/history` - Payment history
-- `GET /api/payments/stats/overview` - Payment statistics
 
-### Admin
-- `GET /api/admin/dashboard` - Dashboard stats
-- `GET /api/admin/users` - User management
-- `PUT /api/admin/users/:id/status` - Toggle user status
-- `GET /api/admin/audit-logs` - View audit logs
-- `GET /api/admin/revenue-analytics` - Revenue reports
+### Pharmacy
+- `GET /api/medicines` - List medicines
+- `GET /api/medicines/inventory` - Get inventory
+- `POST /api/medicines/orders` - Create purchase order
+- `GET /api/pharmacy/finance` - Get financial data
 
-## User Roles & Permissions
+## 🧪 Testing
 
-| Role | Description | Key Permissions |
-|------|-------------|----------------|
-| Super Admin | System administrator | Full system access |
-| Admin | Hospital administrator | Manage staff, view reports, manage beds |
-| Doctor | Medical doctor | View patients, write prescriptions, video calls |
-| Nurse | Hospital nurse | Bed management, assist doctors |
-| Receptionist | Front desk | Appointment booking, patient registration |
-| Patient | Hospital patient | Book appointments, view history, payments |
-| Pharmacist | Pharmacy staff | Medicine management, prescriptions |
+```bash
+# Run backend tests
+cd backend
+npm test
 
-## Development Timeline (12-14 Weeks)
+# Run frontend tests
+cd frontend
+npm test
+```
 
-### Phase 1 (Weeks 1-2): Foundation
-- [x] Project setup and configuration
-- [x] Database schema design
-- [x] Authentication system
-- [x] Basic API structure
+## 📝 Environment Variables
 
-### Phase 2 (Weeks 3-5): Core Features
-- [ ] Appointment booking system
-- [ ] Doctor management
-- [ ] Patient dashboard
+### Backend
+```env
+PORT=5000
+NODE_ENV=development
+DATABASE_URL=postgresql://user:pass@localhost:5432/hospital_db
+JWT_SECRET=your-secret-key
+JWT_EXPIRES_IN=7d
+RAZORPAY_KEY_ID=rzp_test_xxx
+RAZORPAY_KEY_SECRET=xxx
+TWILIO_ACCOUNT_SID=xxx
+TWILIO_AUTH_TOKEN=xxx
+TWILIO_PHONE_NUMBER=+1234567890
+EMAIL_SERVICE=gmail
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+```
 
-### Phase 3 (Weeks 6-7): Medical Records
-- [ ] Medical records module
-- [ ] Prescription management
-- [ ] Document upload (OCR)
+### Frontend
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:5000
+VITE_RAZORPAY_KEY_ID=rzp_test_xxx
+```
 
-### Phase 4 (Weeks 8-9): Advanced Features
-- [ ] Payment integration
-- [ ] SMS/Email notifications
-- [ ] Bed management
+## 🐛 Troubleshooting
 
-### Phase 5 (Weeks 10-11): Video Consultation
-- [ ] WebRTC integration
-- [ ] Video call UI
-- [ ] Real-time features
+### Common Issues
 
-### Phase 6 (Weeks 12-13): Admin & Analytics
-- [ ] Admin dashboard
-- [ ] Reports and analytics
-- [ ] User management
+1. **Database Connection Error**
+   - Ensure PostgreSQL is running
+   - Check DATABASE_URL in .env
+   - Verify database exists
 
-### Phase 7 (Week 14): Testing & Deployment
-- [ ] Testing and bug fixes
-- [ ] Documentation
-- [ ] Deployment
+2. **Payment Gateway Not Working**
+   - Verify Razorpay keys in .env
+   - Check if Razorpay dashboard is configured
+   - Ensure callback URLs are correct
 
-## Contributing
+3. **Build Errors**
+   - Run `npm install` in both frontend and backend
+   - Check TypeScript version compatibility
+   - Clear node_modules and reinstall
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
+## 🙏 Acknowledgments
 
-For support, email support@hospitalms.com or join our Slack channel.
+- React Team for the amazing frontend library
+- Express.js Team for the robust backend framework
+- PostgreSQL Team for the reliable database
+- Tailwind CSS Team for the utility-first CSS framework
+- Razorpay for payment gateway integration
+- All contributors and testers
 
-## Acknowledgments
+## 📞 Support
 
-- React team for the amazing frontend library
-- Express.js team for the backend framework
-- PostgreSQL team for the robust database
-- Tailwind CSS team for the utility-first CSS framework
+For support, email: support@hospitalms.com
+
+## 🔗 Links
+
+- [Live Demo](https://your-demo-link.com)
+- [Documentation](https://your-docs-link.com)
+- [Issue Tracker](https://github.com/yourusername/hospital-management-system/issues)
+
+---
+
+Made with ❤️ by the Hospital MS Team
