@@ -44,6 +44,8 @@ interface Appointment {
   consultationType: 'in-person' | 'video';
   amount: number;
   paymentStatus: 'paid' | 'pending';
+  tokenNumber?: string;
+  appointmentNumber?: string;
 }
 
 interface Doctor {
@@ -351,7 +353,8 @@ const PatientPortalDashboard: React.FC = () => {
             type: 'Follow-up',
             consultationType: 'video',
             amount: 1500,
-            paymentStatus: 'paid'
+            paymentStatus: 'paid',
+            appointmentNumber: 'V-2024-015'
           },
           { 
             id: '2', 
@@ -364,7 +367,24 @@ const PatientPortalDashboard: React.FC = () => {
             type: 'General Checkup',
             consultationType: 'in-person',
             amount: 800,
-            paymentStatus: 'paid'
+            paymentStatus: 'paid',
+            tokenNumber: 'A-042',
+            appointmentNumber: 'APT-2024-042'
+          },
+          { 
+            id: '3', 
+            doctorId: 'doc3',
+            doctorName: 'Dr. Emily Davis', 
+            department: 'Dermatology', 
+            date: '2024-02-26', 
+            time: '11:30 AM', 
+            status: 'upcoming', 
+            type: 'Consultation',
+            consultationType: 'in-person',
+            amount: 1200,
+            paymentStatus: 'paid',
+            tokenNumber: 'A-056',
+            appointmentNumber: 'APT-2024-056'
           }
         ]);
         setIsLoading(false);
@@ -610,8 +630,20 @@ const PatientPortalDashboard: React.FC = () => {
               appointments.filter(a => a.status === 'upcoming').slice(0, 2).map((apt) => (
                 <div key={apt.id} className="p-4 hover:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 text-sm truncate">{apt.doctorName}</p>
+                      <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium text-gray-900 text-sm truncate">{apt.doctorName}</p>
+                        {apt.tokenNumber && (
+                          <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-bold border border-amber-300">
+                            Token: {apt.tokenNumber}
+                          </span>
+                        )}
+                        {apt.appointmentNumber && !apt.tokenNumber && (
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-medium">
+                            {apt.appointmentNumber}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-500">{apt.department} • {apt.type}</p>
                       
                       <div className="flex items-center mt-1 text-xs text-gray-600">
@@ -1513,7 +1545,19 @@ const PatientPortalDashboard: React.FC = () => {
                           </div>
                           
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">{apt.doctorName}</p>
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-medium text-gray-900">{apt.doctorName}</p>
+                              {apt.tokenNumber && (
+                                <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs font-bold border border-amber-300">
+                                  Token: {apt.tokenNumber}
+                                </span>
+                              )}
+                              {apt.appointmentNumber && !apt.tokenNumber && (
+                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                                  {apt.appointmentNumber}
+                                </span>
+                              )}
+                            </div>
                             <p className="text-sm text-gray-500">{apt.department} • {apt.type}</p>
                             
                             <div className="flex items-center mt-2 text-sm text-gray-600">
