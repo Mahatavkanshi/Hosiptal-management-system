@@ -529,48 +529,299 @@ const PatientPortalDashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Welcome back, {user?.first_name || 'Patient'}
-        </h1>
-        <p className="text-gray-600 mt-1">Manage your health records and appointments</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation Bar */}
+      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="bg-teal-500 text-white p-2 rounded-lg mr-3">
+                <Activity className="h-5 w-5" />
+              </div>
+              <span className="font-bold text-xl text-gray-900">Hospital MS</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-medium text-gray-900">{user?.first_name || 'Patient'} {user?.last_name || 'Doe'}</p>
+                <p className="text-xs text-gray-500">Patient ID: PT-2024-001</p>
+              </div>
+              <div className="h-10 w-10 bg-teal-100 rounded-full flex items-center justify-center">
+                <User className="h-6 w-6 text-teal-600" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <button 
-          onClick={() => setShowBookAppointment(true)}
-          className="flex items-center justify-center p-4 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl"
-        >
-          <Calendar className="h-5 w-5 mr-2" />
-          Book Appointment
-        </button>
-        <button 
-          onClick={() => setShowViewRecords(true)}
-          className="flex items-center justify-center p-4 bg-white border-2 border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-colors shadow-sm hover:shadow-md"
-        >
-          <FileText className="h-5 w-5 mr-2" />
-          View Records
-        </button>
-        <button 
-          onClick={() => setShowPayBills(true)}
-          className="flex items-center justify-center p-4 bg-white border-2 border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-colors shadow-sm hover:shadow-md"
-        >
-          <CreditCard className="h-5 w-5 mr-2" />
-          Pay Bills
-        </button>
-        <button 
-          onClick={() => setShowTelemedicine(true)}
-          className="flex items-center justify-center p-4 bg-white border-2 border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-colors shadow-sm hover:shadow-md"
-        >
-          <Activity className="h-5 w-5 mr-2" />
-          Telemedicine
-        </button>
-      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Banner */}
+        <div className="bg-gradient-to-r from-teal-500 to-teal-600 rounded-2xl p-8 mb-8 text-white shadow-lg">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="mb-4 md:mb-0">
+              <h1 className="text-3xl font-bold mb-2">
+                Welcome back, {user?.first_name || 'Patient'}! 👋
+              </h1>
+              <p className="text-teal-100 text-lg">
+                Manage your health records and appointments
+              </p>
+              <div className="flex items-center mt-3 space-x-4 text-sm text-teal-100">
+                <span className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                </span>
+                <span className="flex items-center">
+                  <Clock className="h-4 w-4 mr-1" />
+                  {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+            </div>
+            <div className="flex space-x-3">
+              <button 
+                onClick={() => setShowBookAppointment(true)}
+                className="bg-white text-teal-600 px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center"
+              >
+                <Calendar className="h-5 w-5 mr-2" />
+                Book Appointment
+              </button>
+            </div>
+          </div>
+        </div>
 
-      {/* Stats Overview - Reduced to 2 cards */}
+        {/* Quick Action Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <button 
+            onClick={() => setShowBookAppointment(true)}
+            className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all text-left group"
+          >
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors">
+              <Calendar className="h-6 w-6 text-blue-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">Book</h3>
+            <p className="text-sm text-gray-500">Appointment</p>
+          </button>
+          
+          <button 
+            onClick={() => setShowViewRecords(true)}
+            className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all text-left group"
+          >
+            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-green-200 transition-colors">
+              <FileText className="h-6 w-6 text-green-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">View</h3>
+            <p className="text-sm text-gray-500">Records</p>
+          </button>
+          
+          <button 
+            onClick={() => setShowPayBills(true)}
+            className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all text-left group"
+          >
+            <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-yellow-200 transition-colors">
+              <CreditCard className="h-6 w-6 text-yellow-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">Pay</h3>
+            <p className="text-sm text-gray-500">Bills</p>
+          </button>
+          
+          <button 
+            onClick={() => setShowTelemedicine(true)}
+            className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all text-left group"
+          >
+            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-purple-200 transition-colors">
+              <Video className="h-6 w-6 text-purple-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">Video</h3>
+            <p className="text-sm text-gray-500">Consult</p>
+          </button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Medical Records</p>
+                <p className="text-2xl font-bold text-gray-900">{records.length}</p>
+              </div>
+              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                <FileText className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Balance Due</p>
+                <p className="text-2xl font-bold text-gray-900">${totalDue}</p>
+              </div>
+              <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-yellow-500" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Upcoming</p>
+                <p className="text-2xl font-bold text-gray-900">{upcomingCount}</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-blue-500" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Prescriptions</p>
+                <p className="text-2xl font-bold text-gray-900">4</p>
+              </div>
+              <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+                <Pill className="h-6 w-6 text-purple-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Upcoming Appointments */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-5 border-b border-gray-200 flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                    <Calendar className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Upcoming Appointments</h3>
+                    <p className="text-sm text-gray-500">{upcomingCount} scheduled</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowAllAppointments(true)}
+                  className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center"
+                >
+                  View All
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </button>
+              </div>
+              
+              <div className="divide-y divide-gray-100">
+                {appointments.filter(a => a.status === 'upcoming').length === 0 ? (
+                  <div className="p-8 text-center">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Calendar className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500">No upcoming appointments</p>
+                    <button 
+                      onClick={() => setShowBookAppointment(true)}
+                      className="mt-3 text-teal-600 font-medium hover:text-teal-700"
+                    >
+                      Book your first appointment
+                    </button>
+                  </div>
+                ) : (
+                  appointments.filter(a => a.status === 'upcoming').map((apt) => (
+                    <div key={apt.id} className="p-5 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start">
+                          <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                            <Stethoscope className="h-6 w-6 text-teal-600" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-semibold text-gray-900">{apt.doctorName}</p>
+                              {apt.tokenNumber && (
+                                <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs font-bold border border-amber-300">
+                                  Token: {apt.tokenNumber}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500">{apt.department} • {apt.type}</p>
+                            <div className="flex items-center mt-2 text-sm text-gray-600">
+                              <Clock className="h-4 w-4 mr-1 text-gray-400" />
+                              <span>{apt.date} at {apt.time}</span>
+                              {apt.consultationType === 'video' && (
+                                <span className="ml-2 px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">Video</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          {apt.consultationType === 'video' && apt.paymentStatus === 'paid' && (
+                            <button
+                              onClick={() => startVideoCall(apt)}
+                              className="flex items-center px-3 py-1.5 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700"
+                            >
+                              <Video className="h-4 w-4 mr-1" />
+                              Join
+                            </button>
+                          )}
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(apt.status)}`}>
+                            {apt.status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Medical Records Sidebar */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="p-5 border-b border-gray-200">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                  <FileText className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Recent Records</h3>
+                  <p className="text-sm text-gray-500">{records.length} total</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="divide-y divide-gray-100 max-h-[400px] overflow-y-auto">
+              {records.slice(0, 3).map((record) => (
+                <div 
+                  key={record.id} 
+                  className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => setShowRecordDetails(record)}
+                >
+                  <div className="flex items-start">
+                    <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                      <FileText className="h-5 w-5 text-green-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 text-sm truncate">{record.diagnosis}</p>
+                      <p className="text-xs text-gray-500">{record.doctor}</p>
+                      <p className="text-xs text-gray-400 mt-1">{record.date}</p>
+                    </div>
+                    <button className="ml-2 text-gray-400 hover:text-teal-600">
+                      <Download className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="p-4 border-t border-gray-200">
+              <button 
+                onClick={() => setShowViewRecords(true)}
+                className="w-full py-2 text-center text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+              >
+                View All Records
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
           <div className="flex items-center">
