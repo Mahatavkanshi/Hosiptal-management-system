@@ -23,12 +23,20 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for token refresh
+// Response interceptor for token refresh and error handling
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
+    // Handle 429 Too Many Requests
+    if (error.response?.status === 429) {
+      console.warn('Rate limit exceeded. Please wait before making more requests.');
+      // Don't retry 429 errors
+      return Promise.reject(error);
+    }
+
+    // Handle 401 Unauthorized
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 

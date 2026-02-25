@@ -18,7 +18,8 @@ import {
   CreditCard,
   Settings,
   Bell,
-  Palette
+  Palette,
+  Activity
 } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -31,7 +32,6 @@ const MainLayout: React.FC = () => {
     wallpaperMode,
     wallpaperBlur,
     wallpaperOpacity,
-    getEffectiveBackground,
     getGlassStyles
   } = useTheme();
   
@@ -81,8 +81,9 @@ const MainLayout: React.FC = () => {
         return [
           { name: 'Dashboard', href: '/reception-dashboard', icon: LayoutDashboard },
           { name: 'Appointments', href: '/appointments', icon: Calendar },
-          { name: 'Patients', href: '/patients', icon: Users },
+          { name: 'Patients', href: '/reception/patients', icon: Users },
           { name: 'Bed Management', href: '/beds', icon: BedDouble },
+          { name: 'ER Waiting', href: '/reception/er-waiting', icon: Activity },
         ];
       
       case 'nurse':

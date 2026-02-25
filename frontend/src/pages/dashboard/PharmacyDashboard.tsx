@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Pill, 
   Package,
@@ -12,7 +13,8 @@ import {
   Calendar,
   CheckCircle2,
   XCircle,
-  MoreVertical
+  MoreVertical,
+  DollarSign
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
@@ -102,9 +104,16 @@ const PharmacyDashboard: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Pharmacy Dashboard</h1>
-          <p className="text-gray-600 mt-1">Medicine inventory and prescription management</p>
+          <p className="text-gray-600 mt-1">Medicine inventory, prescriptions, and finance management</p>
         </div>
         <div className="flex gap-3">
+          <Link 
+            to="/pharmacy/finance"
+            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <DollarSign className="h-4 w-4 mr-2" />
+            Finance
+          </Link>
           <button className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
             <Plus className="h-4 w-4 mr-2" />
             Add Medicine

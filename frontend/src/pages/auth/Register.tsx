@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, Eye, EyeOff, User, Stethoscope, Building2, Shield, ArrowLeft, UserCheck } from 'lucide-react';
+import { Loader2, Eye, EyeOff, User, Stethoscope, Building2, Shield, ArrowLeft, UserCheck, Pill } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { register, user, getDashboardRoute } = useAuth();
-  const [userType, setUserType] = useState<'patient' | 'doctor' | 'admin' | 'nurse'>('patient');
+  const [userType, setUserType] = useState<'patient' | 'doctor' | 'admin' | 'nurse' | 'receptionist' | 'pharmacist'>('patient');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -20,6 +20,8 @@ const Register: React.FC = () => {
       if (deptFromUrl === 'admin') setUserType('admin');
       else if (deptFromUrl === 'doctor') setUserType('doctor');
       else if (deptFromUrl === 'nurse') setUserType('nurse');
+      else if (deptFromUrl === 'receptionist') setUserType('receptionist');
+      else if (deptFromUrl === 'pharmacist') setUserType('pharmacist');
       else if (deptFromUrl === 'patient') setUserType('patient');
     }
   }, [deptFromUrl]);
@@ -64,7 +66,16 @@ const Register: React.FC = () => {
     nurse_department: '',
     nursing_license: '',
     nursing_experience: '',
-    shift_preference: ''
+    shift_preference: '',
+    // Receptionist fields
+    receptionist_department: '',
+    receptionist_employee_id: '',
+    receptionist_language: '',
+    // Pharmacist fields
+    pharmacist_license: '',
+    pharmacist_experience: '',
+    pharmacist_degree: '',
+    pharmacist_specialization: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -133,6 +144,15 @@ const Register: React.FC = () => {
         userData.nursing_license = formData.nursing_license;
         userData.nursing_experience = parseInt(formData.nursing_experience) || 0;
         userData.shift_preference = formData.shift_preference;
+      } else if (userType === 'receptionist') {
+        userData.receptionist_department = formData.receptionist_department;
+        userData.receptionist_employee_id = formData.receptionist_employee_id;
+        userData.receptionist_language = formData.receptionist_language;
+      } else if (userType === 'pharmacist') {
+        userData.pharmacist_degree = formData.pharmacist_degree;
+        userData.pharmacist_license = formData.pharmacist_license;
+        userData.pharmacist_experience = parseInt(formData.pharmacist_experience) || 0;
+        userData.pharmacist_specialization = formData.pharmacist_specialization;
       }
 
       await register(userData);
@@ -155,12 +175,16 @@ const Register: React.FC = () => {
     if (deptFromUrl === 'admin') return 'Create Admin Account';
     if (deptFromUrl === 'doctor') return 'Create Doctor Account';
     if (deptFromUrl === 'nurse') return 'Create Nurse Account';
+    if (deptFromUrl === 'receptionist') return 'Create Receptionist Account';
+    if (deptFromUrl === 'pharmacist') return 'Create Pharmacist Account';
     if (deptFromUrl === 'patient') return 'Create Patient Account';
     
     switch (userType) {
       case 'admin': return 'Create Admin Account';
       case 'doctor': return 'Create Doctor Account';
       case 'nurse': return 'Create Nurse Account';
+      case 'receptionist': return 'Create Receptionist Account';
+      case 'pharmacist': return 'Create Pharmacist Account';
       default: return 'Create Patient Account';
     }
   };
@@ -221,6 +245,45 @@ const Register: React.FC = () => {
           >
             <Shield className={`h-6 w-6 mb-2 ${userType === 'admin' ? 'text-purple-600' : 'text-gray-400'}`} />
             <span className={`text-sm font-medium ${userType === 'admin' ? 'text-purple-700' : 'text-gray-600'}`}>Admin</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setUserType('nurse')}
+            className={`flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-colors ${
+              userType === 'nurse' 
+                ? 'border-pink-500 bg-pink-50' 
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <UserCheck className={`h-6 w-6 mb-2 ${userType === 'nurse' ? 'text-pink-600' : 'text-gray-400'}`} />
+            <span className={`text-sm font-medium ${userType === 'nurse' ? 'text-pink-700' : 'text-gray-600'}`}>Nurse</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setUserType('receptionist')}
+            className={`flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-colors ${
+              userType === 'receptionist' 
+                ? 'border-green-500 bg-green-50' 
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <Building2 className={`h-6 w-6 mb-2 ${userType === 'receptionist' ? 'text-green-600' : 'text-gray-400'}`} />
+            <span className={`text-sm font-medium ${userType === 'receptionist' ? 'text-green-700' : 'text-gray-600'}`}>Receptionist</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setUserType('pharmacist')}
+            className={`flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-colors ${
+              userType === 'pharmacist' 
+                ? 'border-orange-500 bg-orange-50' 
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <Pill className={`h-6 w-6 mb-2 ${userType === 'pharmacist' ? 'text-orange-600' : 'text-gray-400'}`} />
+            <span className={`text-sm font-medium ${userType === 'pharmacist' ? 'text-orange-700' : 'text-gray-600'}`}>Pharmacist</span>
           </button>
         </div>
       )}
@@ -356,7 +419,6 @@ const Register: React.FC = () => {
                 <option value="">Select</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="other">Other</option>
               </select>
             </div>
 
@@ -746,6 +808,147 @@ const Register: React.FC = () => {
           </>
         )}
 
+        {/* Receptionist-specific fields */}
+        {userType === 'receptionist' && (
+          <>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center mb-2">
+                <span className="font-medium text-green-900">Receptionist Registration</span>
+              </div>
+              <p className="text-sm text-green-700">
+                Register as a receptionist. You will manage patient admissions, appointments, and front desk operations.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="receptionist_department" className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
+              <select
+                id="receptionist_department"
+                name="receptionist_department"
+                required
+                value={formData.receptionist_department}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              >
+                <option value="">Select Department</option>
+                <option value="front_desk">Front Desk</option>
+                <option value="admissions">Admissions</option>
+                <option value="billing">Billing</option>
+                <option value="outpatient">Outpatient Services</option>
+                <option value="emergency_desk">Emergency Desk</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="receptionist_employee_id" className="block text-sm font-medium text-gray-700 mb-1">Employee ID *</label>
+              <input
+                id="receptionist_employee_id"
+                name="receptionist_employee_id"
+                type="text"
+                required
+                value={formData.receptionist_employee_id}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="e.g., REC-12345"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="receptionist_language" className="block text-sm font-medium text-gray-700 mb-1">Languages Known</label>
+              <input
+                id="receptionist_language"
+                name="receptionist_language"
+                type="text"
+                value={formData.receptionist_language}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="e.g., English, Hindi, Spanish"
+              />
+            </div>
+          </>
+        )}
+
+        {/* Pharmacist-specific fields */}
+        {userType === 'pharmacist' && (
+          <>
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center mb-2">
+                <span className="font-medium text-orange-900">Pharmacist Registration</span>
+              </div>
+              <p className="text-sm text-orange-700">
+                Register as a pharmacist. You will manage medicine inventory, prescriptions, and pharmacy operations.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="pharmacist_degree" className="block text-sm font-medium text-gray-700 mb-1">Degree *</label>
+              <select
+                id="pharmacist_degree"
+                name="pharmacist_degree"
+                required
+                value={formData.pharmacist_degree}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+              >
+                <option value="">Select Degree</option>
+                <option value="b_pharm">B.Pharm</option>
+                <option value="m_pharm">M.Pharm</option>
+                <option value="pharm_d">Pharm.D</option>
+                <option value="diploma">Diploma in Pharmacy</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="pharmacist_license" className="block text-sm font-medium text-gray-700 mb-1">Pharmacy License Number *</label>
+              <input
+                id="pharmacist_license"
+                name="pharmacist_license"
+                type="text"
+                required
+                value={formData.pharmacist_license}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="e.g., PCI-12345"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="pharmacist_experience" className="block text-sm font-medium text-gray-700 mb-1">Experience (Years) *</label>
+                <input
+                  id="pharmacist_experience"
+                  name="pharmacist_experience"
+                  type="number"
+                  min="0"
+                  max="50"
+                  required
+                  value={formData.pharmacist_experience}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="e.g., 3"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="pharmacist_specialization" className="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                <select
+                  id="pharmacist_specialization"
+                  name="pharmacist_specialization"
+                  value={formData.pharmacist_specialization}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                >
+                  <option value="">Select Specialization</option>
+                  <option value="hospital">Hospital Pharmacy</option>
+                  <option value="clinical">Clinical Pharmacy</option>
+                  <option value="retail">Retail Pharmacy</option>
+                  <option value="compounding">Compounding</option>
+                </select>
+              </div>
+            </div>
+          </>
+        )}
+
         <div className="pt-4">
           <button
             type="submit"
@@ -755,6 +958,10 @@ const Register: React.FC = () => {
                 ? 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500' 
                 : userType === 'nurse'
                 ? 'bg-pink-600 hover:bg-pink-700 focus:ring-pink-500'
+                : userType === 'receptionist'
+                ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500'
+                : userType === 'pharmacist'
+                ? 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-500'
                 : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
             } focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed`}
           >

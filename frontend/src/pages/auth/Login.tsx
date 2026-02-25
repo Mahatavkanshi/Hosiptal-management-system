@@ -102,36 +102,37 @@ const Login: React.FC = () => {
   const isPortalMode = !!department;
 
   useEffect(() => {
-    // If user is already logged in, redirect to appropriate dashboard
+    // If user is already logged in, check portal access and redirect
     if (user) {
+      // Check if user is trying to access the wrong portal
+      if (isPortalMode && department) {
+        const portalRole = department.id;
+        if (user.role !== portalRole && user.role !== 'admin' && user.role !== 'super_admin') {
+          // User is in wrong portal - show error and don't redirect
+          toast.error(`Access denied. You are registered as a ${user.role}, but you're trying to access the ${department.name}. Please use the correct portal.`);
+          return;
+        }
+      }
+      // Portal access is valid or not in portal mode - redirect normally
       redirectBasedOnRole(user.role);
     }
-  }, [user]);
+  }, [user, isPortalMode, department]);
 
   const redirectBasedOnRole = (role: string) => {
-    switch (role) {
-      case 'doctor':
-        navigate('/dashboard');
-        break;
-      case 'admin':
-      case 'super_admin':
-        navigate('/admin-dashboard');
-        break;
-      case 'nurse':
-        navigate('/nurse-dashboard');
-        break;
-      case 'receptionist':
-        navigate('/reception-dashboard');
-        break;
-      case 'pharmacist':
-        navigate('/pharmacy-dashboard');
-        break;
-      case 'patient':
-        navigate('/patient-portal');
-        break;
-      default:
-        navigate('/dashboard');
-    }
+    const routes: Record<string, string> = {
+      doctor: '/dashboard',
+      admin: '/admin-dashboard',
+      super_admin: '/admin-dashboard',
+      nurse: '/nurse-dashboard',
+      receptionist: '/reception-dashboard',
+      pharmacist: '/pharmacy-dashboard',
+      patient: '/patient-portal'
+    };
+    
+    const targetRoute = routes[role] || '/dashboard';
+    console.log('Redirecting to:', targetRoute);
+    // Use window.location for full page reload to ensure clean state
+    window.location.href = targetRoute;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,14 +153,15 @@ const Login: React.FC = () => {
     setIsLoading(true);
     
     try {
-      await login(formData.email, formData.password);
+      const userData = await login(formData.email, formData.password);
       toast.success('Login successful!');
+      console.log('Logged in as:', userData);
       
-      // Redirect based on user's actual role after successful login
-      // The role will be available after login completes
+      // Use the redirect function which does a full page reload
+      redirectBasedOnRole(userData.role);
+      
     } catch (error: any) {
       toast.error(error.message || 'Login failed');
-    } finally {
       setIsLoading(false);
     }
   };

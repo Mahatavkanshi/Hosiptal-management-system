@@ -17,7 +17,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
@@ -63,6 +63,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingProfile, setIsFetchingProfile] = useState(false);
 
   useEffect(() => {
     // Check for stored token and validate it
@@ -76,16 +77,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const fetchProfile = async () => {
+    // Prevent multiple simultaneous profile fetches
+    if (isFetchingProfile) return;
+    
+    setIsFetchingProfile(true);
     try {
       const response = await api.get('/auth/profile');
       setUser(response.data.data.user);
-    } catch (error) {
-      console.error('Failed to fetch profile:', error);
+    } catch (error: any) {
+      // Don't log rate limit errors to console to reduce noise
+      if (error.response?.status !== 429) {
+        console.error('Failed to fetch profile:', error);
+      }
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       delete api.defaults.headers.common['Authorization'];
     } finally {
       setIsLoading(false);
+      setIsFetchingProfile(false);
     }
   };
 
@@ -119,7 +128,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setUser(user);
+      return user; // Return user data
     } catch (error: any) {
+      if (error.response?.status === 429) {
+        throw new Error('Too many login attempts. Please wait a moment and try again.');
+      }
       throw new Error(error.response?.data?.message || 'Login failed');
     }
   };

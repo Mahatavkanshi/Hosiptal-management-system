@@ -25,7 +25,11 @@ import NurseCarePlans from '../pages/nurse/NurseCarePlans';
 import NurseGCSAssessment from '../pages/nurse/NurseGCSAssessment';
 import NurseReports from '../pages/nurse/NurseReports';
 import ReceptionDashboard from '../pages/dashboard/ReceptionDashboard';
+import PatientDisplay from '../pages/reception/PatientDisplay';
+import ReceptionPatients from '../pages/reception/Patients';
+import ERWaiting from '../pages/reception/ERWaiting';
 import PharmacyDashboard from '../pages/dashboard/PharmacyDashboard';
+import PharmacyFinance from '../pages/pharmacy/PharmacyFinance';
 import PatientPortalDashboard from '../pages/dashboard/PatientPortalDashboard';
 
 // Appointment Pages
@@ -67,28 +71,50 @@ import NotFound from '../pages/NotFound';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: JSX.Element; allowedRoles?: string[] }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  // Wait for auth to initialize
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen"><div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div></div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/portal" replace />;
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/dashboard" replace />;
+    // Redirect to user's own dashboard if they don't have access
+    const { getDashboardRoute } = useAuth();
+    const targetRoute = getDashboardRoute(user.role);
+    return <Navigate to={targetRoute} replace />;
   }
 
   return children;
 };
 
-// Public Route Component (redirects to dashboard if authenticated)
+// Public Route Component (redirects to appropriate dashboard if authenticated)
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, getDashboardRoute } = useAuth();
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+  if (isAuthenticated && user) {
+    // Redirect based on user role
+    const targetRoute = getDashboardRoute(user.role);
+    return <Navigate to={targetRoute} replace />;
   }
 
   return children;
+};
+
+// Component to redirect to appropriate dashboard based on role
+const DefaultRedirect = () => {
+  const { user, getDashboardRoute } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/portal" replace />;
+  }
+  
+  const targetRoute = getDashboardRoute(user.role);
+  return <Navigate to={targetRoute} replace />;
 };
 
 const AppRoutes = () => {
@@ -105,7 +131,7 @@ const AppRoutes = () => {
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<DefaultRedirect />} />
         
         {/* Doctor Dashboard */}
         <Route path="/dashboard" element={<Dashboard />} />
@@ -125,9 +151,18 @@ const AppRoutes = () => {
         
         {/* Reception Dashboard */}
         <Route path="/reception-dashboard" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
+        <Route path="/reception/queue" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
+        <Route path="/reception/add-patient" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
+        <Route path="/reception/search" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
+        <Route path="/reception/emergency" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
+        <Route path="/reception/reports" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionDashboard /></ProtectedRoute>} />
+        <Route path="/reception/display" element={<PatientDisplay />} />
+        <Route path="/reception/patients" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ReceptionPatients /></ProtectedRoute>} />
+        <Route path="/reception/er-waiting" element={<ProtectedRoute allowedRoles={['receptionist', 'admin', 'super_admin']}><ERWaiting /></ProtectedRoute>} />
         
         {/* Pharmacy Dashboard */}
         <Route path="/pharmacy-dashboard" element={<ProtectedRoute allowedRoles={['pharmacist', 'admin', 'super_admin']}><PharmacyDashboard /></ProtectedRoute>} />
+        <Route path="/pharmacy/finance" element={<ProtectedRoute allowedRoles={['pharmacist', 'admin', 'super_admin']}><PharmacyFinance /></ProtectedRoute>} />
         
         {/* Patient Portal Dashboard */}
         <Route path="/patient-portal" element={<ProtectedRoute allowedRoles={['patient']}><PatientPortalDashboard /></ProtectedRoute>} />
