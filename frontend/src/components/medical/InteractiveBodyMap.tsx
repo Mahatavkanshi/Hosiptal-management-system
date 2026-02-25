@@ -13,7 +13,6 @@ import {
   Plus,
   ArrowLeft
 } from 'lucide-react';
-import api from '../../services/api';
 import { useTheme } from '../../contexts/ThemeContext';
 import ThemeSelector from '../theme/ThemeSelector';
 import { useAuth } from '../../context/AuthContext';
@@ -69,14 +68,14 @@ const bodyParts: Omit<BodyPart, 'status' | 'recordCount'>[] = [
   { id: 'bones', name: 'Bones & Joints', keywords: ['bone', 'joint', 'arthritis', 'osteoporosis', 'fracture', 'orthopedic'], position: { x: 65, y: 50 }, size: 'medium' },
 ];
 
-// Generate demo medical records for visualization
+// Generate demo medical records for visualization - Comprehensive data
 const generateDemoRecords = (patientId: string): MedicalRecord[] => [
   {
     id: 'demo-record-1',
     patient_id: patientId,
     diagnosis: 'Hypertension - Stage 1',
     chief_complaint: 'Headache and dizziness',
-    examination_notes: 'Blood pressure elevated at 140/90. Patient reports frequent headaches.',
+    examination_notes: 'Blood pressure elevated at 140/90. Patient reports frequent headaches. Heart rate normal.',
     visit_date: '2026-02-15',
     follow_up_date: '2026-03-15',
     doctor_first_name: 'Sarah',
@@ -88,7 +87,7 @@ const generateDemoRecords = (patientId: string): MedicalRecord[] => [
     patient_id: patientId,
     diagnosis: 'Type 2 Diabetes',
     chief_complaint: 'Increased thirst and frequent urination',
-    examination_notes: 'Fasting glucose: 180 mg/dL. HbA1c: 8.2%. Started on Metformin.',
+    examination_notes: 'Fasting glucose: 180 mg/dL. HbA1c: 8.2%. Started on Metformin. Kidney function normal.',
     visit_date: '2026-01-20',
     follow_up_date: '2026-02-20',
     doctor_first_name: 'Michael',
@@ -98,23 +97,70 @@ const generateDemoRecords = (patientId: string): MedicalRecord[] => [
   {
     id: 'demo-record-3',
     patient_id: patientId,
-    diagnosis: 'Lower Back Pain',
-    chief_complaint: 'Chronic lower back pain',
-    examination_notes: 'MRI shows mild disc herniation at L4-L5. Physical therapy recommended.',
+    diagnosis: 'Lower Back Pain - Chronic',
+    chief_complaint: 'Chronic lower back pain for 3 months',
+    examination_notes: 'MRI shows mild disc herniation at L4-L5. Spine alignment affected. Physical therapy recommended.',
     visit_date: '2026-02-10',
     doctor_first_name: 'Emily',
+    doctor_last_name: 'Davis',
     doctor_specialization: 'Orthopedics'
   },
   {
     id: 'demo-record-4',
     patient_id: patientId,
-    diagnosis: 'Seasonal Allergies',
-    chief_complaint: 'Sneezing and nasal congestion',
-    examination_notes: 'Allergic rhinitis. Prescribed antihistamines.',
+    diagnosis: 'Seasonal Allergic Rhinitis',
+    chief_complaint: 'Sneezing, nasal congestion and throat irritation',
+    examination_notes: 'Allergic rhinitis confirmed. ENT examination shows inflamed nasal passages. Prescribed antihistamines.',
     visit_date: '2026-02-18',
     doctor_first_name: 'David',
     doctor_last_name: 'Wilson',
     doctor_specialization: 'ENT'
+  },
+  {
+    id: 'demo-record-5',
+    patient_id: patientId,
+    diagnosis: 'Migraine with Aura',
+    chief_complaint: 'Severe headache with visual disturbances',
+    examination_notes: 'Patient reports throbbing headache on right side, sensitivity to light. Neurological exam normal. Brain scan scheduled.',
+    visit_date: '2026-02-05',
+    follow_up_date: '2026-03-05',
+    doctor_first_name: 'Robert',
+    doctor_last_name: 'Taylor',
+    doctor_specialization: 'Neurology'
+  },
+  {
+    id: 'demo-record-6',
+    patient_id: patientId,
+    diagnosis: 'Gastric Ulcer',
+    chief_complaint: 'Stomach pain and acid reflux',
+    examination_notes: 'Endoscopy reveals small gastric ulcer. H. pylori test positive. Started on antibiotics and PPI.',
+    visit_date: '2026-01-28',
+    follow_up_date: '2026-02-28',
+    doctor_first_name: 'Lisa',
+    doctor_last_name: 'Anderson',
+    doctor_specialization: 'Gastroenterology'
+  },
+  {
+    id: 'demo-record-7',
+    patient_id: patientId,
+    diagnosis: 'Knee Osteoarthritis',
+    chief_complaint: 'Knee pain and stiffness',
+    examination_notes: 'X-ray shows moderate osteoarthritis in right knee joint. Bone density reduced. Recommended physiotherapy and pain management.',
+    visit_date: '2026-02-22',
+    doctor_first_name: 'James',
+    doctor_last_name: 'Brown',
+    doctor_specialization: 'Orthopedics'
+  },
+  {
+    id: 'demo-record-8',
+    patient_id: patientId,
+    diagnosis: 'Contact Dermatitis',
+    chief_complaint: 'Skin rash and itching on arms',
+    examination_notes: 'Eczema-like rash observed. Skin patch test conducted. Prescribed topical corticosteroids and moisturizers.',
+    visit_date: '2026-02-12',
+    doctor_first_name: 'Maria',
+    doctor_last_name: 'Garcia',
+    doctor_specialization: 'Dermatology'
   }
 ];
 
@@ -147,43 +193,22 @@ const InteractiveBodyMap = () => {
     setLoading(false);
   }, [user]);
 
-  // Fetch medical records when patient is set
-  useEffect(() => {
-    if (selectedPatient) {
-      fetchMedicalRecords(selectedPatient.id);
-    }
-  }, [selectedPatient]);
+
 
   // Update body part stats when records change
   useEffect(() => {
     if (medicalRecords.length > 0) {
       updateBodyPartStats();
+    } else {
+      // Initialize with empty stats
+      const initialStats = bodyParts.map(part => ({
+        ...part,
+        status: 'healthy' as const,
+        recordCount: 0
+      }));
+      setBodyPartStats(initialStats);
     }
   }, [medicalRecords]);
-
-  const fetchMedicalRecords = async (patientId: string) => {
-    try {
-      setLoading(true);
-      
-      if (patientId.startsWith('demo-')) {
-        // Use demo records for demo patients
-        const demoRecords = generateDemoRecords(patientId);
-        setMedicalRecords(demoRecords);
-      } else {
-        // Fetch real records
-        const response = await api.get(`/patients/medical-history`);
-        const records = response.data.data || [];
-        setMedicalRecords(records);
-      }
-    } catch (error) {
-      console.error('Error fetching medical records:', error);
-      // Fallback to demo records
-      const demoRecords = generateDemoRecords(patientId);
-      setMedicalRecords(demoRecords);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const updateBodyPartStats = () => {
     const stats = bodyParts.map(part => {
