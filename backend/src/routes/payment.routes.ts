@@ -22,7 +22,7 @@ router.post('/create-order',
   authenticate,
   authorize('patient', 'admin', 'receptionist'),
   [
-    body('amount').isDecimal({ min: 0 }).withMessage('Valid amount is required'),
+    body('amount').isDecimal().withMessage('Valid amount is required').custom(value => parseFloat(value) >= 0).withMessage('Amount must be non-negative'),
     body('payment_type').isIn(['consultation', 'bed', 'medicine', 'lab_test', 'registration']).withMessage('Invalid payment type')
   ],
   asyncHandler(async (req, res) => {

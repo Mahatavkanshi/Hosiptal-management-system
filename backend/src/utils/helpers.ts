@@ -29,7 +29,7 @@ export const generateToken = (user: Partial<User>): string => {
       last_name: user.last_name
     },
     jwtSecret,
-    { expiresIn: jwtExpiresIn }
+    { expiresIn: jwtExpiresIn as any }
   );
 };
 

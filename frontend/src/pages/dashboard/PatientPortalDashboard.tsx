@@ -88,7 +88,7 @@ interface PaymentHistory {
   date: string;
   amount: number;
   description: string;
-  type: 'appointment' | 'pharmacy' | 'reception' | 'other';
+  type: 'appointment' | 'pharmacy' | 'lab' | 'reception' | 'other';
   status: 'success' | 'failed' | 'pending';
   transactionId: string;
 }

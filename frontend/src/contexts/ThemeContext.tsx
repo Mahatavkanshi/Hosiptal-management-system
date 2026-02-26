@@ -132,6 +132,7 @@ export const gradientThemes = [
     id: 'dark',
     name: 'Dark Mode',
     gradient: 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)',
+    colors: 'from-slate-600 to-slate-800',
     isDark: true,
     cardBg: 'bg-slate-950',
     cardBorder: 'border-slate-800/50',
@@ -288,15 +289,15 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         if (savedAccentColor) {
           const colorObj = accentColors.find(c => c.value === savedAccentColor);
           if (colorObj) {
-            setAccentColorState(colorObj.value);
-            setAccentColorRgb(colorObj.rgb);
+            setAccentColorState(colorObj.value as any);
+            setAccentColorRgb(colorObj.rgb as any);
           }
         }
         
         // Gradient Theme
         const savedGradient = localStorage.getItem(STORAGE_KEYS.GRADIENT_THEME);
         if (savedGradient) {
-          setGradientThemeState(savedGradient);
+          setGradientThemeState(savedGradient as any);
         }
         
         // Wallpaper Pattern (backward compatibility)
@@ -372,14 +373,14 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const setAccentColor = (color: string) => {
     const colorObj = accentColors.find(c => c.value === color);
     if (colorObj) {
-      setAccentColorState(colorObj.value);
-      setAccentColorRgb(colorObj.rgb);
+      setAccentColorState(colorObj.value as any);
+      setAccentColorRgb(colorObj.rgb as any);
       localStorage.setItem(STORAGE_KEYS.ACCENT_COLOR, colorObj.value);
     }
   };
 
   const setGradientTheme = (gradient: string) => {
-    setGradientThemeState(gradient);
+    setGradientThemeState(gradient as any);
     localStorage.setItem(STORAGE_KEYS.GRADIENT_THEME, gradient);
   };
 
@@ -569,6 +570,9 @@ export const getThemeColors = (theme: string) => {
     // Other properties for compatibility
     borderColor: isDarkTheme ? 'border-slate-700' : 'border-slate-200',
     cardBg: isDarkTheme ? 'bg-slate-800/50' : 'bg-white/80',
+    
+    // Accent color for focus rings and highlights
+    accentColor: 'blue',
   };
 };
 

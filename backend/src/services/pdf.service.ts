@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import { Buffer } from 'buffer';
 
 export interface ReportData {
   id?: string;

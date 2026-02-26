@@ -388,15 +388,17 @@ const Dashboard = () => {
     }
   ];
 
-  const dummyAppointments = [
+  const dummyAppointments: Appointment[] = [
     {
       id: 'apt-1',
       patient_first_name: 'John',
       patient_last_name: 'Doe',
       patient_age: 45,
       patient_phone: '+91 9876543210',
+      address: '123 Main St',
+      city: 'Mumbai',
+      state: 'Maharashtra',
       appointment_time: '09:30',
-      appointment_date: new Date().toISOString().split('T')[0],
       status: 'completed',
       type: 'In Person',
       symptoms: 'Fever, headache'
@@ -407,8 +409,10 @@ const Dashboard = () => {
       patient_last_name: 'Smith',
       patient_age: 32,
       patient_phone: '+91 9876543211',
+      address: '456 Park Ave',
+      city: 'Delhi',
+      state: 'Delhi',
       appointment_time: '10:00',
-      appointment_date: new Date().toISOString().split('T')[0],
       status: 'in_progress',
       type: 'Video',
       symptoms: 'Chest pain'
@@ -419,8 +423,10 @@ const Dashboard = () => {
       patient_last_name: 'Johnson',
       patient_age: 58,
       patient_phone: '+91 9876543212',
+      address: '789 Oak Rd',
+      city: 'Bangalore',
+      state: 'Karnataka',
       appointment_time: '11:30',
-      appointment_date: new Date().toISOString().split('T')[0],
       status: 'pending',
       type: 'In Person',
       symptoms: 'Diabetes checkup'
@@ -431,8 +437,10 @@ const Dashboard = () => {
       patient_last_name: 'Williams',
       patient_age: 28,
       patient_phone: '+91 9876543213',
+      address: '321 Pine St',
+      city: 'Chennai',
+      state: 'Tamil Nadu',
       appointment_time: '14:00',
-      appointment_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
       status: 'confirmed',
       type: 'In Person',
       symptoms: 'Skin rash'
@@ -443,8 +451,10 @@ const Dashboard = () => {
       patient_last_name: 'Brown',
       patient_age: 65,
       patient_phone: '+91 9876543214',
+      address: '654 Elm St',
+      city: 'Hyderabad',
+      state: 'Telangana',
       appointment_time: '15:30',
-      appointment_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
       status: 'confirmed',
       type: 'Video',
       symptoms: 'Heart checkup'
@@ -455,8 +465,10 @@ const Dashboard = () => {
       patient_last_name: 'Davis',
       patient_age: 35,
       patient_phone: '+91 9876543215',
+      address: '987 Cedar Ln',
+      city: 'Pune',
+      state: 'Maharashtra',
       appointment_time: '16:00',
-      appointment_date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
       status: 'pending',
       type: 'In Person',
       symptoms: 'Regular checkup'
@@ -1043,7 +1055,7 @@ const Dashboard = () => {
                       </td>
                       <td className="py-4 px-4 text-gray-900 font-medium">{apt.appointment_time}</td>
                       <td className="py-4 px-4 text-gray-600">
-                        {new Date(apt.appointment_date).toLocaleDateString('en-IN', { 
+                        {new Date().toLocaleDateString('en-IN', { 
                           day: 'numeric', 
                           month: 'short', 
                           year: 'numeric' 

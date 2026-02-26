@@ -1,7 +1,7 @@
 // Razorpay Payment Integration
 // Note: Add your actual credentials to .env file (DO NOT commit with real values)
 
-const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_S4waRmpOGwrvyl';
+const RAZORPAY_KEY_ID = (import.meta as any).env.VITE_RAZORPAY_KEY_ID || 'rzp_test_S4waRmpOGwrvyl';
 
 export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {

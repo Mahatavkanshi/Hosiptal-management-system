@@ -6,8 +6,9 @@ export const ThemeSelector: React.FC = () => {
   const { theme, setTheme, isDark } = useTheme();
   const colors = getThemeColors(theme);
 
-  // Get current theme name
-  const currentThemeName = colors.name;
+  // Get current theme name from gradientThemes
+  const currentTheme = gradientThemes.find(t => t.id === theme);
+  const currentThemeName = currentTheme?.name || 'Purple Dream';
 
   return (
     <div className="relative group">
@@ -42,6 +43,7 @@ export const ThemeSelector: React.FC = () => {
             
             {['light', 'dark'].map((t) => {
               const themeColors = getThemeColors(t as 'light' | 'dark');
+              const themeName = t === 'light' ? 'Light Mode' : 'Dark Mode';
               return (
                 <button
                   key={t}
@@ -60,7 +62,7 @@ export const ThemeSelector: React.FC = () => {
                       ? isDark ? 'text-white' : 'text-slate-900'
                       : isDark ? 'text-slate-300' : 'text-slate-600'
                   }`}>
-                    {themeColors.name}
+                    {themeName}
                   </span>
                   {theme === t && (
                     <div className="ml-auto">
