@@ -1,6 +1,16 @@
 import axios from 'axios';
 
-const API_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:5002/api';
+// Support both build-time (Vite) and runtime (Docker) configuration
+const getApiUrl = () => {
+  // Check for runtime config (injected by Docker entrypoint)
+  if (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_API_URL) {
+    return (window as any).__ENV__.VITE_API_URL;
+  }
+  // Fallback to build-time config (Vite)
+  return (import.meta as any).env.VITE_API_URL || 'http://localhost:5002/api';
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,

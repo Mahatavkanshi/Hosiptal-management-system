@@ -1,6 +1,20 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = (import.meta as any).env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5002';
+// Support both build-time (Vite) and runtime (Docker) configuration
+const getSocketUrl = () => {
+  // Check for runtime config (injected by Docker entrypoint)
+  if (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_SOCKET_URL) {
+    return (window as any).__ENV__.VITE_SOCKET_URL;
+  }
+  // Fallback to build-time config (Vite)
+  const apiUrl = (import.meta as any).env.VITE_API_URL;
+  if (apiUrl) {
+    return apiUrl.replace('/api', '');
+  }
+  return 'http://localhost:5002';
+};
+
+const SOCKET_URL = getSocketUrl();
 
 class SocketService {
   private socket: Socket | null = null;

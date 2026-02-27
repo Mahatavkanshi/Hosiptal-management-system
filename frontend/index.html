@@ -12,6 +12,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Runtime configuration for Docker deployments -->
+    <script>
+      window.__ENV__ = {
+        VITE_API_URL: "VITE_API_URL_PLACEHOLDER",
+        VITE_SOCKET_URL: "VITE_SOCKET_URL_PLACEHOLDER",
+        VITE_RAZORPAY_KEY_ID: "VITE_RAZORPAY_KEY_ID_PLACEHOLDER"
+      };
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
