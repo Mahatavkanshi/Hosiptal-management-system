@@ -14,17 +14,18 @@ const Register: React.FC = () => {
   
   // Check if coming from specific department portal
   const deptFromUrl = searchParams.get('dept');
+  const getPortalRole = (dept: string | null) => {
+    if (!dept) return null;
+    const allowedRoles = ['patient', 'doctor', 'admin', 'nurse', 'receptionist', 'pharmacist'];
+    return allowedRoles.includes(dept) ? dept : null;
+  };
+  const portalRole = getPortalRole(deptFromUrl);
   
   useEffect(() => {
-    if (deptFromUrl) {
-      if (deptFromUrl === 'admin') setUserType('admin');
-      else if (deptFromUrl === 'doctor') setUserType('doctor');
-      else if (deptFromUrl === 'nurse') setUserType('nurse');
-      else if (deptFromUrl === 'receptionist') setUserType('receptionist');
-      else if (deptFromUrl === 'pharmacist') setUserType('pharmacist');
-      else if (deptFromUrl === 'patient') setUserType('patient');
+    if (portalRole) {
+      setUserType(portalRole as 'patient' | 'doctor' | 'admin' | 'nurse' | 'receptionist' | 'pharmacist');
     }
-  }, [deptFromUrl]);
+  }, [portalRole]);
 
   useEffect(() => {
     // If user is already logged in, redirect to appropriate dashboard
@@ -98,8 +99,10 @@ const Register: React.FC = () => {
       return;
     }
 
+    const effectiveUserType = (portalRole || userType) as 'patient' | 'doctor' | 'admin' | 'nurse' | 'receptionist' | 'pharmacist';
+
     // Validate admin code for admin registration
-    if (userType === 'admin' && formData.admin_code !== 'ADMIN123') {
+    if (effectiveUserType === 'admin' && formData.admin_code !== 'ADMIN123') {
       toast.error('Invalid admin registration code');
       return;
     }
@@ -113,10 +116,10 @@ const Register: React.FC = () => {
         first_name: formData.first_name,
         last_name: formData.last_name,
         phone: formData.phone,
-        role: userType
+        role: effectiveUserType
       };
 
-      if (userType === 'patient') {
+      if (effectiveUserType === 'patient') {
         userData.date_of_birth = formData.date_of_birth;
         userData.blood_group = formData.blood_group;
         userData.gender = formData.gender;
@@ -125,7 +128,7 @@ const Register: React.FC = () => {
         userData.state = formData.state;
         userData.emergency_contact_name = formData.emergency_contact_name;
         userData.emergency_contact_phone = formData.emergency_contact_phone;
-      } else if (userType === 'doctor') {
+      } else if (effectiveUserType === 'doctor') {
         userData.specialization = formData.specialization;
         userData.qualification = formData.qualification;
         userData.department = formData.department;
@@ -136,19 +139,19 @@ const Register: React.FC = () => {
         userData.available_time_start = formData.available_time_start;
         userData.available_time_end = formData.available_time_end;
         userData.slot_duration = parseInt(formData.slot_duration) || 30;
-      } else if (userType === 'admin') {
+      } else if (effectiveUserType === 'admin') {
         userData.department = formData.department;
         userData.employee_id = formData.employee_id;
-      } else if (userType === 'nurse') {
+      } else if (effectiveUserType === 'nurse') {
         userData.nurse_department = formData.nurse_department;
         userData.nursing_license = formData.nursing_license;
         userData.nursing_experience = parseInt(formData.nursing_experience) || 0;
         userData.shift_preference = formData.shift_preference;
-      } else if (userType === 'receptionist') {
+      } else if (effectiveUserType === 'receptionist') {
         userData.receptionist_department = formData.receptionist_department;
         userData.receptionist_employee_id = formData.receptionist_employee_id;
         userData.receptionist_language = formData.receptionist_language;
-      } else if (userType === 'pharmacist') {
+      } else if (effectiveUserType === 'pharmacist') {
         userData.pharmacist_degree = formData.pharmacist_degree;
         userData.pharmacist_license = formData.pharmacist_license;
         userData.pharmacist_experience = parseInt(formData.pharmacist_experience) || 0;
@@ -159,7 +162,7 @@ const Register: React.FC = () => {
       toast.success('Registration successful!');
       
       // Redirect based on user role
-      const dashboardRoute = getDashboardRoute(userType);
+      const dashboardRoute = getDashboardRoute(effectiveUserType);
       navigate(dashboardRoute);
     } catch (error: any) {
       toast.error(error.message || 'Registration failed');
@@ -169,7 +172,7 @@ const Register: React.FC = () => {
   };
 
   // If coming from a department portal, hide role selection and show specific form
-  const isPortalMode = !!deptFromUrl;
+  const isPortalMode = !!portalRole;
 
   const getTitle = () => {
     if (deptFromUrl === 'admin') return 'Create Admin Account';

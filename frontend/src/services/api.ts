@@ -2,10 +2,17 @@ import axios from 'axios';
 
 // Support both build-time (Vite) and runtime (Docker) configuration
 const getApiUrl = () => {
+  const runtimeApiUrl = typeof window !== 'undefined' ? (window as any).__ENV__?.VITE_API_URL : undefined;
+
   // Check for runtime config (injected by Docker entrypoint)
-  if (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_API_URL) {
-    return (window as any).__ENV__.VITE_API_URL;
+  if (
+    typeof window !== 'undefined' &&
+    runtimeApiUrl &&
+    runtimeApiUrl !== 'VITE_API_URL_PLACEHOLDER'
+  ) {
+    return runtimeApiUrl;
   }
+
   // Fallback to build-time config (Vite)
   return (import.meta as any).env.VITE_API_URL || 'http://localhost:5002/api';
 };
@@ -38,6 +45,11 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const requestUrl = originalRequest?.url || '';
+    const isAuthRequest =
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/register') ||
+      requestUrl.includes('/auth/refresh-token');
 
     // Handle 429 Too Many Requests
     if (error.response?.status === 429) {
@@ -47,7 +59,7 @@ api.interceptors.response.use(
     }
 
     // Handle 401 Unauthorized
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
       originalRequest._retry = true;
 
       try {

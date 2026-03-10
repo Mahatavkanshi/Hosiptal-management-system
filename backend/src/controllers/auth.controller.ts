@@ -11,6 +11,13 @@ import {
 } from '../utils/helpers';
 import { User, Patient, Doctor } from '../types';
 
+const normalizeRole = (role: string) => {
+  const cleaned = String(role || '').trim().toLowerCase();
+  if (cleaned === 'pharmacy') return 'pharmacist';
+  if (cleaned === 'super admin') return 'super_admin';
+  return cleaned;
+};
+
 // Validation rules
 export const registerValidation = [
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
@@ -166,6 +173,10 @@ export const login = asyncHandler(
     }
 
     const user = userResult.rows[0];
+    const normalizedUser = {
+      ...user,
+      role: normalizeRole(user.role)
+    };
 
     // Verify password
     const isPasswordValid = await comparePassword(password, user.password_hash);
@@ -174,7 +185,7 @@ export const login = asyncHandler(
     }
 
     // Generate tokens
-    const token = generateToken(user);
+    const token = generateToken(normalizedUser);
     const refreshToken = generateRefreshToken(user.id);
 
     // Update last login
@@ -187,7 +198,7 @@ export const login = asyncHandler(
         user: {
           id: user.id,
           email: user.email,
-          role: user.role,
+          role: normalizedUser.role,
           first_name: user.first_name,
           last_name: user.last_name,
           phone: user.phone
@@ -215,6 +226,7 @@ export const getProfile = asyncHandler(
     }
 
     const user = userResult.rows[0];
+    user.role = normalizeRole(user.role);
     let profile = null;
 
     // Get role-specific profile
@@ -365,7 +377,11 @@ export const refreshToken = asyncHandler(
       }
 
       const user = userResult.rows[0];
-      const newToken = generateToken(user);
+      const normalizedUser = {
+        ...user,
+        role: normalizeRole(user.role)
+      };
+      const newToken = generateToken(normalizedUser);
       const newRefreshToken = generateRefreshToken(user.id);
 
       res.json({

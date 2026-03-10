@@ -2,9 +2,15 @@ import { io, Socket } from 'socket.io-client';
 
 // Support both build-time (Vite) and runtime (Docker) configuration
 const getSocketUrl = () => {
+  const runtimeSocketUrl = typeof window !== 'undefined' ? (window as any).__ENV__?.VITE_SOCKET_URL : undefined;
+
   // Check for runtime config (injected by Docker entrypoint)
-  if (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_SOCKET_URL) {
-    return (window as any).__ENV__.VITE_SOCKET_URL;
+  if (
+    typeof window !== 'undefined' &&
+    runtimeSocketUrl &&
+    runtimeSocketUrl !== 'VITE_SOCKET_URL_PLACEHOLDER'
+  ) {
+    return runtimeSocketUrl;
   }
   // Fallback to build-time config (Vite)
   const apiUrl = (import.meta as any).env.VITE_API_URL;

@@ -13,6 +13,13 @@ export interface AuthRequest extends Request {
   };
 }
 
+const normalizeRole = (role: unknown): UserRole => {
+  const cleaned = String(role || '').trim().toLowerCase();
+  if (cleaned === 'pharmacy') return 'pharmacist';
+  if (cleaned === 'super admin') return 'super_admin';
+  return cleaned as UserRole;
+};
+
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
   try {
     const authHeader = req.headers.authorization;
@@ -37,7 +44,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     req.user = {
       id: decoded.id,
       email: decoded.email,
-      role: decoded.role,
+      role: normalizeRole(decoded.role),
       first_name: decoded.first_name,
       last_name: decoded.last_name
     };
@@ -94,7 +101,7 @@ export const optionalAuth = (req: AuthRequest, res: Response, next: NextFunction
     req.user = {
       id: decoded.id,
       email: decoded.email,
-      role: decoded.role,
+      role: normalizeRole(decoded.role),
       first_name: decoded.first_name,
       last_name: decoded.last_name
     };

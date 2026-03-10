@@ -86,7 +86,7 @@ const departments: Record<string, DepartmentConfig> = {
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, user } = useAuth();
+  const { login, user, logout } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -101,20 +101,34 @@ const Login: React.FC = () => {
   // Determine if we're in portal mode or regular login
   const isPortalMode = !!department;
 
+  const normalizeRole = (role: string) => {
+    const cleaned = String(role || '').trim().toLowerCase();
+    if (cleaned === 'pharmacy') return 'pharmacist';
+    if (cleaned === 'super admin') return 'super_admin';
+    return cleaned;
+  };
+
+  const getPortalRole = (dept: string) => {
+    const deptRole = normalizeRole(dept);
+    const allowedRoles = ['doctor', 'admin', 'nurse', 'receptionist', 'pharmacist', 'patient'];
+    return allowedRoles.includes(deptRole) ? deptRole : null;
+  };
+
   useEffect(() => {
     // If user is already logged in, check portal access and redirect
     if (user) {
+      const normalizedUserRole = normalizeRole(user.role);
       // Check if user is trying to access the wrong portal
       if (isPortalMode && department) {
         const portalRole = department.id;
-        if (user.role !== portalRole && user.role !== 'admin' && user.role !== 'super_admin') {
+        if (normalizedUserRole !== portalRole && normalizedUserRole !== 'admin' && normalizedUserRole !== 'super_admin') {
           // User is in wrong portal - show error and don't redirect
-          toast.error(`Access denied. You are registered as a ${user.role}, but you're trying to access the ${department.name}. Please use the correct portal.`);
+          toast.error(`Access denied. You are registered as a ${normalizedUserRole}, but you're trying to access the ${department.name}. Please use the correct portal.`);
           return;
         }
       }
       // Portal access is valid or not in portal mode - redirect normally
-      redirectBasedOnRole(user.role);
+      redirectBasedOnRole(normalizedUserRole);
     }
   }, [user, isPortalMode, department]);
 
@@ -154,11 +168,24 @@ const Login: React.FC = () => {
     
     try {
       const userData = await login(formData.email, formData.password);
+
+      const normalizedRole = normalizeRole(userData.role);
+
+      if (isPortalMode && department) {
+        const requiredRole = getPortalRole(department.id);
+        if (requiredRole && normalizedRole !== requiredRole) {
+          logout();
+          toast.error(`Only ${requiredRole} accounts can sign in from this portal.`);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       toast.success('Login successful!');
-      console.log('Logged in as:', userData);
+      console.log('Logged in as:', { ...userData, role: normalizedRole });
       
       // Use the redirect function which does a full page reload
-      redirectBasedOnRole(userData.role);
+      redirectBasedOnRole(normalizedRole);
       
     } catch (error: any) {
       toast.error(error.message || 'Login failed');

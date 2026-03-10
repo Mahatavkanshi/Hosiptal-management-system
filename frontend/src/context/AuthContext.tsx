@@ -65,6 +65,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingProfile, setIsFetchingProfile] = useState(false);
 
+  const normalizeRole = (role: string) => {
+    const cleaned = String(role || '').trim().toLowerCase();
+    if (cleaned === 'pharmacy') return 'pharmacist';
+    if (cleaned === 'super admin') return 'super_admin';
+    return cleaned as UserRole;
+  };
+
+  const normalizeUser = (rawUser: any): User => ({
+    ...rawUser,
+    role: normalizeRole(rawUser.role)
+  });
+
   useEffect(() => {
     // Check for stored token and validate it
     const token = localStorage.getItem('token');
@@ -83,7 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsFetchingProfile(true);
     try {
       const response = await api.get('/auth/profile');
-      setUser(response.data.data.user);
+      setUser(normalizeUser(response.data.data.user));
     } catch (error: any) {
       // Don't log rate limit errors to console to reduce noise
       if (error.response?.status !== 429) {
@@ -122,13 +134,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
       const { user, token, refreshToken } = response.data.data;
+      const normalizedUser = normalizeUser(user);
       
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
-      setUser(user);
-      return user; // Return user data
+      setUser(normalizedUser);
+      return normalizedUser; // Return user data
     } catch (error: any) {
       if (error.response?.status === 429) {
         throw new Error('Too many login attempts. Please wait a moment and try again.');
@@ -141,12 +154,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await api.post('/auth/register', userData);
       const { user, token, refreshToken } = response.data.data;
+      const normalizedUser = normalizeUser(user);
       
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
-      setUser(user);
+      setUser(normalizedUser);
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Registration failed');
     }
