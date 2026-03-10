@@ -4,52 +4,29 @@ A comprehensive, full-stack Hospital Management System built with modern technol
 
 ## 📸 Screenshots
 
-<!--
-To add screenshots to your README, follow these steps:
+<img src="backend/images/ROLES.png" alt="Role Selection Portal" width="800"/>
 
-1. Create a folder called "screenshots" in your project root
-2. Save your images with these names:
-   - role-selection.png (Role Selection Portal)
-   - doctor-dashboard.png (Doctor Dashboard)
-   - patient-dashboard.png (Patient Portal)
-   - receptionist-dashboard.png (Receptionist Dashboard)
-   - pharmacy-dashboard.png (Pharmacy Dashboard)
+**Role Selection Portal** - Department-based entry for all hospital roles.
 
-3. Use one of these methods:
+<img src="backend/images/dashboard%20%282%29.png" alt="Main Dashboard" width="800"/>
 
-   METHOD 1: Direct GitHub Upload (Easiest)
-   - Go to your repo on GitHub
-   - Click README.md file
-   - Click the pencil icon (Edit)
-   - Drag and drop your images directly into the editor
-   - GitHub will auto-upload and give you the markdown links
+**Main Dashboard** - Overview cards and operational status at a glance.
 
-   METHOD 2: Upload to Repository
-   - Create "screenshots" folder locally
-   - Add images to the folder
-   - Push to GitHub
-   - Uncomment the markdown below:
+<img src="backend/images/doctors.png" alt="Doctor Dashboard" width="800"/>
 
-<img src="screenshots/role-selection.png" alt="Role Selection Portal" width="800"/>
+**Doctor Dashboard** - Patient care workflow, appointments, and clinical actions.
 
-**Role Selection Portal** - Clean role-based portal selection for different departments
+<img src="backend/images/patient.png" alt="Patient Portal" width="800"/>
 
-<img src="screenshots/doctor-dashboard.png" alt="Doctor Dashboard" width="800"/>
+**Patient Portal** - Appointments, records, prescriptions, and health access.
 
-**Doctor Dashboard** - Comprehensive dashboard with patient statistics, charts, and revenue analytics
+<img src="backend/images/receptionist.png" alt="Reception Dashboard" width="800"/>
 
-<img src="screenshots/patient-dashboard.png" alt="Patient Dashboard" width="800"/>
+**Reception Dashboard** - Queue, admissions, and front-desk operations.
 
-**Patient Portal** - Modern patient dashboard with welcome banner, quick actions, and appointments
+<img src="backend/images/pharmacy.png" alt="Pharmacy Dashboard" width="800"/>
 
-<img src="screenshots/receptionist-dashboard.png" alt="Receptionist Dashboard" width="800"/>
-
-**Receptionist Dashboard** - Patient admissions management with token system and messaging
-
-<img src="screenshots/pharmacy-dashboard.png" alt="Pharmacy Dashboard" width="800"/>
-
-**Pharmacy Dashboard** - Complete medicine inventory management with stock alerts
--->
+**Pharmacy Dashboard** - Inventory tracking, orders, and medicine workflows.
 
 ---
 
