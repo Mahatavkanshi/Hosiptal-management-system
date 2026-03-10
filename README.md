@@ -28,6 +28,38 @@ A comprehensive, full-stack Hospital Management System built with modern technol
 
 **Pharmacy Dashboard** - Inventory tracking, orders, and medicine workflows.
 
+<img src="backend/images/admin%20%282%29.png" alt="Admin Dashboard" width="800"/>
+
+**Admin Dashboard** - User management, controls, and hospital-wide administration.
+
+<img src="backend/images/nurse.png" alt="Nurse Dashboard" width="800"/>
+
+**Nurse Dashboard** - Care tasks, vitals workflow, and ward support.
+
+<img src="backend/images/medicine.png" alt="Medicine Module" width="800"/>
+
+**Medicine Module** - Catalog and stock-level management for pharmacy operations.
+
+<img src="backend/images/prescription.png" alt="Prescription Module" width="800"/>
+
+**Prescription Module** - Digital prescriptions and medication instructions.
+
+<img src="backend/images/payment.png" alt="Payment Module" width="800"/>
+
+**Payment Module** - Billing, payment collection, and transaction tracking.
+
+<img src="backend/images/bed.png" alt="Bed Management" width="800"/>
+
+**Bed Management** - Bed allocation, occupancy status, and availability overview.
+
+<img src="backend/images/reports.png" alt="Reports Module" width="800"/>
+
+**Reports Module** - Operational and clinical reporting for decision support.
+
+<img src="backend/images/ai-assistant.png" alt="AI Assistant" width="800"/>
+
+**AI Assistant** - Intelligent support for symptom/clinical assistance workflows.
+
 ---
 
 ## ✨ Features
