@@ -4,61 +4,15 @@ A comprehensive, full-stack Hospital Management System built with modern technol
 
 ## 📸 Screenshots
 
-![Role Selection Portal](backend/images/ROLES.png)
-
-**Role Selection Portal** - Department-based entry for all hospital roles.
-
-![Main Dashboard](backend/images/dashboard%20(2).png)
-
-**Main Dashboard** - Overview cards and operational status at a glance.
-
-![Doctor Dashboard](backend/images/doctors.png)
-
-**Doctor Dashboard** - Patient care workflow, appointments, and clinical actions.
-
-![Patient Portal](backend/images/patient.png)
-
-**Patient Portal** - Appointments, records, prescriptions, and health access.
-
-![Reception Dashboard](backend/images/receptionist.png)
-
-**Reception Dashboard** - Queue, admissions, and front-desk operations.
-
-![Pharmacy Dashboard](backend/images/pharmacy.png)
-
-**Pharmacy Dashboard** - Inventory tracking, orders, and medicine workflows.
-
-![Admin Dashboard](backend/images/admin%20(2).png)
-
-**Admin Dashboard** - User management, controls, and hospital-wide administration.
-
-![Nurse Dashboard](backend/images/nurse.png)
-
-**Nurse Dashboard** - Care tasks, vitals workflow, and ward support.
-
-![Medicine Module](backend/images/medicine.png)
-
-**Medicine Module** - Catalog and stock-level management for pharmacy operations.
-
-![Prescription Module](backend/images/prescription.png)
-
-**Prescription Module** - Digital prescriptions and medication instructions.
-
-![Payment Module](backend/images/payment.png)
-
-**Payment Module** - Billing, payment collection, and transaction tracking.
-
-![Bed Management](backend/images/bed.png)
-
-**Bed Management** - Bed allocation, occupancy status, and availability overview.
-
-![Reports Module](backend/images/reports.png)
-
-**Reports Module** - Operational and clinical reporting for decision support.
-
-![AI Assistant](backend/images/ai-assistant.png)
-
-**AI Assistant** - Intelligent support for symptom/clinical assistance workflows.
+| | |
+|---|---|
+| <img src="backend/images/ROLES.png" alt="Role Selection Portal" width="100%"/><br/><strong>Role Selection Portal</strong><br/>Department-based entry for all hospital roles. | <img src="backend/images/dashboard%20(2).png" alt="Main Dashboard" width="100%"/><br/><strong>Main Dashboard</strong><br/>Overview cards and operational status at a glance. |
+| <img src="backend/images/doctors.png" alt="Doctor Dashboard" width="100%"/><br/><strong>Doctor Dashboard</strong><br/>Patient care workflow, appointments, and clinical actions. | <img src="backend/images/patient.png" alt="Patient Portal" width="100%"/><br/><strong>Patient Portal</strong><br/>Appointments, records, prescriptions, and health access. |
+| <img src="backend/images/receptionist.png" alt="Reception Dashboard" width="100%"/><br/><strong>Reception Dashboard</strong><br/>Queue, admissions, and front-desk operations. | <img src="backend/images/pharmacy.png" alt="Pharmacy Dashboard" width="100%"/><br/><strong>Pharmacy Dashboard</strong><br/>Inventory tracking, orders, and medicine workflows. |
+| <img src="backend/images/admin%20(2).png" alt="Admin Dashboard" width="100%"/><br/><strong>Admin Dashboard</strong><br/>User management, controls, and hospital-wide administration. | <img src="backend/images/nurse.png" alt="Nurse Dashboard" width="100%"/><br/><strong>Nurse Dashboard</strong><br/>Care tasks, vitals workflow, and ward support. |
+| <img src="backend/images/medicine.png" alt="Medicine Module" width="100%"/><br/><strong>Medicine Module</strong><br/>Catalog and stock-level management for pharmacy operations. | <img src="backend/images/prescription.png" alt="Prescription Module" width="100%"/><br/><strong>Prescription Module</strong><br/>Digital prescriptions and medication instructions. |
+| <img src="backend/images/payment.png" alt="Payment Module" width="100%"/><br/><strong>Payment Module</strong><br/>Billing, payment collection, and transaction tracking. | <img src="backend/images/bed.png" alt="Bed Management" width="100%"/><br/><strong>Bed Management</strong><br/>Bed allocation, occupancy status, and availability overview. |
+| <img src="backend/images/reports.png" alt="Reports Module" width="100%"/><br/><strong>Reports Module</strong><br/>Operational and clinical reporting for decision support. | <img src="backend/images/ai-assistant.png" alt="AI Assistant" width="100%"/><br/><strong>AI Assistant</strong><br/>Intelligent support for symptom and clinical assistance workflows. |
 
 ---
 
